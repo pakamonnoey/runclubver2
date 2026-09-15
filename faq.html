@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>FAQ | RUN BKK</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="vendor/bootstrap.min.css" />
+    <link rel="stylesheet" href="style.css" />
+
+    <script>
+        function toggleMenu() {
+        const menu = document.getElementById("menu");
+        const menuButton = document.getElementById("menuButton");
+        const isOpen = menu.classList.toggle("show");
+        menuButton.setAttribute("aria-expanded", String(isOpen));
+      }
+      </script>
+  </head>
+
+  <body>
+    <!-- Navigation -->
+
+    <nav class="navbar">
+      <div class="container">
+        <a href="index.html" class="logo"> RUN<span>BKK</span> </a>
+        <button
+          type="button"
+          class="menu-button"
+          id="menuButton"
+          aria-label="เปิดเมนูนำทาง"
+          aria-controls="menu"
+          aria-expanded="false"
+          onclick="toggleMenu()"
+        >
+          ☰
+        </button>
+        <div class="menu" id="menu">
+          <a href="index.html">Home</a>
+          <a href="events.html">Events</a>
+          <a href="clubs.html">Clubs</a>
+          <a href="index.html#spots">Spots</a>
+          <a href="index.html#about">About</a>
+          <a href="faq.html">FAQ</a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- FAQ Hero -->
+    <section class="faq-hero">
+      <div class="container">
+        <h1>FAQ</h1>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="faq-section">
+      <div class="container">
+        <div class="accordion" id="faqAccordion">
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button
+                class="accordion-button"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#question1"
+              >
+                What is RUN BKK?
+              </button>
+            </h2>
+
+            <div
+              id="question1"
+              class="accordion-collapse collapse show"
+              data-bs-parent="#faqAccordion"
+            >
+              <div class="accordion-body">
+                RUN BKK is a website that helps runners discover running events,
+                clubs and places to run around Bangkok.
+              </div>
+            </div>
+          </div>
+
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button
+                class="accordion-button collapsed"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#question2"
+              >
+                How can I find running events?
+              </button>
+            </h2>
+
+            <div
+              id="question2"
+              class="accordion-collapse collapse"
+              data-bs-parent="#faqAccordion"
+            >
+              <div class="accordion-body">
+                You can visit the Events page to find upcoming running events in
+                Bangkok.
+              </div>
+            </div>
+          </div>
+
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button
+                class="accordion-button collapsed"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#question3"
+              >
+                Where can I find running clubs?
+              </button>
+            </h2>
+
+            <div
+              id="question3"
+              class="accordion-collapse collapse"
+              data-bs-parent="#faqAccordion"
+            >
+              <div class="accordion-body">
+                Visit the Clubs page to discover running communities and clubs
+                around Bangkok.
+              </div>
+            </div>
+          </div>
+
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button
+                class="accordion-button collapsed"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#question4"
+              >
+                Can beginners join a running club?
+              </button>
+            </h2>
+
+            <div
+              id="question4"
+              class="accordion-collapse collapse"
+              data-bs-parent="#faqAccordion"
+            >
+              <div class="accordion-body">
+                Yes. Many running clubs welcome runners of different experience
+                levels, including beginners.
+              </div>
+            </div>
+          </div>
+
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button
+                class="accordion-button collapsed"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#question5"
+              >
+                How can I find places to run?
+              </button>
+            </h2>
+
+            <div
+              id="question5"
+              class="accordion-collapse collapse"
+              data-bs-parent="#faqAccordion"
+            >
+              <div class="accordion-body">
+                Check the Spots section on the Home page to discover popular
+                running areas in Bangkok.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <script src="vendor/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

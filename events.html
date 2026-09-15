@@ -1,0 +1,341 @@
+<!doctype html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Events - RUN BKK</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="vendor/bootstrap.min.css" />
+    <link rel="stylesheet" href="style.css" />
+    <script>
+    function toggleMenu() {
+      const menu = document.getElementById("menu");
+      const menuButton = document.getElementById("menuButton");
+      const isOpen = menu.classList.toggle("show");
+      menuButton.setAttribute("aria-expanded", String(isOpen));
+    }
+    </script>
+  </head>
+
+  <body>
+    <!-- Navigation -->
+    <nav class="navbar">
+      <div class="container">
+        <a href="index.html" class="logo"> RUN<span>BKK</span> </a>
+        <button
+          type="button"
+          class="menu-button"
+          id="menuButton"
+          aria-label="เปิดเมนูนำทาง"
+          aria-controls="menu"
+          aria-expanded="false"
+          onclick="toggleMenu()"
+        >
+          ☰
+        </button>
+        <div class="menu" id="menu">
+          <a href="index.html">Home</a>
+          <a href="events.html">Events</a>
+          <a href="clubs.html">Clubs</a>
+          <a href="index.html#spots">Spots</a>
+          <a href="index.html#about">About</a>
+          <a href="faq.html">FAQ</a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Events Page -->
+    <section class="events-page">
+      <div class="container">
+        <!-- Page Header -->
+        <div class="events-header">
+          <h1>Events</h1>
+        </div>
+
+        <!-- Page Title -->
+        <div class="events-title">
+          <p class="small-title">DON'T MISS OUT</p>
+
+          <h2>Upcoming Events</h2>
+        </div>
+
+        <!-- Search -->
+        <section class="search-section">
+          <div class="search-box">
+            <div class="search-field">
+              <label class="visually-hidden" for="searchInput">Search events</label>
+              <input
+                type="text"
+                id="searchInput"
+                placeholder="Search events..."
+              />
+            </div>
+
+            <div class="search-field">
+              <label class="visually-hidden" for="locationInput">Search location</label>
+              <input
+                type="text"
+                id="locationInput"
+                placeholder="Search location..."
+              />
+            </div>
+
+            <div class="search-field">
+              <label class="visually-hidden" for="distanceSelect">Event distance</label>
+              <select id="distanceSelect">
+                <option value="all">All distances</option>
+                <option value="3">3 KM</option>
+                <option value="5">5 KM</option>
+                <option value="10">10 KM</option>
+              </select>
+            </div>
+
+            <button class="search-button" onclick="searchEvents()">
+              Search
+            </button>
+          </div>
+        </section>
+    
+        <!-- Event List -->
+        <div class="event-list">
+          <!-- Event 1 -->
+          <a
+            href="https://www.runlah.com/th/ihg2026"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="event-list-card"
+            data-distance="5"
+          >
+            <img src="image/event1.webp" alt="IHG RUN FOR GOOD 2026" />
+
+            <div class="event-date-box">
+              <strong>20</strong>
+              <span>SEP</span>
+            </div>
+
+            <div class="event-list-info">
+              <p class="event-type">Fun RUN</p>
+
+              <h3>IHG RUN FOR GOOD 2026</h3>
+
+              <p>📍 Rot Fai Park (สวนรถไฟ)</p>
+
+              <p>🕐 06:00 AM</p>
+            </div>
+
+            <div class="event-distance">5 KM</div>
+          </a>
+
+          <!-- Event 2 -->
+          <a
+            href="https://race.thai.run/thaiheartfoundation26?utm_source=runclubbangkok&utm_medium=referral&utm_campaign=events_index&utm_content=thairun-thaiheartfoundation26"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="event-list-card"
+            data-distance="5,10"
+          >
+            <img src="image/event2.png" alt="WORLD HEART DAY FUN RUN 2026" />
+
+            <div class="event-date-box">
+              <strong>27</strong>
+              <span>SEP</span>
+            </div>
+
+            <div class="event-list-info">
+              <p class="event-type">Fun Run</p>
+
+              <h3>เดิน-วิ่ง วันหัวใจโลก WORLD HEART DAY FUN RUN 2026</h3>
+
+              <p>📍 Rama VIII Bridge (สะพานพระราม8)</p>
+
+              <p>🕐 04:00 AM</p>
+            </div>
+
+            <div class="event-distance">5 / 10 KM</div>
+          </a>
+
+          <!-- Event 3 -->
+          <a
+            href="https://www.runlah.com/th/u9dZslLQ"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="event-list-card"
+            data-distance="3,5"
+          >
+            <img
+              src="image/event3.webp"
+              alt="SANRIO CHARACTERS HALF MARATHON"
+            />
+
+            <div class="event-date-box">
+              <strong>27</strong>
+              <span>SEP</span>
+            </div>
+
+            <div class="event-list-info">
+              <p class="event-type">Fun Run</p>
+
+              <h3>SANRIO CHARACTERS HALF MARATHON</h3>
+
+              <p>📍 One Bangkok (วันแบงค็อก)</p>
+
+              <p>🕐 07:00 AM</p>
+            </div>
+
+            <div class="event-distance">3 / 5 KM</div>
+          </a>
+
+          <!-- Event 4 -->
+          <a
+            href="https://race.thai.run/sponsorrunbangkok2026?utm_source=runclubbangkok&utm_medium=referral&utm_campaign=events_index&utm_content=thairun-sponsorrunbangkok2026"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="event-list-card"
+            data-distance="5"
+          >
+            <img src="image/event4.jpeg" alt="SPONSOR RUN BANGKOK 2026" />
+
+            <div class="event-date-box">
+              <strong>4</strong>
+              <span>OCT</span>
+            </div>
+
+            <div class="event-list-info">
+              <p class="event-type">HALF MARATHON</p>
+
+              <h3>SPONSOR RUN BANGKOK 2026</h3>
+
+              <p>📍 Rama VIII Bridge (สะพานพระราม8)</p>
+
+              <p>🕐 06:00 AM</p>
+            </div>
+
+            <div class="event-distance">5 KM</div>
+          </a>
+
+          <!-- Event 5 -->
+          <a
+            href="https://www.runlah.com/th/Z2Kybfat"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="event-list-card"
+            data-distance="3,5"
+          >
+            <img src="image/event5.webp" alt="Run to the Rhythm 2026" />
+
+            <div class="event-date-box">
+              <strong>18</strong>
+              <span>OCT</span>
+            </div>
+
+            <div class="event-list-info">
+              <p class="event-type">Marathon</p>
+
+              <h3>Run to the Rhythm 2026</h3>
+
+              <p>📍 Suan Luang Rama IX Public Park (สวนหลวง ร.9)</p>
+
+              <p>🕐 07:00 AM</p>
+            </div>
+
+            <div class="event-distance">3 / 5 KM</div>
+          </a>
+
+          <!-- Event 6 -->
+          <a
+            href="https://www.runlah.com/th/ZjLrENYS"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="event-list-card"
+            data-distance="5,10"
+          >
+            <img src="image/event6.webp" alt="Thailand Post EMS RUN 2026" />
+
+            <div class="event-date-box">
+              <strong>18</strong>
+              <span>OCT</span>
+            </div>
+
+            <div class="event-list-info">
+              <p class="event-type">Fun Run</p>
+
+              <h3>Thailand Post EMS RUN 2026</h3>
+
+              <p>📍 General Post Office (ไปรษณีย์กลาง บางรัก)</p>
+
+              <p>🕐 07:00 PM</p>
+            </div>
+
+            <div class="event-distance">5 / 10 KM</div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-content">
+          <div>
+            <a href="index.html" class="logo"> RUN<span>BKK</span> </a>
+
+            <p>Find your run. Find your people.</p>
+          </div>
+
+          <div class="footer-links">
+            <a href="events.html">Events</a>
+            <a href="clubs.html">Clubs</a>
+            <a href="index.html#spots">Spots</a>
+            <a href="index.html#about">About</a>
+            <a href="faq.html">FAQ</a>
+          </div>
+        </div>
+
+        <div class="footer-bottom">
+          <p>© 2026 RUN BKK. Running community in Bangkok.</p>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      function searchEvents() {
+        let keyword = document
+          .getElementById("searchInput")
+          .value.toLowerCase();
+
+        let location = document
+          .getElementById("locationInput")
+          .value.toLowerCase();
+
+        let distance = document.getElementById("distanceSelect").value;
+
+        let events = document.querySelectorAll(".event-list-card");
+
+        events.forEach(function (event) {
+          let eventText = event.textContent.toLowerCase();
+
+          let eventDistance = event.getAttribute("data-distance");
+
+          let keywordMatch = eventText.includes(keyword);
+
+          let locationMatch = eventText.includes(location);
+
+          let distanceMatch =
+            distance === "all" || eventDistance.includes(distance);
+
+          if (keywordMatch && locationMatch && distanceMatch) {
+            event.style.display = "flex";
+          } else {
+            event.style.display = "none";
+          }
+        });
+      }
+    </script>
+
+    <script src="vendor/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

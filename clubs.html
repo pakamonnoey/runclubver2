@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Running Clubs - RUN BKK</title>
+    <link
+    href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+    <link rel="stylesheet" href="vendor/bootstrap.min.css" />
+    <link rel="stylesheet" href="style.css" />
+    <script>
+      function toggleMenu() {
+        const menu = document.getElementById("menu");
+        const menuButton = document.getElementById("menuButton");
+        const isOpen = menu.classList.toggle("show");
+        menuButton.setAttribute("aria-expanded", String(isOpen));
+      }
+    </script>
+  </head>
+
+  <body>
+    <!-- Navigation -->
+
+    <nav class="navbar">
+      <div class="container">
+        <a href="index.html" class="logo"> RUN<span>BKK</span> </a>
+        <button
+          type="button"
+          class="menu-button"
+          id="menuButton"
+          aria-label="เปิดเมนูนำทาง"
+          aria-controls="menu"
+          aria-expanded="false"
+          onclick="toggleMenu()"
+        >
+          ☰
+        </button>
+        <div class="menu" id="menu">
+          <a href="index.html">Home</a>
+          <a href="events.html">Events</a>
+          <a href="clubs.html">Clubs</a>
+          <a href="index.html#spots">Spots</a>
+          <a href="index.html#about">About</a>
+          <a href="faq.html">FAQ</a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Clubs Hero -->
+
+    <section class="clubs-hero">
+      <div class="container">
+        <p class="small-title">RUN TOGETHER</p>
+
+        <h1>Running Clubs</h1>
+
+        <p>Find a running community and meet new people in Bangkok.</p>
+      </div>
+    </section>
+
+    <!-- Club List -->
+
+    <section class="clubs-section">
+      <div class="container">
+        <div class="row g-4 align-items-stretch">
+          <!-- Club 1 -->
+
+          <div class="col-md-4">
+            <div class="club-card">
+              <div class="club-image">
+                <img src="image/club1.png" alt="Cruise Control Run Club" />
+              </div>
+
+              <div class="club-info">
+                <h2>Cruise Control Run Club</h2>
+
+                <p>
+                  มีรูปแบบกิจกรรมหลัก 3 แบบ ได้แก่ Social Run วิ่งเบาๆ 5-6
+                  กิโลเพื่อความสนุก, City Run วิ่งสำรวจเมืองเดือนละครั้ง และ
+                  Long Run สำหรับเพิ่มความทนทาน เน้นบรรยากาศเป็นกันเอง
+                  ไม่แข่งขัน ใครก็เข้าร่วมได้
+                </p>
+
+                <div class="club-bottom">
+                  <p>📍 Benjakitti Park (สวนเบญจกิตติ)</p>
+
+                  <a
+                    href="https://www.instagram.com/cruisecontrolrunclub/"
+                    class="instagram-button"
+                  >
+                    Instagram →
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Club 2 -->
+          <div class="col-md-4">
+            <div class="club-card">
+              <div class="club-image">
+                <img src="image/club2.jpeg" alt="Sabai Run Club Bangkok" />
+              </div>
+
+              <div class="club-info">
+                <h2>Sabai Run Club Bangkok</h2>
+
+                <p>
+                  เป็นคอมูนิตี้ที่ได้ทั้งการวิ่งและการเข้าสังคมพบปะผู้คน
+                  เน้นให้การวิ่งเป็นกิจกรรมที่เข้าได้กับทุกคน จัดวิ่งทุกๆ
+                  วันอาทิตย์ มีทั้งคนไทยและชาวต่างชาติ
+                  รวมถึงเซเลบริตี้มาเข้าร่วมคลับมากมาย
+                  ที่สำคัญไม่มีค่าใช้จ่ายและไม่ต้องลงทะเบียน
+                </p>
+                <div class="club-bottom">
+                  <p>📍 Benjakitti Park (สวนเบญจกิตติ)</p>
+
+                  <a
+                    href="https://www.instagram.com/sabairunclub.bkk/"
+                    class="instagram-button"
+                  >
+                    Instagram →
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Club 3 -->
+          <div class="col-md-4">
+            <div class="club-card">
+              <div class="club-image">
+                <img src="image/club3.png" alt="MMRC Meep Meep Run Club" />
+              </div>
+
+              <div class="club-info">
+                <h2>MMRC Meep Meep Run Club</h2>
+
+                <p>
+                  มีกิจกรรม “Run, Jog & Walk Series” ร่วมกับพื้นที่สาธารณะ
+                  จัดขึ้นแบบฟรี เป็นเช้าวันหยุด บรรยากาศเป็นกันเอง
+                  มีแบ่งกลุ่มตามสปีดและเน้นเรื่องชุมชน มิตรภาพ
+                  และความสนุกจากการออกกำลังกายร่วมกัน ไม่ใช่การแข่งขัน
+                </p>
+                <div class="club-bottom">
+                  <p>📍 พื้นที่สาธารณะ</p>
+
+                  <a
+                    href="https://www.instagram.com/meepmeeprunclub/"
+                    class="instagram-button"
+                  >
+                    Instagram →
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Club 4 -->
+          <div class="col-md-4">
+            <div class="club-card">
+              <div class="club-image">
+                <img src="image/club4.jpeg" alt="Monster Run Bkk" />
+              </div>
+
+              <div class="club-info">
+                <h2>Monster Run Bkk</h2>
+
+                <p>
+                  มี City Run และ Event Collaboration
+                  จุดเด่นคือการสร้างบรรยากาศสนุกและเป็นกันเองในการวิ่งสำรวจเมือง
+                  เป็นทั้งกลุ่มวิ่งและแหล่งรวมคนรักการวิ่งที่เชื่อมโยงกันผ่านกิจกรรมและไลฟ์สไตล์การออกกำลังกาย
+                </p>
+                <div class="club-bottom">
+                  <p>📍 สำรวจเมือง</p>
+
+                  <a
+                    href="https://www.instagram.com/monster.bkk/"
+                    class="instagram-button"
+                  >
+                    Instagram →
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Club 5 -->
+          <div class="col-md-4">
+            <div class="club-card">
+              <div class="club-image">
+                <img src="image/club5.jpg" alt="CNX-BKK Brotherhood" />
+              </div>
+
+              <div class="club-info">
+                <h2>CNX-BKK Brotherhood</h2>
+
+                <p>
+                  เป็นกลุ่มวิ่งที่ผสมผสานจิตวิญญาณของคนที่มาจากเชียงใหม่เข้ากับพลังของกรุงเทพฯ
+                  ได้อย่างลงตัว กลุ่มนี้นิยามตัวเองว่าเป็น “Daydrinker & Runner
+                  Club”
+                </p>
+                <div class="club-bottom">
+                  <p>📍 ตามเส้นทางและอีเวนต์</p>
+                  <a
+                    href="https://www.instagram.com/cnx_bkk.brotherhood/"
+                    class="instagram-button"
+                  >
+                    Instagram →
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-content">
+          <div>
+            <a href="index.html" class="logo"> RUN<span>BKK</span> </a>
+
+            <p>Find your run. Find your people.</p>
+          </div>
+
+          <div class="footer-links">
+            <a href="events.html">Events</a>
+            <a href="clubs.html">Clubs</a>
+            <a href="index.html#spots">Spots</a>
+            <a href="index.html#about">About</a>
+            <a href="faq.html">FAQ</a>
+          </div>
+        </div>
+
+        <div class="footer-bottom">
+          <p>© 2026 RUN BKK. Running community in Bangkok.</p>
+        </div>
+      </div>
+    </footer>
+
+    <script src="vendor/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
