@@ -1,52 +1,4 @@
-<!doctype html>
-<html lang="th">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-    <title>Events - RUN BKK</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="vendor/bootstrap.min.css" />
-    <link rel="stylesheet" href="style.css" />
-    <script>
-    function toggleMenu() {
-      const menu = document.getElementById("menu");
-      const menuButton = document.getElementById("menuButton");
-      const isOpen = menu.classList.toggle("show");
-      menuButton.setAttribute("aria-expanded", String(isOpen));
-    }
-    </script>
-  </head>
-
-  <body>
-    <!-- Navigation -->
-    <nav class="navbar">
-      <div class="container">
-        <a href="index.html" class="logo"> RUN<span>BKK</span> </a>
-        <button
-          type="button"
-          class="menu-button"
-          id="menuButton"
-          aria-label="เปิดเมนูนำทาง"
-          aria-controls="menu"
-          aria-expanded="false"
-          onclick="toggleMenu()"
-        >
-          ☰
-        </button>
-        <div class="menu" id="menu">
-          <a href="index.html">Home</a>
-          <a href="events.html">Events</a>
-          <a href="clubs.html">Clubs</a>
-          <a href="index.html#spots">Spots</a>
-          <a href="index.html#about">About</a>
-          <a href="faq.html">FAQ</a>
-        </div>
-      </div>
-    </nav>
+<%- include('partials/head', { title: 'Events - RUN BKK' }) %>
 
     <!-- Events Page -->
     <section class="events-page">
@@ -110,7 +62,7 @@
             class="event-list-card"
             data-distance="5"
           >
-            <img src="image/event1.webp" alt="IHG RUN FOR GOOD 2026" />
+            <img src="/image/event1.webp" alt="IHG RUN FOR GOOD 2026" />
 
             <div class="event-date-box">
               <strong>20</strong>
@@ -138,7 +90,7 @@
             class="event-list-card"
             data-distance="5,10"
           >
-            <img src="image/event2.png" alt="WORLD HEART DAY FUN RUN 2026" />
+            <img src="/image/event2.png" alt="WORLD HEART DAY FUN RUN 2026" />
 
             <div class="event-date-box">
               <strong>27</strong>
@@ -167,7 +119,7 @@
             data-distance="3,5"
           >
             <img
-              src="image/event3.webp"
+              src="/image/event3.webp"
               alt="SANRIO CHARACTERS HALF MARATHON"
             />
 
@@ -197,7 +149,7 @@
             class="event-list-card"
             data-distance="5"
           >
-            <img src="image/event4.jpeg" alt="SPONSOR RUN BANGKOK 2026" />
+            <img src="/image/event4.jpeg" alt="SPONSOR RUN BANGKOK 2026" />
 
             <div class="event-date-box">
               <strong>4</strong>
@@ -225,7 +177,7 @@
             class="event-list-card"
             data-distance="3,5"
           >
-            <img src="image/event5.webp" alt="Run to the Rhythm 2026" />
+            <img src="/image/event5.webp" alt="Run to the Rhythm 2026" />
 
             <div class="event-date-box">
               <strong>18</strong>
@@ -253,7 +205,7 @@
             class="event-list-card"
             data-distance="5,10"
           >
-            <img src="image/event6.webp" alt="Thailand Post EMS RUN 2026" />
+            <img src="/image/event6.webp" alt="Thailand Post EMS RUN 2026" />
 
             <div class="event-date-box">
               <strong>18</strong>
@@ -276,30 +228,7 @@
       </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="footer">
-      <div class="container">
-        <div class="footer-content">
-          <div>
-            <a href="index.html" class="logo"> RUN<span>BKK</span> </a>
-
-            <p>Find your run. Find your people.</p>
-          </div>
-
-          <div class="footer-links">
-            <a href="events.html">Events</a>
-            <a href="clubs.html">Clubs</a>
-            <a href="index.html#spots">Spots</a>
-            <a href="index.html#about">About</a>
-            <a href="faq.html">FAQ</a>
-          </div>
-        </div>
-
-        <div class="footer-bottom">
-          <p>© 2026 RUN BKK. Running community in Bangkok.</p>
-        </div>
-      </div>
-    </footer>
+    
 
     <script>
       function searchEvents() {
@@ -336,6 +265,4 @@
       }
     </script>
 
-    <script src="vendor/bootstrap.bundle.min.js"></script>
-  </body>
-</html>
+<%- include('partials/footer') %>

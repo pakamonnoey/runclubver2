@@ -1,51 +1,4 @@
-<!doctype html>
-<html lang="th">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>RUN BKK</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="vendor/bootstrap.min.css" />
-    <link rel="stylesheet" href="style.css" />
-    <script>
-      function toggleMenu() {
-        const menu = document.getElementById("menu");
-        const menuButton = document.getElementById("menuButton");
-        const isOpen = menu.classList.toggle("show");
-        menuButton.setAttribute("aria-expanded", String(isOpen));
-      }
-    </script>
-  </head>
-
-  <body>
-    <!-- Navigation -->
-    <nav class="navbar">
-      <div class="container">
-        <a href="index.html" class="logo">RUN<span>BKK</span></a>
-        <button
-          type="button"
-          class="menu-button"
-          id="menuButton"
-          aria-label="เปิดเมนูนำทาง"
-          aria-controls="menu"
-          aria-expanded="false"
-          onclick="toggleMenu()"
-        >
-          ☰
-        </button>
-        <div class="menu" id="menu">
-          <a href="index.html">Home</a>
-          <a href="events.html">Events</a>
-          <a href="clubs.html">Clubs</a>
-          <a href="index.html#spots">Spots</a>
-          <a href="index.html#about">About</a>
-          <a href="faq.html">FAQ</a>
-        </div>
-      </div>
-    </nav>
+<%- include('partials/head', { title: 'RUN BKK' }) %>
 
     <!-- Hero Section -->
     <section class="hero">
@@ -60,7 +13,7 @@
             Discover running events, clubs and places to run around Bangkok.
           </p>
 
-          <a href="events.html" class="main-button"> Explore Events → </a>
+          <a href="/events" class="main-button"> Explore Events → </a>
         </div>
       </div>
     </section>
@@ -71,7 +24,7 @@
         <div class="about-content">
           <div class="about-image">
             <img
-              src="image/about.jpg"
+              src="/image/about.jpg"
               alt="Runners enjoying a group run in Bangkok"
               loading="lazy"
             />
@@ -95,7 +48,7 @@
               เราช่วยให้คุณหาอีเวนต์และกลุ่มวิ่งที่เหมาะกับตัวเองได้ง่ายขึ้น
             </p>
 
-            <a href="clubs.html" class="main-button"> Find Your Crew → </a>
+            <a href="/clubs" class="main-button"> Find Your Crew → </a>
           </div>
         </div>
       </div>
@@ -117,7 +70,7 @@
             <div class="event-card">
               <div class="event-image">
                 <img
-                  src="image/event1.webp"
+                  src="/image/event1.webp"
                   alt="IHG RUN FOR GOOD 2026"
                   loading="lazy"
                 />
@@ -144,7 +97,7 @@
             <div class="event-card">
               <div class="event-image">
                 <img
-                  src="image/event2.png"
+                  src="/image/event2.png"
                   alt="WORLD HEART DAY FUN RUN 2026"
                   loading="lazy"
                 />
@@ -171,7 +124,7 @@
             <div class="event-card">
               <div class="event-image">
                 <img
-                  src="image/event3.webp"
+                  src="/image/event3.webp"
                   alt="SANRIO CHARACTERS HALF MARATHON"
                   loading="lazy"
                 />
@@ -193,7 +146,7 @@
             </div>
           </div>
         </div>
-        <a href="events.html" class="view-events">All Events</a>
+        <a href="/events" class="view-events">All Events</a>
       </div>
     </section>
 
@@ -214,7 +167,7 @@
             <div class="spot-card">
               <div class="spot-image">
                 <img
-                  src="image/spot_lum.webp"
+                  src="/image/spot_lum.webp"
                   alt="Runners at Lumpini Park"
                   loading="lazy"
                 />
@@ -235,7 +188,7 @@
             <div class="spot-card">
               <div class="spot-image">
                 <img
-                  src="image/spot_ben.jpg"
+                  src="/image/spot_ben.jpg"
                   alt="Benjakitti Park"
                   loading="lazy"
                 />
@@ -256,7 +209,7 @@
             <div class="spot-card">
               <div class="spot-image">
                 <img
-                  src="image/spot_chat.jpeg"
+                  src="/image/spot_chat.jpeg"
                   alt="Chatuchak Park"
                   loading="lazy"
                 />
@@ -275,31 +228,4 @@
       </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="footer">
-      <div class="container">
-        <div class="footer-content">
-          <div>
-            <a href="index.html" class="logo"> RUN<span>BKK</span> </a>
-
-            <p>Find your run. Find your people.</p>
-          </div>
-
-          <div class="footer-links">
-            <a href="events.html">Events</a>
-            <a href="clubs.html">Clubs</a>
-            <a href="index.html#spots">Spots</a>
-            <a href="index.html#about">About</a>
-            <a href="faq.html">FAQ</a>
-          </div>
-        </div>
-
-        <div class="footer-bottom">
-          <p>© 2026 RUN BKK. Running community in Bangkok.</p>
-        </div>
-      </div>
-    </footer>
-
-    <script src="vendor/bootstrap.bundle.min.js"></script>
-  </body>
-</html>
+<%- include('partials/footer') %>

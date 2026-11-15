@@ -1,54 +1,4 @@
-<!doctype html>
-<html lang="th">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-    <title>FAQ | RUN BKK</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="vendor/bootstrap.min.css" />
-    <link rel="stylesheet" href="style.css" />
-
-    <script>
-        function toggleMenu() {
-        const menu = document.getElementById("menu");
-        const menuButton = document.getElementById("menuButton");
-        const isOpen = menu.classList.toggle("show");
-        menuButton.setAttribute("aria-expanded", String(isOpen));
-      }
-      </script>
-  </head>
-
-  <body>
-    <!-- Navigation -->
-
-    <nav class="navbar">
-      <div class="container">
-        <a href="index.html" class="logo"> RUN<span>BKK</span> </a>
-        <button
-          type="button"
-          class="menu-button"
-          id="menuButton"
-          aria-label="เปิดเมนูนำทาง"
-          aria-controls="menu"
-          aria-expanded="false"
-          onclick="toggleMenu()"
-        >
-          ☰
-        </button>
-        <div class="menu" id="menu">
-          <a href="index.html">Home</a>
-          <a href="events.html">Events</a>
-          <a href="clubs.html">Clubs</a>
-          <a href="index.html#spots">Spots</a>
-          <a href="index.html#about">About</a>
-          <a href="faq.html">FAQ</a>
-        </div>
-      </div>
-    </nav>
+<%- include('partials/head', { title: 'FAQ | RUN BKK' }) %>
 
     <!-- FAQ Hero -->
     <section class="faq-hero">
@@ -184,6 +134,4 @@
       </div>
     </section>
 
-    <script src="vendor/bootstrap.bundle.min.js"></script>
-  </body>
-</html>
+<%- include('partials/footer') %>

@@ -1,52 +1,4 @@
-<!doctype html>
-<html lang="th">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-    <title>Running Clubs - RUN BKK</title>
-    <link
-    href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700&display=swap"
-    rel="stylesheet">
-    <link rel="stylesheet" href="vendor/bootstrap.min.css" />
-    <link rel="stylesheet" href="style.css" />
-    <script>
-      function toggleMenu() {
-        const menu = document.getElementById("menu");
-        const menuButton = document.getElementById("menuButton");
-        const isOpen = menu.classList.toggle("show");
-        menuButton.setAttribute("aria-expanded", String(isOpen));
-      }
-    </script>
-  </head>
-
-  <body>
-    <!-- Navigation -->
-
-    <nav class="navbar">
-      <div class="container">
-        <a href="index.html" class="logo"> RUN<span>BKK</span> </a>
-        <button
-          type="button"
-          class="menu-button"
-          id="menuButton"
-          aria-label="เปิดเมนูนำทาง"
-          aria-controls="menu"
-          aria-expanded="false"
-          onclick="toggleMenu()"
-        >
-          ☰
-        </button>
-        <div class="menu" id="menu">
-          <a href="index.html">Home</a>
-          <a href="events.html">Events</a>
-          <a href="clubs.html">Clubs</a>
-          <a href="index.html#spots">Spots</a>
-          <a href="index.html#about">About</a>
-          <a href="faq.html">FAQ</a>
-        </div>
-      </div>
-    </nav>
+<%- include('partials/head', { title: 'Running Clubs - RUN BKK' }) %>
 
     <!-- Clubs Hero -->
 
@@ -70,7 +22,7 @@
           <div class="col-md-4">
             <div class="club-card">
               <div class="club-image">
-                <img src="image/club1.png" alt="Cruise Control Run Club" />
+                <img src="/image/club1.png" alt="Cruise Control Run Club" />
               </div>
 
               <div class="club-info">
@@ -101,7 +53,7 @@
           <div class="col-md-4">
             <div class="club-card">
               <div class="club-image">
-                <img src="image/club2.jpeg" alt="Sabai Run Club Bangkok" />
+                <img src="/image/club2.jpeg" alt="Sabai Run Club Bangkok" />
               </div>
 
               <div class="club-info">
@@ -132,7 +84,7 @@
           <div class="col-md-4">
             <div class="club-card">
               <div class="club-image">
-                <img src="image/club3.png" alt="MMRC Meep Meep Run Club" />
+                <img src="/image/club3.png" alt="MMRC Meep Meep Run Club" />
               </div>
 
               <div class="club-info">
@@ -162,7 +114,7 @@
           <div class="col-md-4">
             <div class="club-card">
               <div class="club-image">
-                <img src="image/club4.jpeg" alt="Monster Run Bkk" />
+                <img src="/image/club4.jpeg" alt="Monster Run Bkk" />
               </div>
 
               <div class="club-info">
@@ -191,7 +143,7 @@
           <div class="col-md-4">
             <div class="club-card">
               <div class="club-image">
-                <img src="image/club5.jpg" alt="CNX-BKK Brotherhood" />
+                <img src="/image/club5.jpg" alt="CNX-BKK Brotherhood" />
               </div>
 
               <div class="club-info">
@@ -218,32 +170,4 @@
       </div>
     </section>
 
-    <!-- Footer -->
-
-    <footer class="footer">
-      <div class="container">
-        <div class="footer-content">
-          <div>
-            <a href="index.html" class="logo"> RUN<span>BKK</span> </a>
-
-            <p>Find your run. Find your people.</p>
-          </div>
-
-          <div class="footer-links">
-            <a href="events.html">Events</a>
-            <a href="clubs.html">Clubs</a>
-            <a href="index.html#spots">Spots</a>
-            <a href="index.html#about">About</a>
-            <a href="faq.html">FAQ</a>
-          </div>
-        </div>
-
-        <div class="footer-bottom">
-          <p>© 2026 RUN BKK. Running community in Bangkok.</p>
-        </div>
-      </div>
-    </footer>
-
-    <script src="vendor/bootstrap.bundle.min.js"></script>
-  </body>
-</html>
+<%- include('partials/footer') %>

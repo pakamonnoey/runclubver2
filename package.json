@@ -1,0 +1,33 @@
+{
+  "name": "run-bkk",
+  "version": "1.0.0",
+  "description": "RUN BKK - Bangkok running club community platform",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pakamonnoey/runclubver2.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/pakamonnoey/runclubver2/issues"
+  },
+  "homepage": "https://github.com/pakamonnoey/runclubver2#readme",
+  "dependencies": {
+    "dotenv": "^18.0.10",
+    "ejs": "^7.0.2",
+    "express": "^5.3.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
