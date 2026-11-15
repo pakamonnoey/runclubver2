@@ -28,7 +28,9 @@
       <a href="/admin" class="menu-dashboard">Admin</a>
       <% } %>
       <a href="/profile" class="menu-user">👋 <%= currentUser.name %></a>
-      <form action="/logout" method="POST" class="menu-logout">
+      <!-- confirm() คืน false เมื่อกด Cancel → return false หยุดการส่งฟอร์ม -->
+      <form action="/logout" method="POST" class="menu-logout"
+            onsubmit="return confirm('ต้องการออกจากระบบใช่ไหม?')">
         <button type="submit">Logout</button>
       </form>
       <% } else { %>

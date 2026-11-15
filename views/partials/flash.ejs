@@ -1,7 +1,9 @@
 <% if (locals.flash) { %>
-<!-- ข้อความแจ้งเตือนครั้งเดียว (ตั้งค่าใน req.session.flash) -->
+<!-- ข้อความแจ้งเตือนครั้งเดียว (ตั้งค่าใน req.session.flash)
+     success → หายเองใน 5 วินาที (public/js/flash.js) / error, warning → ค้างไว้จนกดปิด -->
 <div class="container">
-  <div class="alert alert-<%= flash.type %> alert-dismissible fade show flash-message" role="alert">
+  <div class="alert alert-<%= flash.type %> alert-dismissible fade show flash-message" role="alert"
+       <%= flash.type === 'success' ? 'data-autohide' : '' %>>
     <%= flash.message %>
     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="ปิด"></button>
   </div>
