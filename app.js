@@ -12,6 +12,7 @@ const authRoutes = require("./routes/auth");
 const clubRoutes = require("./routes/clubs");
 const eventRoutes = require("./routes/events");
 const memberRoutes = require("./routes/member");
+const adminRoutes = require("./routes/admin");
 const format = require("./utils/format");
 
 const app = express();
@@ -63,7 +64,21 @@ app.use(
 );
 
 // 5) ส่งข้อมูลที่ทุกหน้าต้องใช้ไปให้ view (navbar ต้องรู้ว่าใคร login อยู่)
-app.use((req, res, next) => {
+app.use(async (req, res, next) => {
+  // ดึงชื่อ/role ล่าสุดจาก DB ทุก request → ถ้า Admin เปลี่ยน role หรือลบ user จะมีผลทันที
+  // (ไม่ต้องรอให้ผู้ใช้ logout แล้ว login ใหม่)
+  if (req.session.user) {
+    const [rows] = await pool.query("SELECT id, name, role FROM users WHERE id = ?", [
+      req.session.user.id,
+    ]);
+    const fresh = rows[0];
+    if (!fresh) {
+      delete req.session.user; // user ถูกลบ → หลุดจากระบบ
+    } else if (fresh.role !== req.session.user.role || fresh.name !== req.session.user.name) {
+      req.session.user = fresh; // อัปเดตเฉพาะเมื่อเปลี่ยน (ไม่ต้องเขียน session ทุก request)
+    }
+  }
+
   res.locals.currentUser = req.session.user || null;
   // flash = ข้อความแจ้งเตือนครั้งเดียว: แสดงแล้วลบทิ้ง
   res.locals.flash = req.session.flash || null;
@@ -77,6 +92,7 @@ app.use("/", authRoutes); // /register /login /logout
 app.use("/clubs", clubRoutes); // /clubs, /clubs/:id (ต้อง login)
 app.use("/events", eventRoutes); // /events, /events/:id, join, cancel (ต้อง login)
 app.use("/", memberRoutes); // /my-runs, /profile (ต้อง login)
+app.use("/admin", adminRoutes); // Admin Dashboard (admin เท่านั้น)
 
 // 7) ไม่เจอ route ไหนเลย → หน้า 404
 app.use((req, res) => {

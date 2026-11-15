@@ -37,4 +37,20 @@ module.exports = {
   distanceText: (km) => (km === null || km === undefined ? "" : `${Number(km)} KM`),
 
   runTypeLabel: (type) => RUN_TYPES[type] || type,
+
+  // ค่าสำหรับเติมใน <input type="datetime-local"> เช่น "2026-11-22T06:00" (เวลาไทย)
+  // locale sv-SE ให้รูปแบบ "2026-11-22 06:00:00" ซึ่งตัดต่อได้ง่าย
+  inputDateTime: (date) =>
+    new Date(date).toLocaleString("sv-SE", { timeZone: TZ }).slice(0, 16).replace(" ", "T"),
+
+  // วันที่ + เวลาแบบสั้น สำหรับตารางใน dashboard เช่น "22 พ.ย. 2569 06:00"
+  shortDateTime: (date) =>
+    new Date(date).toLocaleString("th-TH", {
+      timeZone: TZ,
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    }),
 };

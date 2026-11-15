@@ -1,0 +1,40 @@
+<%- include('../partials/head', { title: 'Admin Dashboard - RUN BKK' }) %>
+
+    <section class="dashboard-page">
+      <div class="container">
+        <div class="dashboard-header">
+          <div>
+            <p class="small-title">ADMIN</p>
+            <h1>Admin Dashboard</h1>
+          </div>
+        </div>
+        <%- include('../partials/admin-nav', { active: 'dashboard' }) %>
+
+        <div class="row g-3">
+          <div class="col-6 col-md-4">
+            <a href="/admin/events" class="stat-card <%= stats.draft_events > 0 ? 'stat-alert' : '' %>">
+              <strong><%= stats.draft_events %></strong><span>กิจกรรม draft (ยังไม่แสดง)</span>
+            </a>
+          </div>
+          <div class="col-6 col-md-4">
+            <a href="/admin/clubs" class="stat-card <%= stats.pending_clubs > 0 ? 'stat-alert' : '' %>">
+              <strong><%= stats.pending_clubs %></strong><span>คลับรอ publish</span>
+            </a>
+          </div>
+          <div class="col-6 col-md-4">
+            <a href="/admin/users" class="stat-card"><strong><%= stats.users %></strong><span>ผู้ใช้ทั้งหมด</span></a>
+          </div>
+          <div class="col-6 col-md-4">
+            <a href="/admin/clubs" class="stat-card"><strong><%= stats.clubs %></strong><span>คลับทั้งหมด</span></a>
+          </div>
+          <div class="col-6 col-md-4">
+            <a href="/admin/events" class="stat-card"><strong><%= stats.upcoming_events %></strong><span>กิจกรรมที่กำลังจะมาถึง</span></a>
+          </div>
+          <div class="col-6 col-md-4">
+            <div class="stat-card"><strong><%= stats.registrations %></strong><span>การ Join ทั้งหมด</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+<%- include('../partials/footer') %>

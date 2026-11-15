@@ -1,0 +1,129 @@
+<%- include('../partials/head', { title: heading + ' - RUN BKK' }) %>
+
+    <section class="auth-section">
+      <div class="container">
+        <div class="auth-card auth-card-wide">
+          <a href="/admin/events" class="back-link">← Events</a>
+          <h1><%= heading %></h1>
+
+          <% if (joinedCount > 0) { %>
+          <div class="alert alert-info">มีผู้เข้าร่วมแล้ว <%= joinedCount %> คน — ถ้าเปลี่ยนวันเวลา/สถานที่ ควรแจ้งผู้เข้าร่วมด้วย</div>
+          <% } %>
+
+          <form action="<%= action %>" method="POST" novalidate>
+            <div class="mb-3">
+              <label for="club_id" class="form-label">คลับ *</label>
+              <select id="club_id" name="club_id" class="form-select <%= errors.club_id ? 'is-invalid' : '' %>">
+                <option value="">— เลือกคลับ —</option>
+                <% clubs.forEach(function (club) { %>
+                <option value="<%= club.id %>" <%= String(values.club_id) === String(club.id) ? 'selected' : '' %>>
+                  <%= club.name %><%= club.status === 'pending' ? ' (pending)' : '' %>
+                </option>
+                <% }); %>
+              </select>
+              <div class="invalid-feedback"><%= errors.club_id || '' %></div>
+            </div>
+
+            <div class="mb-3">
+              <label for="title" class="form-label">ชื่อกิจกรรม *</label>
+              <input type="text" id="title" name="title" maxlength="150" placeholder="เช่น Sunday Social Run"
+                     class="form-control <%= errors.title ? 'is-invalid' : '' %>" value="<%= values.title || '' %>" />
+              <div class="invalid-feedback"><%= errors.title || '' %></div>
+            </div>
+
+            <div class="row g-3 mb-3">
+              <div class="col-sm-6">
+                <label for="run_type" class="form-label">ประเภท *</label>
+                <select id="run_type" name="run_type" class="form-select <%= errors.run_type ? 'is-invalid' : '' %>">
+                  <option value="">— เลือก —</option>
+                  <% Object.entries(runTypes).forEach(function ([value, label]) { %>
+                  <option value="<%= value %>" <%= values.run_type === value ? 'selected' : '' %>><%= label %></option>
+                  <% }); %>
+                </select>
+                <div class="invalid-feedback"><%= errors.run_type || '' %></div>
+              </div>
+              <div class="col-sm-6">
+                <label for="start_at" class="form-label">วันและเวลา *</label>
+                <input type="datetime-local" id="start_at" name="start_at"
+                       class="form-control <%= errors.start_at ? 'is-invalid' : '' %>" value="<%= values.start_at || '' %>" />
+                <div class="invalid-feedback"><%= errors.start_at || '' %></div>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="meeting_point" class="form-label">จุดนัดพบ *</label>
+              <input type="text" id="meeting_point" name="meeting_point" maxlength="255" placeholder="เช่น สวนเบญจกิตติ ประตู 1"
+                     class="form-control <%= errors.meeting_point ? 'is-invalid' : '' %>" value="<%= values.meeting_point || '' %>" />
+              <div class="invalid-feedback"><%= errors.meeting_point || '' %></div>
+            </div>
+
+            <div class="row g-3 mb-3">
+              <div class="col-sm-4">
+                <label for="distance_km" class="form-label">ระยะทาง (กม.)</label>
+                <input type="number" id="distance_km" name="distance_km" step="0.1" min="0.1" max="100"
+                       class="form-control <%= errors.distance_km ? 'is-invalid' : '' %>" value="<%= values.distance_km ?? '' %>" />
+                <div class="invalid-feedback"><%= errors.distance_km || '' %></div>
+              </div>
+              <div class="col-sm-4">
+                <label for="pace" class="form-label">Pace</label>
+                <input type="text" id="pace" name="pace" maxlength="50" placeholder="7:00–8:00 min/km"
+                       class="form-control <%= errors.pace ? 'is-invalid' : '' %>" value="<%= values.pace || '' %>" />
+                <div class="invalid-feedback"><%= errors.pace || '' %></div>
+              </div>
+              <div class="col-sm-4">
+                <label for="max_participants" class="form-label">รับสูงสุด (คน)</label>
+                <input type="number" id="max_participants" name="max_participants" min="1" max="1000" placeholder="ไม่จำกัด"
+                       class="form-control <%= errors.max_participants ? 'is-invalid' : '' %>" value="<%= values.max_participants ?? '' %>" />
+                <div class="invalid-feedback"><%= errors.max_participants || '' %></div>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="description" class="form-label">รายละเอียด</label>
+              <textarea id="description" name="description" rows="4" maxlength="2000"
+                        class="form-control <%= errors.description ? 'is-invalid' : '' %>"><%= values.description || '' %></textarea>
+              <div class="invalid-feedback"><%= errors.description || '' %></div>
+            </div>
+
+            <div class="row g-3 mb-3">
+              <div class="col-sm-5">
+                <label for="registration_type" class="form-label">วิธีสมัคร *</label>
+                <select id="registration_type" name="registration_type" class="form-select <%= errors.registration_type ? 'is-invalid' : '' %>">
+                  <option value="internal" <%= values.registration_type === 'internal' ? 'selected' : '' %>>กด Join ในเว็บ</option>
+                  <option value="external" <%= values.registration_type === 'external' ? 'selected' : '' %>>ลิงก์ภายนอก</option>
+                </select>
+                <div class="invalid-feedback"><%= errors.registration_type || '' %></div>
+              </div>
+              <div class="col-sm-7">
+                <label for="external_url" class="form-label">ลิงก์สมัครภายนอก</label>
+                <input type="url" id="external_url" name="external_url" placeholder="https://forms.gle/..."
+                       class="form-control <%= errors.external_url ? 'is-invalid' : '' %>" value="<%= values.external_url || '' %>" />
+                <div class="invalid-feedback"><%= errors.external_url || '' %></div>
+              </div>
+            </div>
+
+            <div class="row g-3 mb-4">
+              <div class="col-sm-7">
+                <label for="image" class="form-label">รูปภาพ (เว้นว่าง = ใช้รูปคลับ)</label>
+                <input type="text" id="image" name="image" placeholder="/image/... หรือ https://..."
+                       class="form-control <%= errors.image ? 'is-invalid' : '' %>" value="<%= values.image || '' %>" />
+                <div class="invalid-feedback"><%= errors.image || '' %></div>
+              </div>
+              <div class="col-sm-5">
+                <label for="status" class="form-label">สถานะ</label>
+                <select id="status" name="status" class="form-select <%= errors.status ? 'is-invalid' : '' %>">
+                  <option value="draft" <%= values.status === 'draft' ? 'selected' : '' %>>draft (ยังไม่แสดง)</option>
+                  <option value="published" <%= values.status === 'published' ? 'selected' : '' %>>published (แสดงบนเว็บ)</option>
+                  <option value="cancelled" <%= values.status === 'cancelled' ? 'selected' : '' %>>cancelled (ยกเลิก)</option>
+                </select>
+                <div class="invalid-feedback"><%= errors.status || '' %></div>
+              </div>
+            </div>
+
+            <button type="submit" class="main-button auth-button">บันทึกกิจกรรม</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+<%- include('../partials/footer') %>

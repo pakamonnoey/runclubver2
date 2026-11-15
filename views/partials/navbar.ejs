@@ -24,6 +24,9 @@
       <!-- locals.currentUser: ใช้ locals. เพื่อไม่ error ถ้าบางหน้าไม่มีตัวแปรนี้ -->
       <% if (locals.currentUser) { %>
       <a href="/my-runs">My Runs</a>
+      <% if (currentUser.role === 'admin') { %>
+      <a href="/admin" class="menu-dashboard">Admin</a>
+      <% } %>
       <a href="/profile" class="menu-user">👋 <%= currentUser.name %></a>
       <form action="/logout" method="POST" class="menu-logout">
         <button type="submit">Logout</button>

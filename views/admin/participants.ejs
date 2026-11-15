@@ -1,0 +1,49 @@
+<%- include('../partials/head', { title: 'Participants - RUN BKK' }) %>
+
+    <section class="dashboard-page">
+      <div class="container">
+        <a href="/admin/events" class="back-link">← Events</a>
+        <div class="dashboard-header">
+          <div>
+            <p class="small-title"><%= event.club_name %></p>
+            <h1><%= event.title %></h1>
+            <p class="text-muted mb-0">
+              <%= fmt.thaiDate(event.start_at) %> · <%= fmt.timeText(event.start_at) %> ·
+              <span class="status-badge status-<%= event.status %>"><%= event.status %></span>
+            </p>
+          </div>
+        </div>
+
+        <div class="dashboard-card">
+          <h2 class="form-section-title">
+            ผู้เข้าร่วม <%= participants.length %><%= event.max_participants !== null ? ' / ' + event.max_participants : '' %> คน
+          </h2>
+
+          <% if (event.registration_type === 'external') { %>
+          <p class="text-muted">กิจกรรมนี้สมัครผ่านลิงก์ภายนอก — รายชื่อจะอยู่ที่ระบบภายนอก</p>
+          <% } %>
+
+          <% if (participants.length === 0) { %>
+          <p class="empty-state">ยังไม่มีผู้เข้าร่วม</p>
+          <% } else { %>
+          <div class="table-responsive">
+            <table class="table dashboard-table">
+              <thead><tr><th>#</th><th>ชื่อ</th><th>อีเมล</th><th>Join เมื่อ</th></tr></thead>
+              <tbody>
+                <% participants.forEach(function (p, i) { %>
+                <tr>
+                  <td><%= i + 1 %></td>
+                  <td><%= p.name %></td>
+                  <td><%= p.email %></td>
+                  <td><%= fmt.shortDateTime(p.joined_at) %></td>
+                </tr>
+                <% }); %>
+              </tbody>
+            </table>
+          </div>
+          <% } %>
+        </div>
+      </div>
+    </section>
+
+<%- include('../partials/footer') %>

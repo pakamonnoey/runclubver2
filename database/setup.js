@@ -9,7 +9,7 @@ const fs = require("fs");
 const path = require("path");
 const mysql = require("mysql2/promise");
 
-const TABLES = ["users", "clubs", "run_sessions", "registrations", "club_owner_requests"];
+const TABLES = ["users", "clubs", "run_sessions", "registrations"];
 const force = process.argv.includes("--force");
 
 async function main() {

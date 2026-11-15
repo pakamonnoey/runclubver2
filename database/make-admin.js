@@ -18,7 +18,7 @@ async function main() {
     console.error(`✘ ไม่พบผู้ใช้อีเมล ${email} — สมัครผ่านหน้า /register ก่อน`);
     process.exitCode = 1;
   } else {
-    console.log(`✔ ${email} เป็น admin แล้ว (ต้อง logout แล้ว login ใหม่ถึงจะมีผล)`);
+    console.log(`✔ ${email} เป็น admin แล้ว (refresh หน้าเว็บก็มีผลทันที)`);
   }
 }
 

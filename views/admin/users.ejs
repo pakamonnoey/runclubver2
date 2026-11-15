@@ -1,0 +1,55 @@
+<%- include('../partials/head', { title: 'Manage Users - RUN BKK' }) %>
+
+    <section class="dashboard-page">
+      <div class="container">
+        <div class="dashboard-header">
+          <div><p class="small-title">ADMIN</p><h1>Users</h1></div>
+        </div>
+        <%- include('../partials/admin-nav', { active: 'users' }) %>
+
+        <div class="dashboard-card">
+          <div class="table-responsive">
+            <table class="table dashboard-table">
+              <thead>
+                <tr><th>ชื่อ</th><th>อีเมล</th><th>สมัครเมื่อ</th><th>กิจกรรมที่ Join</th><th>Role</th><th></th></tr>
+              </thead>
+              <tbody>
+                <% users.forEach(function (u) { const isMe = u.id === currentUser.id; %>
+                <tr>
+                  <td><%= u.name %><%= isMe ? ' (คุณ)' : '' %></td>
+                  <td><%= u.email %></td>
+                  <td><%= fmt.shortDateTime(u.created_at) %></td>
+                  <td><%= u.run_count %></td>
+                  <td>
+                    <% if (isMe) { %>
+                    <span class="status-badge status-published"><%= u.role %></span>
+                    <% } else { %>
+                    <form action="/admin/users/<%= u.id %>/role" method="POST" class="inline-form">
+                      <select name="role" class="form-select form-select-sm" aria-label="role">
+                        <% ['member', 'admin'].forEach(function (role) { %>
+                        <option value="<%= role %>" <%= u.role === role ? 'selected' : '' %>><%= role %></option>
+                        <% }); %>
+                      </select>
+                      <button type="submit" class="outline-button btn-sm-custom">บันทึก</button>
+                    </form>
+                    <% } %>
+                  </td>
+                  <td>
+                    <% if (!isMe) { %>
+                    <form action="/admin/users/<%= u.id %>/delete" method="POST"
+                          onsubmit="return confirm('ลบผู้ใช้คนนี้? การ Join ทั้งหมดของผู้ใช้นี้จะถูกลบด้วย')">
+                      <%# ห้ามใส่ข้อมูลผู้ใช้ (เช่น email) ใน JS inline — escape ของ HTML ไม่พอสำหรับ JS → XSS %>
+                      <button type="submit" class="link-danger-button">ลบ</button>
+                    </form>
+                    <% } %>
+                  </td>
+                </tr>
+                <% }); %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+<%- include('../partials/footer') %>

@@ -1,0 +1,60 @@
+<%- include('../partials/head', { title: heading + ' - RUN BKK' }) %>
+
+    <section class="auth-section">
+      <div class="container">
+        <div class="auth-card auth-card-wide">
+          <a href="/admin/clubs" class="back-link">← Clubs</a>
+          <h1><%= heading %></h1>
+
+          <form action="<%= action %>" method="POST" novalidate>
+            <div class="mb-3">
+              <label for="name" class="form-label">ชื่อคลับ *</label>
+              <input type="text" id="name" name="name" required maxlength="150"
+                     class="form-control <%= errors.name ? 'is-invalid' : '' %>" value="<%= values.name || '' %>" />
+              <div class="invalid-feedback"><%= errors.name || '' %></div>
+            </div>
+
+            <div class="mb-3">
+              <label for="description" class="form-label">คำอธิบาย</label>
+              <textarea id="description" name="description" rows="5" maxlength="2000"
+                        class="form-control <%= errors.description ? 'is-invalid' : '' %>"><%= values.description || '' %></textarea>
+              <div class="invalid-feedback"><%= errors.description || '' %></div>
+            </div>
+
+            <div class="mb-3">
+              <label for="location" class="form-label">สถานที่วิ่งประจำ</label>
+              <input type="text" id="location" name="location" maxlength="255"
+                     class="form-control <%= errors.location ? 'is-invalid' : '' %>" value="<%= values.location || '' %>" />
+              <div class="invalid-feedback"><%= errors.location || '' %></div>
+            </div>
+
+            <div class="mb-3">
+              <label for="instagram_url" class="form-label">Instagram URL</label>
+              <input type="url" id="instagram_url" name="instagram_url" placeholder="https://www.instagram.com/..."
+                     class="form-control <%= errors.instagram_url ? 'is-invalid' : '' %>" value="<%= values.instagram_url || '' %>" />
+              <div class="invalid-feedback"><%= errors.instagram_url || '' %></div>
+            </div>
+
+            <div class="mb-3">
+              <label for="image" class="form-label">รูปภาพ</label>
+              <input type="text" id="image" name="image" placeholder="/image/club1.png หรือ https://..."
+                     class="form-control <%= errors.image ? 'is-invalid' : '' %>" value="<%= values.image || '' %>" />
+              <div class="invalid-feedback"><%= errors.image || '' %></div>
+            </div>
+
+            <div class="mb-3">
+              <label for="status" class="form-label">สถานะ</label>
+              <select id="status" name="status" class="form-select <%= errors.status ? 'is-invalid' : '' %>">
+                <option value="pending" <%= values.status === 'pending' ? 'selected' : '' %>>pending (ยังไม่แสดงบนเว็บ)</option>
+                <option value="published" <%= values.status === 'published' ? 'selected' : '' %>>published (แสดงบนเว็บ)</option>
+              </select>
+              <div class="invalid-feedback"><%= errors.status || '' %></div>
+            </div>
+
+            <button type="submit" class="main-button auth-button mt-2">บันทึก</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+<%- include('../partials/footer') %>

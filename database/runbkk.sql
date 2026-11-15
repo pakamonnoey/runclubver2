@@ -11,7 +11,7 @@ SET NAMES utf8mb4;
 -- ลบจากตารางลูก → ตารางแม่ (ตารางที่มี FK ชี้ไปหาคนอื่นต้องลบก่อน)
 DROP TABLE IF EXISTS registrations;
 DROP TABLE IF EXISTS run_sessions;
-DROP TABLE IF EXISTS club_owner_requests;
+DROP TABLE IF EXISTS club_owner_requests;  -- ตารางจากเวอร์ชันเก่า (ไม่ใช้แล้ว)
 DROP TABLE IF EXISTS clubs;
 DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS sessions;
@@ -24,18 +24,17 @@ CREATE TABLE users (
   name          VARCHAR(100) NOT NULL,
   email         VARCHAR(255) NOT NULL,
   password_hash VARCHAR(255) NOT NULL,              -- เก็บ hash จาก bcrypt ไม่เก็บรหัสจริง
-  role          ENUM('member', 'owner', 'admin') NOT NULL DEFAULT 'member',
+  role          ENUM('member', 'admin') NOT NULL DEFAULT 'member',   -- admin = คนกรอก/อัปเดตข้อมูลคลับและกิจกรรม
   created_at    TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at    TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   UNIQUE KEY uq_users_email (email)                -- 1 อีเมล สมัครได้ 1 บัญชี
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ---------------------------------------------------------------------
--- 2) clubs : ชมรมวิ่ง (owner_id = NULL แปลว่ายังไม่มีเจ้าของมาดูแล)
+-- 2) clubs : ชมรมวิ่ง (Admin เป็นคนกรอกและอัปเดตข้อมูล)
 -- ---------------------------------------------------------------------
 CREATE TABLE clubs (
   id            INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  owner_id      INT UNSIGNED NULL,
   name          VARCHAR(150) NOT NULL,
   description   TEXT NULL,
   location      VARCHAR(255) NULL,
@@ -45,9 +44,7 @@ CREATE TABLE clubs (
   created_at    TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at    TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   UNIQUE KEY uq_clubs_name (name),
-  KEY idx_clubs_status (status),
-  CONSTRAINT fk_clubs_owner FOREIGN KEY (owner_id) REFERENCES users (id)
-    ON DELETE SET NULL                              -- ลบ user แล้วคลับยังอยู่ แค่ไม่มีเจ้าของ
+  KEY idx_clubs_status (status)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ---------------------------------------------------------------------
@@ -92,27 +89,7 @@ CREATE TABLE registrations (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ---------------------------------------------------------------------
--- 5) club_owner_requests : คำขอเป็น Club Owner (Admin เป็นคนอนุมัติ)
---    club_id = ขอดูแลคลับที่มีอยู่แล้ว / NULL = ขอเพิ่มคลับใหม่ชื่อ club_name
--- ---------------------------------------------------------------------
-CREATE TABLE club_owner_requests (
-  id          INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  user_id     INT UNSIGNED NOT NULL,
-  club_id     INT UNSIGNED NULL,
-  club_name   VARCHAR(150) NOT NULL,
-  message     TEXT NULL,                            -- เช่น ลิงก์ IG / หลักฐานว่าเป็นผู้ดูแลจริง
-  status      ENUM('pending', 'approved', 'rejected') NOT NULL DEFAULT 'pending',
-  created_at  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  reviewed_at TIMESTAMP NULL,
-  KEY idx_requests_status (status),
-  CONSTRAINT fk_req_user FOREIGN KEY (user_id) REFERENCES users (id)
-    ON DELETE CASCADE,
-  CONSTRAINT fk_req_club FOREIGN KEY (club_id) REFERENCES clubs (id)
-    ON DELETE SET NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- ---------------------------------------------------------------------
--- 6) sessions : ที่เก็บ login session (ใช้โดย express-mysql-session ใน Phase 4)
+-- 5) sessions : ที่เก็บ login session (ใช้โดย express-mysql-session ใน Phase 4)
 --    โครงสร้างตรงตามที่ library กำหนด
 -- ---------------------------------------------------------------------
 CREATE TABLE sessions (

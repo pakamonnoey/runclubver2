@@ -1,6 +1,15 @@
 // Middleware ตรวจสิทธิ์ — ใส่หน้า route ที่ต้องการป้องกัน
 // เช่น router.get("/clubs", requireLogin, handler)
 
+// หน้า 403 (login แล้วแต่ไม่มีสิทธิ์) — ใช้ซ้ำได้จากทุก route
+function forbidden(res) {
+  res.status(403).render("error", {
+    title: "Forbidden - RUN BKK",
+    status: 403,
+    message: "คุณไม่มีสิทธิ์เข้าถึงหน้านี้",
+  });
+}
+
 // ต้อง login ก่อน
 function requireLogin(req, res, next) {
   if (req.session.user) return next(); // login แล้ว → ไปต่อ
@@ -11,18 +20,12 @@ function requireLogin(req, res, next) {
   res.redirect("/login");
 }
 
-// ต้องมี role ที่กำหนด เช่น requireRole("admin") หรือ requireRole("owner", "admin")
+// ต้องมี role ที่กำหนด เช่น requireRole("admin")
 function requireRole(...roles) {
   return function (req, res, next) {
     if (!req.session.user) return requireLogin(req, res, next);
     if (roles.includes(req.session.user.role)) return next();
-
-    // login แล้วแต่ role ไม่ตรง → 403 Forbidden
-    res.status(403).render("error", {
-      title: "Forbidden - RUN BKK",
-      status: 403,
-      message: "คุณไม่มีสิทธิ์เข้าถึงหน้านี้",
-    });
+    forbidden(res); // login แล้วแต่ role ไม่ตรง → 403 Forbidden
   };
 }
 
@@ -32,4 +35,4 @@ function requireGuest(req, res, next) {
   res.redirect("/");
 }
 
-module.exports = { requireLogin, requireRole, requireGuest };
+module.exports = { requireLogin, requireRole, requireGuest, forbidden };

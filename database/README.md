@@ -6,11 +6,8 @@
 
 ```mermaid
 erDiagram
-    users ||--o{ clubs : "owns (owner_id)"
     users ||--o{ registrations : "joins"
-    users ||--o{ club_owner_requests : "submits"
     clubs ||--o{ run_sessions : "hosts"
-    clubs |o--o{ club_owner_requests : "requested for"
     run_sessions ||--o{ registrations : "has"
 
     users {
@@ -18,11 +15,10 @@ erDiagram
         VARCHAR name
         VARCHAR email UK
         VARCHAR password_hash
-        ENUM role "member | owner | admin"
+        ENUM role "member | admin"
     }
     clubs {
         INT id PK
-        INT owner_id FK "NULL = no owner yet"
         VARCHAR name UK
         TEXT description
         VARCHAR location
@@ -50,14 +46,6 @@ erDiagram
         INT run_session_id FK
         TIMESTAMP created_at
     }
-    club_owner_requests {
-        INT id PK
-        INT user_id FK
-        INT club_id FK "NULL = new club"
-        VARCHAR club_name
-        TEXT message
-        ENUM status "pending | approved | rejected"
-    }
     sessions {
         VARCHAR session_id PK
         INT expires
@@ -67,21 +55,28 @@ erDiagram
 
 `sessions` ไม่มีความสัมพันธ์กับตารางอื่น — เป็นที่เก็บ login session ของ express-mysql-session
 
+## ผู้ใช้ 2 แบบ (role)
+
+| role | ทำอะไรได้ |
+|---|---|
+| `member` | ดูคลับ/กิจกรรม, ค้นหา, Join / Cancel, My Runs, แก้ Profile |
+| `admin` | ทุกอย่างของ member + กรอก/แก้ข้อมูลคลับและกิจกรรม, ดูรายชื่อผู้เข้าร่วม, จัดการผู้ใช้ |
+
+ข้อมูลคลับและกิจกรรมมี Admin เป็นคนกรอกเพียงคนเดียว (ตรวจสอบข้อมูลจากแหล่งจริงก่อนกรอก)
+
 ## ความสัมพันธ์ (Relationships)
 
 | ความสัมพันธ์ | แบบ | อธิบาย |
 |---|---|---|
-| users → clubs | 1 : N | 1 owner ดูแลได้หลายคลับ / คลับอาจยังไม่มี owner (NULL) |
 | clubs → run_sessions | 1 : N | 1 คลับมีหลายกิจกรรม |
 | users ↔ run_sessions | M : N | ผ่านตารางกลาง `registrations` |
-| users → club_owner_requests | 1 : N | 1 user ส่งคำขอได้หลายครั้ง |
 
 ## Constraint สำคัญ
 
 - `users.email` **UNIQUE** → สมัครอีเมลซ้ำไม่ได้
 - `registrations (user_id, run_session_id)` **UNIQUE** → Join กิจกรรมเดิมซ้ำไม่ได้
 - `ON DELETE CASCADE` → ลบคลับแล้วกิจกรรม/การลงทะเบียนหายตาม
-- `ON DELETE SET NULL` → ลบ user ที่เป็น owner แล้วคลับยังอยู่
+- `ON DELETE CASCADE` (registrations.user_id) → ลบผู้ใช้แล้วการ Join ของเขาหายตาม
 - `status` → หน้าเว็บแสดงเฉพาะ `published` ข้อมูลที่ยังไม่ยืนยันเป็น `pending` / `draft`
 
 ## วิธีติดตั้ง DB

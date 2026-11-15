@@ -1,0 +1,50 @@
+<%- include('../partials/head', { title: 'Manage Events - RUN BKK' }) %>
+
+    <section class="dashboard-page">
+      <div class="container">
+        <div class="dashboard-header">
+          <div><p class="small-title">ADMIN</p><h1>Events</h1></div>
+          <a href="/admin/events/new" class="main-button">+ เพิ่มกิจกรรม</a>
+        </div>
+        <%- include('../partials/admin-nav', { active: 'events' }) %>
+
+        <div class="dashboard-card">
+          <% if (events.length === 0) { %>
+          <p class="empty-state">ยังไม่มีกิจกรรม</p>
+          <% } else { %>
+          <div class="table-responsive">
+            <table class="table dashboard-table">
+              <thead><tr><th>วันเวลา</th><th>กิจกรรม</th><th>คลับ</th><th>สถานะ</th><th>ผู้เข้าร่วม</th><th></th></tr></thead>
+              <tbody>
+                <% events.forEach(function (e) { const past = new Date(e.start_at) < now; %>
+                <tr class="<%= past ? 'row-past' : '' %>">
+                  <td><%= fmt.shortDateTime(e.start_at) %></td>
+                  <td><%= e.title %></td>
+                  <td><%= e.club_name %></td>
+                  <td><span class="status-badge status-<%= e.status %>"><%= e.status %></span></td>
+                  <td><%= e.joined_count %><%= e.max_participants !== null ? ' / ' + e.max_participants : '' %></td>
+                  <td class="dashboard-actions">
+                    <a href="/admin/events/<%= e.id %>/participants">รายชื่อ</a>
+                    <a href="/admin/events/<%= e.id %>/edit">แก้ไข</a>
+                    <% if (e.status !== 'cancelled' && !past) { %>
+                    <form action="/admin/events/<%= e.id %>/cancel" method="POST"
+                          onsubmit="return confirm('ยกเลิกกิจกรรมนี้? ผู้ที่ Join ไว้จะเห็นว่าถูกยกเลิก')">
+                      <button type="submit" class="link-danger-button">ยกเลิก</button>
+                    </form>
+                    <% } %>
+                    <form action="/admin/events/<%= e.id %>/delete" method="POST"
+                          onsubmit="return confirm('ลบกิจกรรมนี้ถาวร? (ถ้าแค่ไม่จัดแล้ว ให้ใช้ แก้ไข → cancelled แทน)')">
+                      <button type="submit" class="link-danger-button">ลบ</button>
+                    </form>
+                  </td>
+                </tr>
+                <% }); %>
+              </tbody>
+            </table>
+          </div>
+          <% } %>
+        </div>
+      </div>
+    </section>
+
+<%- include('../partials/footer') %>

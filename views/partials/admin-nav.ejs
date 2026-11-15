@@ -1,0 +1,7 @@
+<!-- เมนูย่อยของหน้า Admin — active = ชื่อหน้าปัจจุบัน -->
+<nav class="admin-nav">
+  <a href="/admin" class="<%= active === 'dashboard' ? 'active' : '' %>">Dashboard</a>
+  <a href="/admin/users" class="<%= active === 'users' ? 'active' : '' %>">Users</a>
+  <a href="/admin/clubs" class="<%= active === 'clubs' ? 'active' : '' %>">Clubs</a>
+  <a href="/admin/events" class="<%= active === 'events' ? 'active' : '' %>">Events</a>
+</nav>
