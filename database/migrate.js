@@ -10,7 +10,8 @@ const path = require("path");
 const mysql = require("mysql2/promise");
 
 // error ที่แปลว่า "ทำไปแล้ว" → ข้ามได้
-const ALREADY_DONE = ["ER_TABLE_EXISTS_ERROR", "ER_DUP_FIELDNAME", "ER_DUP_KEYNAME"];
+// ER_CANT_DROP_FIELD_OR_KEY = คอลัมน์ที่จะลบ ถูกลบไปแล้ว
+const ALREADY_DONE = ["ER_TABLE_EXISTS_ERROR", "ER_DUP_FIELDNAME", "ER_DUP_KEYNAME", "ER_CANT_DROP_FIELD_OR_KEY"];
 
 // แยกไฟล์ SQL เป็นทีละคำสั่ง (ตัดคอมเมนต์ -- ออก แล้วแยกด้วย ;)
 function statements(sql) {

@@ -10,11 +10,11 @@ const router = express.Router();
 // (ถ้าใช้ router.use จะดักทุก URL รวมถึงหน้าที่ไม่มีอยู่ → ได้หน้า login แทน 404)
 
 // ===============================================================
-// GET /my-runs — กิจกรรมที่ฉัน Join (แยก "กำลังจะมาถึง" กับ "ที่ผ่านมา")
+// GET /my-runs — ลิสต์กิจกรรมที่ฉันบันทึกไว้ (แยก "กำลังจะมาถึง" กับ "ที่ผ่านมา")
 // ===============================================================
 router.get("/my-runs", requireLogin, async (req, res) => {
   const [runs] = await pool.query(
-    `SELECT rs.*, c.name AS club_name, c.image AS club_image, r.created_at AS joined_at
+    `SELECT rs.*, c.name AS club_name, c.image AS club_image, r.created_at AS saved_at
      FROM registrations r
      JOIN run_sessions rs ON rs.id = r.run_session_id
      JOIN clubs c ON c.id = rs.club_id

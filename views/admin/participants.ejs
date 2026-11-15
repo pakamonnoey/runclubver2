@@ -1,4 +1,4 @@
-<%- include('../partials/head', { title: 'Participants - RUN BKK' }) %>
+<%- include('../partials/head', { title: 'Interested Members - RUN BKK' }) %>
 
     <section class="dashboard-page">
       <div class="container">
@@ -16,26 +16,26 @@
 
         <div class="dashboard-card">
           <h2 class="form-section-title">
-            ผู้เข้าร่วม <%= participants.length %><%= event.max_participants !== null ? ' / ' + event.max_participants : '' %> คน
+            สมาชิกที่สนใจ (บันทึกลงลิสต์) <%= participants.length %> คน
           </h2>
 
-          <% if (event.registration_type === 'external') { %>
-          <p class="text-muted">กิจกรรมนี้สมัครผ่านลิงก์ภายนอก — รายชื่อจะอยู่ที่ระบบภายนอก</p>
+          <% if (event.external_url) { %>
+          <p class="text-muted">การสมัครจริงอยู่ที่ลิงก์ของผู้จัด — รายชื่อนี้คือคนที่กดบันทึกไว้ในเว็บเรา</p>
           <% } %>
 
           <% if (participants.length === 0) { %>
-          <p class="empty-state">ยังไม่มีผู้เข้าร่วม</p>
+          <p class="empty-state">ยังไม่มีใครบันทึกกิจกรรมนี้</p>
           <% } else { %>
           <div class="table-responsive">
             <table class="table dashboard-table">
-              <thead><tr><th>#</th><th>ชื่อ</th><th>อีเมล</th><th>Join เมื่อ</th></tr></thead>
+              <thead><tr><th>#</th><th>ชื่อ</th><th>อีเมล</th><th>บันทึกเมื่อ</th></tr></thead>
               <tbody>
                 <% participants.forEach(function (p, i) { %>
                 <tr>
                   <td><%= i + 1 %></td>
                   <td><%= p.name %></td>
                   <td><%= p.email %></td>
-                  <td><%= fmt.shortDateTime(p.joined_at) %></td>
+                  <td><%= fmt.shortDateTime(p.saved_at) %></td>
                 </tr>
                 <% }); %>
               </tbody>

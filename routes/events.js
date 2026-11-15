@@ -1,4 +1,5 @@
-// Events (run_sessions): รายการ + ค้นหา, รายละเอียด, Join / Cancel
+// Events (run_sessions): รายการ + ค้นหา, รายละเอียด, บันทึกลงลิสต์ของฉัน / เอาออก
+// (เว็บไม่รับสมัครเอง — การสมัครจริงอยู่ที่ลิงก์ของผู้จัด เว็บเราแค่ให้สมาชิกเก็บกิจกรรมที่สนใจไว้ดูใน My Runs)
 const express = require("express");
 const pool = require("../config/db");
 const { requireLogin } = require("../middleware/auth");
@@ -23,10 +24,10 @@ const SORTS = {
   distance_desc: { label: "ระยะยาว → สั้น", sql: "rs.distance_km DESC, rs.start_at ASC" },
 };
 
-// ส่วน SELECT ที่ใช้ร่วมกัน: ข้อมูลกิจกรรม + ชื่อคลับ + จำนวนคนที่ Join แล้ว
+// ส่วน SELECT ที่ใช้ร่วมกัน: ข้อมูลกิจกรรม + ชื่อคลับ + จำนวนคนที่บันทึกไว้ (คนสนใจ)
 const SESSION_SELECT = `
   SELECT rs.*, c.name AS club_name, c.image AS club_image,
-         (SELECT COUNT(*) FROM registrations r WHERE r.run_session_id = rs.id) AS joined_count
+         (SELECT COUNT(*) FROM registrations r WHERE r.run_session_id = rs.id) AS saved_count
   FROM run_sessions rs
   JOIN clubs c ON c.id = rs.club_id`;
 
@@ -95,110 +96,65 @@ router.get("/:id", async (req, res, next) => {
   const event = rows[0];
   if (!event) return next(); // ไม่มี / ยังเป็น draft → 404
 
-  // ผู้ใช้คนนี้ Join แล้วหรือยัง
-  const [reg] = await pool.query(
+  // ผู้ใช้คนนี้บันทึกกิจกรรมนี้ไว้แล้วหรือยัง
+  const [saved] = await pool.query(
     "SELECT id FROM registrations WHERE user_id = ? AND run_session_id = ?",
     [req.session.user.id, id]
   );
 
-  const isPast = new Date(event.start_at) < new Date();
-  const isFull = event.max_participants !== null && event.joined_count >= event.max_participants;
-
   res.render("event-detail", {
     event,
-    isJoined: reg.length > 0,
-    isPast,
-    isFull,
-    spotsLeft: event.max_participants === null ? null : Math.max(event.max_participants - event.joined_count, 0),
+    isSaved: saved.length > 0,
+    isPast: new Date(event.start_at) < new Date(),
   });
 });
 
 // ===============================================================
-// POST /events/:id/join  — เข้าร่วมกิจกรรม
-// ใช้ transaction + SELECT ... FOR UPDATE เพื่อกันกรณีหลายคนกด Join พร้อมกันตอนเหลือที่ว่างที่เดียว
+// POST /events/:id/save  — บันทึกกิจกรรมลง "ลิสต์ของฉัน" (ดูได้ที่ My Runs)
 // ===============================================================
-router.post("/:id/join", async (req, res) => {
+router.post("/:id/save", async (req, res) => {
   const id = Number(req.params.id);
-  const userId = req.session.user.id;
   const back = `/events/${id}`;
+  if (!Number.isInteger(id) || id <= 0) return res.redirect("/events");
 
-  const fail = (message) => {
-    req.session.flash = { type: "danger", message };
-    res.redirect(back);
-  };
-
-  if (!Number.isInteger(id) || id <= 0) return fail("ไม่พบกิจกรรมนี้");
-
-  const conn = await pool.getConnection(); // transaction ต้องใช้ connection เดียวกันตลอด
-  try {
-    await conn.beginTransaction();
-
-    // FOR UPDATE = ล็อกแถวกิจกรรมนี้ไว้ คนอื่นที่จะ Join กิจกรรมเดียวกันต้องรอจนเรา COMMIT
-    const [rows] = await conn.query(
-      `SELECT rs.id, rs.status, rs.start_at, rs.max_participants, rs.registration_type
-       FROM run_sessions rs JOIN clubs c ON c.id = rs.club_id
-       WHERE rs.id = ? AND c.status = 'published'
-       FOR UPDATE`,
-      [id]
-    );
-    const event = rows[0];
-
-    // ตรวจทุกเงื่อนไขฝั่ง server (ปุ่มในหน้าเว็บซ่อนได้ แต่คนยิง request ตรงได้)
-    if (!event || event.status !== "published") {
-      await conn.rollback();
-      return fail("กิจกรรมนี้ไม่เปิดให้เข้าร่วม");
-    }
-    if (event.registration_type !== "internal") {
-      await conn.rollback();
-      return fail("กิจกรรมนี้ต้องสมัครผ่านลิงก์ภายนอก");
-    }
-    if (new Date(event.start_at) < new Date()) {
-      await conn.rollback();
-      return fail("กิจกรรมนี้ผ่านไปแล้ว");
-    }
-
-    const [[{ joined }]] = await conn.query(
-      "SELECT COUNT(*) AS joined FROM registrations WHERE run_session_id = ?",
-      [id]
-    );
-    if (event.max_participants !== null && joined >= event.max_participants) {
-      await conn.rollback();
-      return fail("ขออภัย กิจกรรมนี้เต็มแล้ว");
-    }
-
-    // UNIQUE(user_id, run_session_id) ใน DB กันการ Join ซ้ำ
-    await conn.query("INSERT INTO registrations (user_id, run_session_id) VALUES (?, ?)", [userId, id]);
-    await conn.commit();
-  } catch (err) {
-    await conn.rollback();
-    if (err.code === "ER_DUP_ENTRY") return fail("คุณเข้าร่วมกิจกรรมนี้แล้ว");
-    throw err;
-  } finally {
-    conn.release(); // คืน connection เข้า pool เสมอ
+  // ตรวจฝั่ง server ด้วย (ปุ่มในหน้าเว็บซ่อนได้ แต่คนยิง request ตรงได้):
+  // ต้องเป็นกิจกรรมที่ published ของคลับที่ published และยังไม่ถึงเวลา
+  const [rows] = await pool.query(
+    `SELECT rs.id FROM run_sessions rs JOIN clubs c ON c.id = rs.club_id
+     WHERE rs.id = ? AND rs.status = 'published' AND c.status = 'published' AND rs.start_at > NOW()`,
+    [id]
+  );
+  if (rows.length === 0) {
+    req.session.flash = { type: "danger", message: "บันทึกไม่ได้ (กิจกรรมนี้ผ่านไปแล้ว หรือไม่ได้เปิดแสดง)" };
+    return res.redirect(back);
   }
 
-  req.session.flash = { type: "success", message: "เข้าร่วมกิจกรรมสำเร็จ! ดูได้ที่ My Runs" };
+  // INSERT IGNORE + UNIQUE(user_id, run_session_id) → กดซ้ำก็ไม่เกิดแถวซ้ำ ไม่ error
+  await pool.query("INSERT IGNORE INTO registrations (user_id, run_session_id) VALUES (?, ?)", [
+    req.session.user.id,
+    id,
+  ]);
+
+  req.session.flash = { type: "success", message: "บันทึกลงลิสต์แล้ว ดูได้ที่ My Runs" };
   res.redirect(back);
 });
 
 // ===============================================================
-// POST /events/:id/cancel  — ยกเลิกการเข้าร่วม (เฉพาะของตัวเอง และกิจกรรมยังไม่เริ่ม)
+// POST /events/:id/unsave  — เอาออกจากลิสต์ของฉัน (ลบได้เฉพาะของตัวเอง)
 // ===============================================================
-router.post("/:id/cancel", async (req, res) => {
+router.post("/:id/unsave", async (req, res) => {
   const id = Number(req.params.id);
 
-  // ใส่ user_id ใน WHERE = ลบได้เฉพาะ registration ของตัวเอง (ตรวจ ownership)
-  const [result] = await pool.query(
-    `DELETE r FROM registrations r
-     JOIN run_sessions rs ON rs.id = r.run_session_id
-     WHERE r.run_session_id = ? AND r.user_id = ? AND rs.start_at > NOW()`,
-    [id, req.session.user.id]
-  );
+  // ใส่ user_id จาก session ใน WHERE = ลบได้เฉพาะรายการของตัวเอง (ตรวจ ownership)
+  const [result] = await pool.query("DELETE FROM registrations WHERE run_session_id = ? AND user_id = ?", [
+    id,
+    req.session.user.id,
+  ]);
 
   req.session.flash =
     result.affectedRows > 0
-      ? { type: "success", message: "ยกเลิกการเข้าร่วมแล้ว" }
-      : { type: "danger", message: "ยกเลิกไม่ได้ (ไม่ได้ลงทะเบียนไว้ หรือกิจกรรมเริ่มไปแล้ว)" };
+      ? { type: "success", message: "เอาออกจากลิสต์แล้ว" }
+      : { type: "danger", message: "กิจกรรมนี้ไม่ได้อยู่ในลิสต์ของคุณ" };
 
   // กลับไปหน้าที่กดมา (My Runs หรือ Event Detail) — รับเฉพาะ path ภายในเว็บ
   const from = req.body.from === "my-runs" ? "/my-runs" : `/events/${id}`;

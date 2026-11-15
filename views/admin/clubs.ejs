@@ -21,13 +21,16 @@
                   </td>
                   <td><%= c.event_count %></td>
                   <td><span class="status-badge status-<%= c.status %>"><%= c.status %></span></td>
-                  <td class="dashboard-actions">
-                    <a href="/admin/clubs/<%= c.id %>/edit">แก้ไข</a>
-                    <a href="/admin/events/new?club=<%= c.id %>">+ กิจกรรม</a>
-                    <form action="/admin/clubs/<%= c.id %>/delete" method="POST"
-                          onsubmit="return confirm('ลบคลับนี้? กิจกรรม <%= c.event_count %> รายการและการ Join ทั้งหมดของคลับจะถูกลบด้วย')">
-                      <button type="submit" class="link-danger-button">ลบ</button>
-                    </form>
+                  <td>
+                    <!-- flex อยู่ใน div ไม่ใส่ที่ td ตรงๆ (td ที่เป็น flex จะหลุดจากตาราง เส้นแถวเลยไม่ตรงกัน) -->
+                    <div class="dashboard-actions">
+                      <a href="/admin/clubs/<%= c.id %>/edit">แก้ไข</a>
+                      <a href="/admin/events/new?club=<%= c.id %>">+ กิจกรรม</a>
+                      <form action="/admin/clubs/<%= c.id %>/delete" method="POST"
+                            onsubmit="return confirm('ลบคลับนี้? กิจกรรม <%= c.event_count %> รายการและรายการที่สมาชิกบันทึกไว้จะถูกลบด้วย')">
+                        <button type="submit" class="link-danger-button">ลบ</button>
+                      </form>
+                    </div>
                   </td>
                 </tr>
                 <% }); %>

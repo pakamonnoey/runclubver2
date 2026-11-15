@@ -1,14 +1,14 @@
 # RUN BKK
 
 เว็บไซต์รวมชมรมวิ่ง (Running Clubs) และกิจกรรมวิ่งในกรุงเทพฯ เช่น Morning Run, Social Run, Night Run และ Beginner Friendly Run
-ผู้ใช้ค้นหาคลับ/กิจกรรม ดูสถานที่ วัน เวลา ระยะทาง Pace และกด Join กิจกรรมได้ (ไม่ใช่เว็บขายบัตรงานวิ่ง)
+ผู้ใช้ค้นหาคลับ/กิจกรรม ดูสถานที่ วัน เวลา ระยะทาง ค่าใช้จ่าย กดไปสมัครกับผู้จัด และกด "สนใจ" เก็บกิจกรรมไว้ในลิสต์ของตัวเองได้ (ไม่ใช่เว็บขายบัตรงานวิ่ง และไม่รับสมัครเอง)
 
 ## Features
 
 | ผู้ใช้ | ทำอะไรได้ |
 |---|---|
 | ทุกคน | Home, FAQ, Register, Login |
-| Member (login แล้ว) | ดูคลับ/กิจกรรม + รายละเอียด, Search / Filter / Sort, Join / Cancel, My Runs, แก้ Profile / เปลี่ยนรหัสผ่าน |
+| Member (login แล้ว) | ดูคลับ/กิจกรรม + รายละเอียด, Search / Filter / Sort, สนใจ / เอาออกจากลิสต์, My Runs, แก้ Profile / เปลี่ยนรหัสผ่าน |
 | Admin | ทุกอย่างของ Member + เพิ่ม/แก้/ลบคลับ, เพิ่ม/แก้/ยกเลิก/ลบกิจกรรม (อัปโหลดรูปได้), ดูรายชื่อผู้เข้าร่วม, จัดการผู้ใช้ |
 
 ## Tech Stack
@@ -76,5 +76,5 @@ npm run make-admin -- your@email.com
 - ตรวจข้อมูลทั้งฝั่ง client และ server / EJS escape ข้อมูล (`<%= %>`) กัน XSS / รับเฉพาะลิงก์ http(s)
 - อัปโหลดรูป: admin เท่านั้น, ≤ 2 MB, ตรวจชนิดจากเนื้อไฟล์จริง (JPG/PNG/WEBP — ไม่รับ SVG), ส่งรูปพร้อม `nosniff`
 - ตรวจสิทธิ์ฝั่ง server ทุก route (login + role) / role อ่านจาก DB ทุก request
-- Join ใช้ transaction + `SELECT ... FOR UPDATE` กันจำนวนคนเกิน / UNIQUE กันสมัครซ้ำ
+- บันทึกลงลิสต์: server ตรวจว่ากิจกรรม published + ยังไม่ถึงเวลา / `UNIQUE(user_id, run_session_id)` + `INSERT IGNORE` กันบันทึกซ้ำ / เอาออกได้เฉพาะของตัวเอง (`WHERE user_id = session`)
 - ค่าลับเก็บใน environment variables (`.env` ไม่ขึ้น Git)

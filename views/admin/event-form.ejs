@@ -6,8 +6,8 @@
           <a href="/admin/events" class="back-link">← Events</a>
           <h1><%= heading %></h1>
 
-          <% if (joinedCount > 0) { %>
-          <div class="alert alert-info">มีผู้เข้าร่วมแล้ว <%= joinedCount %> คน — ถ้าเปลี่ยนวันเวลา/สถานที่ ควรแจ้งผู้เข้าร่วมด้วย</div>
+          <% if (savedCount > 0) { %>
+          <div class="alert alert-info">มีสมาชิกบันทึกกิจกรรมนี้ไว้ <%= savedCount %> คน — ถ้าเปลี่ยนวันเวลา/สถานที่ เขาจะเห็นข้อมูลใหม่ใน My Runs</div>
           <% } %>
 
           <!-- multipart/form-data = ฟอร์มที่ส่งไฟล์ได้ (อ่านด้วย multer ใน routes/admin.js) -->
@@ -59,23 +59,17 @@
             </div>
 
             <div class="row g-3 mb-3">
-              <div class="col-sm-4">
+              <div class="col-sm-5">
                 <label for="distance_km" class="form-label">ระยะทาง (กม.)</label>
                 <input type="number" id="distance_km" name="distance_km" step="0.1" min="0.1" max="100"
                        class="form-control <%= errors.distance_km ? 'is-invalid' : '' %>" value="<%= values.distance_km ?? '' %>" />
                 <div class="invalid-feedback"><%= errors.distance_km || '' %></div>
               </div>
-              <div class="col-sm-4">
-                <label for="pace" class="form-label">Pace</label>
-                <input type="text" id="pace" name="pace" maxlength="50" placeholder="7:00–8:00 min/km"
-                       class="form-control <%= errors.pace ? 'is-invalid' : '' %>" value="<%= values.pace || '' %>" />
-                <div class="invalid-feedback"><%= errors.pace || '' %></div>
-              </div>
-              <div class="col-sm-4">
-                <label for="max_participants" class="form-label">รับสูงสุด (คน)</label>
-                <input type="number" id="max_participants" name="max_participants" min="1" max="1000" placeholder="ไม่จำกัด"
-                       class="form-control <%= errors.max_participants ? 'is-invalid' : '' %>" value="<%= values.max_participants ?? '' %>" />
-                <div class="invalid-feedback"><%= errors.max_participants || '' %></div>
+              <div class="col-sm-7">
+                <label for="fee" class="form-label">ค่าใช้จ่าย</label>
+                <input type="text" id="fee" name="fee" maxlength="100" placeholder="เว้นว่าง = ฟรี · มีค่าใช้จ่ายค่อยกรอก เช่น 200 บาท"
+                       class="form-control <%= errors.fee ? 'is-invalid' : '' %>" value="<%= values.fee || '' %>" />
+                <div class="invalid-feedback"><%= errors.fee || '' %></div>
               </div>
             </div>
 
@@ -87,30 +81,13 @@
             </div>
 
             <div class="row g-3 mb-3">
-              <div class="col-sm-5">
-                <label for="registration_type" class="form-label">วิธีสมัคร *</label>
-                <select id="registration_type" name="registration_type" class="form-select <%= errors.registration_type ? 'is-invalid' : '' %>">
-                  <option value="internal" <%= values.registration_type === 'internal' ? 'selected' : '' %>>กด Join ในเว็บ</option>
-                  <option value="external" <%= values.registration_type === 'external' ? 'selected' : '' %>>ลิงก์ภายนอก</option>
-                </select>
-                <div class="invalid-feedback"><%= errors.registration_type || '' %></div>
-              </div>
-              <div class="col-sm-7">
-                <label for="external_url" class="form-label">ลิงก์สมัครภายนอก</label>
-                <input type="url" id="external_url" name="external_url" placeholder="https://forms.gle/..."
+              <div class="col-sm-6">
+                <label for="external_url" class="form-label">ลิงก์สมัคร / ฟอร์มของผู้จัด</label>
+                <input type="url" id="external_url" name="external_url" placeholder="ถ้ามี เช่น https://forms.gle/..."
                        class="form-control <%= errors.external_url ? 'is-invalid' : '' %>" value="<%= values.external_url || '' %>" />
                 <div class="invalid-feedback"><%= errors.external_url || '' %></div>
               </div>
-            </div>
-
-            <div class="row g-3 mb-3">
-              <div class="col-sm-5">
-                <label for="fee" class="form-label">ค่าใช้จ่าย</label>
-                <input type="text" id="fee" name="fee" maxlength="100" placeholder="เช่น ฟรี / 200 บาท"
-                       class="form-control <%= errors.fee ? 'is-invalid' : '' %>" value="<%= values.fee || '' %>" />
-                <div class="invalid-feedback"><%= errors.fee || '' %></div>
-              </div>
-              <div class="col-sm-7">
+              <div class="col-sm-6">
                 <label for="source_url" class="form-label">แหล่งที่มาของข้อมูล</label>
                 <input type="url" id="source_url" name="source_url" placeholder="ลิงก์โพสต์ IG ที่ประกาศกิจกรรมนี้"
                        class="form-control <%= errors.source_url ? 'is-invalid' : '' %>" value="<%= values.source_url || '' %>" />

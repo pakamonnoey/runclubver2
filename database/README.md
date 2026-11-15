@@ -6,7 +6,7 @@
 
 ```mermaid
 erDiagram
-    users ||--o{ registrations : "joins"
+    users ||--o{ registrations : "saves"
     clubs ||--o{ run_sessions : "hosts"
     run_sessions ||--o{ registrations : "has"
 
@@ -35,11 +35,8 @@ erDiagram
         DATETIME start_at
         VARCHAR meeting_point
         DECIMAL distance_km
-        VARCHAR pace
-        VARCHAR fee "e.g. free"
-        INT max_participants "NULL = unlimited"
-        ENUM registration_type "internal | external"
-        VARCHAR external_url
+        VARCHAR fee "NULL = free"
+        VARCHAR external_url "organizer sign-up link"
         VARCHAR source_url "IG post"
         ENUM status "draft | published | cancelled"
     }
@@ -71,7 +68,7 @@ erDiagram
 
 | role | ทำอะไรได้ |
 |---|---|
-| `member` | ดูคลับ/กิจกรรม, ค้นหา, Join / Cancel, My Runs, แก้ Profile |
+| `member` | ดูคลับ/กิจกรรม, ค้นหา, กด "สนใจ" เก็บลงลิสต์ / เอาออก, My Runs, แก้ Profile |
 | `admin` | ทุกอย่างของ member + กรอก/แก้ข้อมูลคลับและกิจกรรม, ดูรายชื่อผู้เข้าร่วม, จัดการผู้ใช้ |
 
 ข้อมูลคลับและกิจกรรมมี Admin เป็นคนกรอกเพียงคนเดียว (ตรวจสอบข้อมูลจากแหล่งจริงก่อนกรอก)
@@ -81,14 +78,14 @@ erDiagram
 | ความสัมพันธ์ | แบบ | อธิบาย |
 |---|---|---|
 | clubs → run_sessions | 1 : N | 1 คลับมีหลายกิจกรรม |
-| users ↔ run_sessions | M : N | ผ่านตารางกลาง `registrations` |
+| users ↔ run_sessions | M : N | ผ่านตารางกลาง `registrations` (1 แถว = สมาชิก 1 คนกดสนใจ 1 กิจกรรม) |
 
 ## Constraint สำคัญ
 
 - `users.email` **UNIQUE** → สมัครอีเมลซ้ำไม่ได้
-- `registrations (user_id, run_session_id)` **UNIQUE** → Join กิจกรรมเดิมซ้ำไม่ได้
+- `registrations (user_id, run_session_id)` **UNIQUE** → บันทึกกิจกรรมเดิมลงลิสต์ซ้ำไม่ได้
 - `ON DELETE CASCADE` → ลบคลับแล้วกิจกรรม/การลงทะเบียนหายตาม
-- `ON DELETE CASCADE` (registrations.user_id) → ลบผู้ใช้แล้วการ Join ของเขาหายตาม
+- `ON DELETE CASCADE` (registrations.user_id) → ลบผู้ใช้แล้วลิสต์ของเขาหายตาม
 - `status` → หน้าเว็บแสดงเฉพาะ `published` ข้อมูลที่ยังไม่ยืนยันเป็น `pending` / `draft`
 
 ## วิธีติดตั้ง DB
@@ -129,7 +126,8 @@ npm run db:migrate                              # ในเครื่อง
 ENV_FILE=.env.production npm run db:migrate     # เว็บจริง
 ```
 
-รันทุกไฟล์ใน `database/migrations/` ตามลำดับ (เช่น `001_images.sql`) — เขียนแบบรันซ้ำได้ ไม่ลบข้อมูล
+รันทุกไฟล์ใน `database/migrations/` ตามลำดับ (เช่น `001_images.sql`) — เขียนแบบรันซ้ำได้
+(`003` ลบคอลัมน์ที่เลิกใช้: pace, max_participants, registration_type)
 
 ## Development vs Production
 
@@ -147,7 +145,7 @@ npm run db:pull
 
 - copy `images` + `clubs` + `run_sessions` จากเว็บจริง → DB ในเครื่อง (ทางเดียว ไม่เขียนกลับขึ้นเว็บจริง)
 - ไม่ดึง `users` / `registrations` (ข้อมูลส่วนตัว) → บัญชีในเครื่องยังเป็นของเดิม
-- การ Join ในเครื่องถูกล้าง (เพราะกิจกรรมเปลี่ยนเป็นชุดจากเว็บจริง)
+- ลิสต์ "สนใจ" ในเครื่องถูกล้าง (เพราะกิจกรรมเปลี่ยนเป็นชุดจากเว็บจริง)
 - ก่อนเขียน จะแสดงสิ่งที่ต่างกัน (เพิ่ม / แก้คอลัมน์ไหน / ลบ — ไม่นับ `created_at`, `updated_at`)
   และ**ถามยืนยัน (พิมพ์ `y`)** ถ้าข้อมูลในเครื่องจะถูกลบหรือทับ · ถ้ามีแค่ข้อมูลใหม่จะทำต่อเลย · ข้ามการถาม: `npm run db:pull -- --yes`
 

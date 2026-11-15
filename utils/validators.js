@@ -63,9 +63,8 @@ function readClubForm(body) {
 // ฟอร์มกิจกรรม
 //   clubIds  = id คลับที่มีอยู่จริง (เลือกได้เฉพาะคลับในรายการ)
 //   isNew    = สร้างใหม่ต้องเป็นวันในอนาคต
-//   minMax   = จำนวนคนที่ Join แล้ว (แก้ไขห้ามตั้งจำนวนรับต่ำกว่านี้)
 // ===============================================================
-function readEventForm(body, { clubIds, isNew, minMax = 0 }) {
+function readEventForm(body, { clubIds, isNew }) {
   const values = {
     club_id: str(body.club_id),
     title: str(body.title),
@@ -74,10 +73,7 @@ function readEventForm(body, { clubIds, isNew, minMax = 0 }) {
     start_at: str(body.start_at), // จาก <input type="datetime-local"> เช่น "2026-11-22T06:00"
     meeting_point: str(body.meeting_point),
     distance_km: str(body.distance_km),
-    pace: str(body.pace),
     fee: str(body.fee),
-    max_participants: str(body.max_participants),
-    registration_type: str(body.registration_type),
     external_url: str(body.external_url),
     source_url: str(body.source_url),
     image: str(body.image),
@@ -113,22 +109,9 @@ function readEventForm(body, { clubIds, isNew, minMax = 0 }) {
     if (!(distance > 0 && distance <= 100)) errors.distance_km = "ระยะทางต้องอยู่ระหว่าง 0.1–100 กม.";
   }
 
-  if (values.pace.length > 50) errors.pace = "Pace ยาวเกิน 50 ตัวอักษร";
   if (values.fee.length > 100) errors.fee = "ค่าใช้จ่ายยาวเกิน 100 ตัวอักษร";
 
-  let maxParticipants = null;
-  if (values.max_participants !== "") {
-    maxParticipants = Number(values.max_participants);
-    if (!Number.isInteger(maxParticipants) || maxParticipants < 1 || maxParticipants > 1000)
-      errors.max_participants = "จำนวนรับต้องเป็นจำนวนเต็ม 1–1000 (เว้นว่าง = ไม่จำกัด)";
-    else if (maxParticipants < minMax)
-      errors.max_participants = `มีผู้เข้าร่วมแล้ว ${minMax} คน ตั้งต่ำกว่านี้ไม่ได้`;
-  }
-
-  if (!["internal", "external"].includes(values.registration_type))
-    errors.registration_type = "กรุณาเลือกวิธีสมัคร";
-  if (values.registration_type === "external" && !isWebUrl(values.external_url))
-    errors.external_url = "สมัครภายนอกต้องใส่ลิงก์ https://";
+  // ลิงก์สมัครของผู้จัด (ถ้ามี) — รับเฉพาะ http(s) กันลิงก์ javascript:
   if (values.external_url && !isWebUrl(values.external_url))
     errors.external_url = "ต้องเป็นลิงก์ที่ขึ้นต้นด้วย https://";
 
@@ -145,11 +128,8 @@ function readEventForm(body, { clubIds, isNew, minMax = 0 }) {
     start_at: startAt,
     meeting_point: values.meeting_point,
     distance_km: distance,
-    pace: values.pace || null,
-    fee: values.fee || null,
-    max_participants: maxParticipants,
-    registration_type: values.registration_type,
-    external_url: values.registration_type === "external" ? values.external_url : null,
+    fee: values.fee || null, // เว้นว่าง = ฟรี (หน้าเว็บแสดงคำว่า "ฟรี")
+    external_url: values.external_url || null,
     source_url: values.source_url || null,
     image: values.image || null,
     status: values.status,

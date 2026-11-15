@@ -14,7 +14,7 @@
           <% } else { %>
           <div class="table-responsive">
             <table class="table dashboard-table">
-              <thead><tr><th>วันเวลา</th><th>กิจกรรม</th><th>คลับ</th><th>สถานะ</th><th>ผู้เข้าร่วม</th><th></th></tr></thead>
+              <thead><tr><th>วันเวลา</th><th>กิจกรรม</th><th>คลับ</th><th>สถานะ</th><th>คนสนใจ</th><th></th></tr></thead>
               <tbody>
                 <% events.forEach(function (e) { const past = new Date(e.start_at) < now; %>
                 <tr class="<%= past ? 'row-past' : '' %>">
@@ -22,20 +22,23 @@
                   <td><%= e.title %></td>
                   <td><%= e.club_name %></td>
                   <td><span class="status-badge status-<%= e.status %>"><%= e.status %></span></td>
-                  <td><%= e.joined_count %><%= e.max_participants !== null ? ' / ' + e.max_participants : '' %></td>
-                  <td class="dashboard-actions">
-                    <a href="/admin/events/<%= e.id %>/participants">รายชื่อ</a>
-                    <a href="/admin/events/<%= e.id %>/edit">แก้ไข</a>
-                    <% if (e.status !== 'cancelled' && !past) { %>
-                    <form action="/admin/events/<%= e.id %>/cancel" method="POST"
-                          onsubmit="return confirm('ยกเลิกกิจกรรมนี้? ผู้ที่ Join ไว้จะเห็นว่าถูกยกเลิก')">
-                      <button type="submit" class="link-danger-button">ยกเลิก</button>
-                    </form>
-                    <% } %>
-                    <form action="/admin/events/<%= e.id %>/delete" method="POST"
-                          onsubmit="return confirm('ลบกิจกรรมนี้ถาวร? (ถ้าแค่ไม่จัดแล้ว ให้ใช้ แก้ไข → cancelled แทน)')">
-                      <button type="submit" class="link-danger-button">ลบ</button>
-                    </form>
+                  <td><%= e.saved_count %></td>
+                  <td>
+                    <!-- flex อยู่ใน div ไม่ใส่ที่ td ตรงๆ (td ที่เป็น flex จะหลุดจากตาราง เส้นแถวเลยไม่ตรงกัน) -->
+                    <div class="dashboard-actions">
+                      <a href="/admin/events/<%= e.id %>/participants">ผู้สนใจ</a>
+                      <a href="/admin/events/<%= e.id %>/edit">แก้ไข</a>
+                      <% if (e.status !== 'cancelled' && !past) { %>
+                      <form action="/admin/events/<%= e.id %>/cancel" method="POST"
+                            onsubmit="return confirm('ยกเลิกกิจกรรมนี้? คนที่บันทึกไว้จะเห็นว่าถูกยกเลิกใน My Runs')">
+                        <button type="submit" class="link-danger-button">ยกเลิก</button>
+                      </form>
+                      <% } %>
+                      <form action="/admin/events/<%= e.id %>/delete" method="POST"
+                            onsubmit="return confirm('ลบกิจกรรมนี้ถาวร? (ถ้าแค่ไม่จัดแล้ว ให้ใช้ แก้ไข → cancelled แทน)')">
+                        <button type="submit" class="link-danger-button">ลบ</button>
+                      </form>
+                    </div>
                   </td>
                 </tr>
                 <% }); %>

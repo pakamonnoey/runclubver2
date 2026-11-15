@@ -433,6 +433,11 @@ html {
   margin: 0;
 }
 
+.events-subtitle {
+  margin: 10px 0 0;
+  color: #666;
+}
+
 .events-title {
   margin-bottom: 20px;
 }
@@ -1039,6 +1044,17 @@ html {
 
 .outline-button.detail-button {
   border: 2px solid #17202a;
+}
+
+/* ปุ่มในกล่องรายละเอียดกิจกรรม เรียงลงมาทีละปุ่ม เว้นระยะเท่ากัน */
+.detail-actions {
+  display: grid;
+  gap: 10px;
+}
+
+.detail-actions form,
+.detail-actions .detail-status {
+  margin: 0;
 }
 
 .detail-status {

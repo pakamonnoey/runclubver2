@@ -32,7 +32,7 @@ router.get("/:id", async (req, res, next) => {
 
   const [events] = await pool.query(
     `SELECT rs.*, c.image AS club_image,
-            (SELECT COUNT(*) FROM registrations r WHERE r.run_session_id = rs.id) AS joined_count
+            (SELECT COUNT(*) FROM registrations r WHERE r.run_session_id = rs.id) AS saved_count
      FROM run_sessions rs JOIN clubs c ON c.id = rs.club_id
      WHERE rs.club_id = ? AND rs.status = 'published' AND rs.start_at >= NOW()
      ORDER BY rs.start_at`,

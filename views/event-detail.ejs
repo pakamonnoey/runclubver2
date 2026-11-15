@@ -23,7 +23,7 @@
             <% } %>
           </div>
 
-          <!-- กล่องข้อมูล + ปุ่ม Join -->
+          <!-- กล่องข้อมูล + ปุ่ม -->
           <aside class="detail-box">
             <ul class="detail-facts">
               <li><span>📅 วันที่</span><strong><%= fmt.thaiDate(event.start_at) %></strong></li>
@@ -32,45 +32,38 @@
               <% if (event.distance_km !== null) { %>
               <li><span>🏃 ระยะทาง</span><strong><%= fmt.distanceText(event.distance_km) %></strong></li>
               <% } %>
-              <% if (event.pace) { %>
-              <li><span>⏱️ Pace</span><strong><%= event.pace %></strong></li>
-              <% } %>
-              <% if (event.fee) { %>
-              <li><span>💰 ค่าใช้จ่าย</span><strong><%= event.fee %></strong></li>
-              <% } %>
-              <% if (event.registration_type === 'internal') { %>
-              <li>
-                <span>👥 ผู้เข้าร่วม</span>
-                <strong>
-                  <%= event.joined_count %><%= event.max_participants !== null ? ' / ' + event.max_participants : '' %> คน
-                  <% if (spotsLeft !== null && !isPast) { %>(เหลือ <%= spotsLeft %> ที่)<% } %>
-                </strong>
-              </li>
-              <% } %>
+              <!-- fee ว่าง = ฟรี (กิจกรรมส่วนใหญ่ฟรี admin กรอกเฉพาะที่มีค่าใช้จ่าย) -->
+              <li><span>💰 ค่าใช้จ่าย</span><strong><%= event.fee || 'ฟรี' %></strong></li>
+              <li><span>⭐ คนสนใจ</span><strong><%= event.saved_count %> คน</strong></li>
             </ul>
 
-            <!-- ปุ่มเปลี่ยนตามสถานะ — server ตรวจเงื่อนไขซ้ำอีกครั้งตอนกด (routes/events.js) -->
             <% if (event.status === 'cancelled') { %>
               <p class="detail-status status-cancelled">กิจกรรมนี้ถูกยกเลิก</p>
             <% } else if (isPast) { %>
               <p class="detail-status">กิจกรรมนี้ผ่านไปแล้ว</p>
-            <% } else if (event.registration_type === 'external') { %>
-              <a href="<%= event.external_url %>" class="main-button detail-button" target="_blank" rel="noopener noreferrer">
-                สมัครผ่านเว็บไซต์ภายนอก ↗
-              </a>
-            <% } else if (isJoined) { %>
-              <p class="detail-status status-joined">✓ คุณเข้าร่วมกิจกรรมนี้แล้ว</p>
-              <form action="/events/<%= event.id %>/cancel" method="POST"
-                    onsubmit="return confirm('ยืนยันยกเลิกการเข้าร่วม?')">
-                <button type="submit" class="outline-button detail-button">ยกเลิกการเข้าร่วม</button>
-              </form>
-            <% } else if (isFull) { %>
-              <p class="detail-status status-cancelled">กิจกรรมนี้เต็มแล้ว</p>
             <% } else { %>
-              <form action="/events/<%= event.id %>/join" method="POST">
-                <button type="submit" class="main-button detail-button">Join Event →</button>
+            <div class="detail-actions">
+              <% if (event.external_url) { %>
+              <!-- ลิงก์สมัครของผู้จัด: ผ่านการตรวจว่าเป็น http(s) ตอนบันทึก (utils/validators.js) -->
+              <a href="<%= event.external_url %>" class="main-button detail-button" target="_blank" rel="noopener noreferrer">
+                สมัครกับผู้จัด ↗
+              </a>
+              <% } %>
+
+              <!-- บันทึกลงลิสต์ของฉัน — server ตรวจเงื่อนไขซ้ำอีกครั้งตอนกด (routes/events.js) -->
+              <% if (isSaved) { %>
+              <p class="detail-status status-joined">✓ อยู่ในลิสต์ของคุณแล้ว</p>
+              <form action="/events/<%= event.id %>/unsave" method="POST">
+                <button type="submit" class="outline-button detail-button">เอาออกจากลิสต์</button>
               </form>
+              <% } else { %>
+              <form action="/events/<%= event.id %>/save" method="POST">
+                <button type="submit" class="outline-button detail-button">☆ สนใจ · เพิ่มลงลิสต์ของฉัน</button>
+              </form>
+              <% } %>
+            </div>
             <% } %>
+
             <% if (event.source_url) { %>
             <!-- ลิงก์แหล่งที่มา: ผ่านการตรวจว่าเป็น http(s) ตอนบันทึก (utils/validators.js) -->
             <a href="<%= event.source_url %>" class="source-link" target="_blank" rel="noopener noreferrer">ดูโพสต์ต้นทาง ↗</a>

@@ -4,9 +4,10 @@
       <div class="container">
         <div class="events-header">
           <h1>My Runs</h1>
+          <p class="events-subtitle">กิจกรรมที่คุณกด "สนใจ" เก็บไว้ — การสมัครจริงให้กดลิงก์ของผู้จัดในหน้ากิจกรรม</p>
         </div>
 
-        <!-- กำลังจะมาถึง: ยกเลิกได้ -->
+        <!-- กำลังจะมาถึง: เอาออกจากลิสต์ได้ -->
         <div class="events-title">
           <p class="small-title">UPCOMING</p>
           <h2>กิจกรรมที่กำลังจะมาถึง (<%= upcoming.length %>)</h2>
@@ -14,7 +15,7 @@
 
         <div class="event-list">
           <% if (upcoming.length === 0) { %>
-          <p class="empty-state">ยังไม่ได้เข้าร่วมกิจกรรมใด — <a href="/events">ดูกิจกรรมทั้งหมด</a></p>
+          <p class="empty-state">ยังไม่มีกิจกรรมในลิสต์ — <a href="/events">ดูกิจกรรมทั้งหมด</a> แล้วกด ☆ สนใจ</p>
           <% } %>
 
           <% upcoming.forEach(function (run) { %>
@@ -35,11 +36,11 @@
               </p>
             </div>
 
-            <form action="/events/<%= run.id %>/cancel" method="POST"
-                  onsubmit="return confirm('ยืนยันยกเลิกการเข้าร่วม?')">
-              <!-- from = บอก server ให้พากลับมาหน้า My Runs หลังยกเลิก -->
+            <form action="/events/<%= run.id %>/unsave" method="POST"
+                  onsubmit="return confirm('เอากิจกรรมนี้ออกจากลิสต์?')">
+              <!-- from = บอก server ให้พากลับมาหน้า My Runs หลังกด -->
               <input type="hidden" name="from" value="my-runs" />
-              <button type="submit" class="outline-button">Cancel</button>
+              <button type="submit" class="outline-button">เอาออก</button>
             </form>
           </div>
           <% }); %>

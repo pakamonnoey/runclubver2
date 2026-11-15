@@ -61,11 +61,8 @@ CREATE TABLE run_sessions (
   start_at          DATETIME NOT NULL,              -- เวลาไทย (Asia/Bangkok)
   meeting_point     VARCHAR(255) NOT NULL,
   distance_km       DECIMAL(4,1) NULL,              -- เช่น 5.0, 10.5
-  pace              VARCHAR(50) NULL,               -- เช่น '6:30–7:30 min/km'
-  fee               VARCHAR(100) NULL,              -- ค่าใช้จ่าย เช่น 'ฟรี', '200 บาท' (NULL = ไม่ระบุ)
-  max_participants  INT UNSIGNED NULL,              -- NULL = ไม่จำกัดจำนวน
-  registration_type ENUM('internal', 'external') NOT NULL DEFAULT 'internal',
-  external_url      VARCHAR(500) NULL,              -- ใช้เมื่อ registration_type = 'external'
+  fee               VARCHAR(100) NULL,              -- ค่าใช้จ่าย เช่น '200 บาท' (NULL = ฟรี)
+  external_url      VARCHAR(500) NULL,              -- ลิงก์สมัคร/ฟอร์มของผู้จัด (ถ้ามี)
   source_url        VARCHAR(500) NULL,              -- แหล่งที่มาของข้อมูล เช่น ลิงก์โพสต์ IG
   image             VARCHAR(255) NULL,
   status            ENUM('draft', 'published', 'cancelled') NOT NULL DEFAULT 'draft',
@@ -77,14 +74,14 @@ CREATE TABLE run_sessions (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ---------------------------------------------------------------------
--- 4) registrations : ใครเข้าร่วมกิจกรรมไหน (ตารางกลางของ Many-to-Many)
+-- 4) registrations : สมาชิกคนไหนกด "สนใจ" เก็บกิจกรรมไหนไว้ในลิสต์ (ตารางกลางของ Many-to-Many)
 -- ---------------------------------------------------------------------
 CREATE TABLE registrations (
   id             INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   user_id        INT UNSIGNED NOT NULL,
   run_session_id INT UNSIGNED NOT NULL,
   created_at     TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  UNIQUE KEY uq_registration (user_id, run_session_id),   -- กันสมัครซ้ำ
+  UNIQUE KEY uq_registration (user_id, run_session_id),   -- กันบันทึกกิจกรรมเดิมซ้ำ
   KEY idx_registrations_session (run_session_id),         -- นับจำนวนคน/ดูรายชื่อ
   CONSTRAINT fk_reg_user FOREIGN KEY (user_id) REFERENCES users (id)
     ON DELETE CASCADE,

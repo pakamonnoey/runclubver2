@@ -67,7 +67,7 @@ router.post("/users/:id/delete", async (req, res) => {
   if (id === req.session.user.id) {
     flash(req, "danger", "ลบบัญชีตัวเองไม่ได้");
   } else {
-    // FK CASCADE: การ Join ทั้งหมดของ user นี้ถูกลบตาม
+    // FK CASCADE: ลิสต์กิจกรรมที่ user นี้บันทึกไว้ถูกลบตาม
     const [result] = await pool.query("DELETE FROM users WHERE id = ?", [id]);
     flash(req, result.affectedRows ? "success" : "danger", result.affectedRows ? "ลบผู้ใช้แล้ว" : "ไม่พบผู้ใช้");
   }
@@ -163,7 +163,7 @@ router.post("/clubs/:id/delete", async (req, res) => {
     "SELECT image FROM clubs WHERE id = ? UNION SELECT image FROM run_sessions WHERE club_id = ?",
     [id, id]
   );
-  // FK CASCADE: กิจกรรมของคลับ + การ Join ถูกลบตาม
+  // FK CASCADE: กิจกรรมของคลับ + รายการที่สมาชิกบันทึกไว้ถูกลบตาม
   const [result] = await pool.query("DELETE FROM clubs WHERE id = ?", [id]);
   for (const row of imageRows) await removeImageIfUnused(row.image);
   flash(req, result.affectedRows ? "success" : "danger", result.affectedRows ? "ลบคลับแล้ว" : "ไม่พบคลับ");
@@ -171,15 +171,15 @@ router.post("/clubs/:id/delete", async (req, res) => {
 });
 
 // ===============================================================
-// Events — รายการทุกสถานะ, เพิ่ม, แก้, ยกเลิก, ลบ, รายชื่อผู้เข้าร่วม
+// Events — รายการทุกสถานะ, เพิ่ม, แก้, ยกเลิก, ลบ, รายชื่อคนที่สนใจ (บันทึกลงลิสต์)
 // ===============================================================
 
-// หากิจกรรม + จำนวนคนที่ Join แล้ว
+// หากิจกรรม + จำนวนคนที่บันทึกลงลิสต์ของตัวเอง
 async function findEvent(id) {
   if (!id) return null;
   const [rows] = await pool.query(
     `SELECT rs.*, c.name AS club_name,
-            (SELECT COUNT(*) FROM registrations r WHERE r.run_session_id = rs.id) AS joined_count
+            (SELECT COUNT(*) FROM registrations r WHERE r.run_session_id = rs.id) AS saved_count
      FROM run_sessions rs JOIN clubs c ON c.id = rs.club_id
      WHERE rs.id = ?`,
     [id]
@@ -200,14 +200,14 @@ async function renderEventForm(res, { event = null, values, errors = {}, status 
     runTypes: RUN_TYPES,
     values,
     errors,
-    joinedCount: event ? event.joined_count : 0,
+    savedCount: event ? event.saved_count : 0,
   });
 }
 
 router.get("/events", async (req, res) => {
   const [events] = await pool.query(
-    `SELECT rs.id, rs.title, rs.start_at, rs.status, rs.max_participants, c.name AS club_name,
-            (SELECT COUNT(*) FROM registrations r WHERE r.run_session_id = rs.id) AS joined_count
+    `SELECT rs.id, rs.title, rs.start_at, rs.status, c.name AS club_name,
+            (SELECT COUNT(*) FROM registrations r WHERE r.run_session_id = rs.id) AS saved_count
      FROM run_sessions rs JOIN clubs c ON c.id = rs.club_id
      ORDER BY rs.start_at DESC`
   );
@@ -216,7 +216,7 @@ router.get("/events", async (req, res) => {
 
 router.get("/events/new", (req, res) =>
   renderEventForm(res, {
-    values: { club_id: String(req.query.club || ""), registration_type: "internal", status: "published" },
+    values: { club_id: String(req.query.club || ""), status: "published" },
   })
 );
 
@@ -231,13 +231,12 @@ router.post("/events", acceptImage, async (req, res) => {
 
   await pool.query(
     `INSERT INTO run_sessions
-       (club_id, title, run_type, description, start_at, meeting_point, distance_km, pace, fee,
-        max_participants, registration_type, external_url, source_url, image, status)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+       (club_id, title, run_type, description, start_at, meeting_point, distance_km, fee,
+        external_url, source_url, image, status)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     [
       data.club_id, data.title, data.run_type, data.description, data.start_at, data.meeting_point,
-      data.distance_km, data.pace, data.fee, data.max_participants, data.registration_type,
-      data.external_url, data.source_url, data.image, data.status,
+      data.distance_km, data.fee, data.external_url, data.source_url, data.image, data.status,
     ]
   );
   flash(req, "success", "เพิ่มกิจกรรมแล้ว");
@@ -254,7 +253,6 @@ router.get("/events/:id/edit", async (req, res, next) => {
     club_id: String(event.club_id),
     start_at: inputDateTime(event.start_at),
     distance_km: event.distance_km ?? "",
-    max_participants: event.max_participants ?? "",
   };
   await renderEventForm(res, { event, values });
 });
@@ -264,11 +262,7 @@ router.post("/events/:id", acceptImage, async (req, res, next) => {
   if (!event) return next();
 
   const clubs = await allClubs();
-  const { values, errors, data } = readEventForm(req.body, {
-    clubIds: clubs.map((c) => c.id),
-    isNew: false,
-    minMax: event.joined_count, // ห้ามตั้งจำนวนรับต่ำกว่าคนที่ Join แล้ว
-  });
+  const { values, errors, data } = readEventForm(req.body, { clubIds: clubs.map((c) => c.id), isNew: false });
   const imageError = checkUploadedImage(req);
   if (imageError) errors.image = imageError;
   if (Object.keys(errors).length > 0) return renderEventForm(res, { event, values, errors, status: 400 });
@@ -278,13 +272,11 @@ router.post("/events/:id", acceptImage, async (req, res, next) => {
   await pool.query(
     `UPDATE run_sessions SET
        club_id = ?, title = ?, run_type = ?, description = ?, start_at = ?, meeting_point = ?,
-       distance_km = ?, pace = ?, fee = ?, max_participants = ?, registration_type = ?,
-       external_url = ?, source_url = ?, image = ?, status = ?
+       distance_km = ?, fee = ?, external_url = ?, source_url = ?, image = ?, status = ?
      WHERE id = ?`,
     [
       data.club_id, data.title, data.run_type, data.description, data.start_at, data.meeting_point,
-      data.distance_km, data.pace, data.fee, data.max_participants, data.registration_type,
-      data.external_url, data.source_url, data.image, data.status, event.id,
+      data.distance_km, data.fee, data.external_url, data.source_url, data.image, data.status, event.id,
     ]
   );
   if (event.image !== data.image) await removeImageIfUnused(event.image);
@@ -292,7 +284,7 @@ router.post("/events/:id", acceptImage, async (req, res, next) => {
   res.redirect("/admin/events");
 });
 
-// ยกเลิก = เปลี่ยน status (ไม่ลบ — ผู้ที่ Join ไว้จะเห็นว่าถูกยกเลิกใน My Runs)
+// ยกเลิก = เปลี่ยน status (ไม่ลบ — คนที่บันทึกไว้จะเห็นว่าถูกยกเลิกใน My Runs)
 router.post("/events/:id/cancel", async (req, res, next) => {
   const event = await findEvent(toId(req.params.id));
   if (!event) return next();
@@ -301,7 +293,7 @@ router.post("/events/:id/cancel", async (req, res, next) => {
   res.redirect("/admin/events");
 });
 
-// ลบถาวร (FK CASCADE: การ Join ของกิจกรรมนี้ถูกลบตาม)
+// ลบถาวร (FK CASCADE: รายการที่สมาชิกบันทึกกิจกรรมนี้ไว้ถูกลบตาม)
 router.post("/events/:id/delete", async (req, res) => {
   const event = await findEvent(toId(req.params.id));
   const [result] = await pool.query("DELETE FROM run_sessions WHERE id = ?", [toId(req.params.id)]);
@@ -315,7 +307,7 @@ router.get("/events/:id/participants", async (req, res, next) => {
   if (!event) return next();
 
   const [participants] = await pool.query(
-    `SELECT u.name, u.email, r.created_at AS joined_at
+    `SELECT u.name, u.email, r.created_at AS saved_at
      FROM registrations r JOIN users u ON u.id = r.user_id
      WHERE r.run_session_id = ?
      ORDER BY r.created_at`,
