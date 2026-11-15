@@ -46,6 +46,12 @@ erDiagram
         INT run_session_id FK
         TIMESTAMP created_at
     }
+    images {
+        INT id PK
+        VARCHAR mime_type "image/jpeg | png | webp"
+        MEDIUMBLOB data
+        INT size
+    }
     sessions {
         VARCHAR session_id PK
         INT expires
@@ -54,6 +60,9 @@ erDiagram
 ```
 
 `sessions` ไม่มีความสัมพันธ์กับตารางอื่น — เป็นที่เก็บ login session ของ express-mysql-session
+
+`images` เก็บรูปที่ Admin อัปโหลด — `clubs.image` / `run_sessions.image` อ้างถึงด้วย path `/uploads/<id>` (ไม่ใช้ FK เพราะคอลัมน์ image รับลิงก์ภายนอกได้ด้วย)
+เก็บใน DB แทนโฟลเดอร์ เพราะ Render แบบฟรีลบไฟล์ที่เขียนลงดิสก์ทุกครั้งที่ server เริ่มใหม่
 
 ## ผู้ใช้ 2 แบบ (role)
 
@@ -110,6 +119,15 @@ Host `127.0.0.1` · Port `3306` · Database `runbkk` · Username `runbkk_app` ·
 - `start_at` เป็นเวลาไทย รูปแบบ `2026-11-22 06:00:00`
 - กรอกเสร็จ → export ข้อมูลไปไว้ใน `seed.sql` เพื่อให้ตอน deploy มีข้อมูลเดียวกัน
 
+## อัปเดตโครงสร้าง DB ที่มีข้อมูลอยู่แล้ว (migration)
+
+```bash
+npm run db:migrate                              # ในเครื่อง
+ENV_FILE=.env.production npm run db:migrate     # เว็บจริง
+```
+
+รันทุกไฟล์ใน `database/migrations/` ตามลำดับ (เช่น `001_images.sql`) — เขียนแบบรันซ้ำได้ ไม่ลบข้อมูล
+
 ## Development vs Production
 
 | | Development (ในเครื่อง) | Production (เว็บจริง) |
@@ -124,7 +142,7 @@ Host `127.0.0.1` · Port `3306` · Database `runbkk` · Username `runbkk_app` ·
 npm run db:pull
 ```
 
-- copy `clubs` + `run_sessions` จากเว็บจริง → DB ในเครื่อง (ทางเดียว ไม่เขียนกลับขึ้นเว็บจริง)
+- copy `images` + `clubs` + `run_sessions` จากเว็บจริง → DB ในเครื่อง (ทางเดียว ไม่เขียนกลับขึ้นเว็บจริง)
 - ไม่ดึง `users` / `registrations` (ข้อมูลส่วนตัว) → บัญชีในเครื่องยังเป็นของเดิม
 - การ Join ในเครื่องถูกล้าง (เพราะกิจกรรมเปลี่ยนเป็นชุดจากเว็บจริง)
 - ก่อนเขียน จะแสดงสิ่งที่ต่างกัน (เพิ่ม / แก้คอลัมน์ไหน / ลบ — ไม่นับ `created_at`, `updated_at`)

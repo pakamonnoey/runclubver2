@@ -17,9 +17,9 @@ function isWebUrl(value) {
   }
 }
 
-// รูป: เว้นว่าง / ไฟล์ในเว็บเรา (/image/xxx.jpg) / ลิงก์ http(s)
+// รูป: เว้นว่าง / ไฟล์ในเว็บเรา (/image/xxx.jpg) / รูปที่อัปโหลด (/uploads/12) / ลิงก์ http(s)
 function isImagePath(value) {
-  return value === "" || /^\/image\/[\w.-]+$/.test(value) || isWebUrl(value);
+  return value === "" || /^\/image\/[\w.-]+$/.test(value) || /^\/uploads\/\d+$/.test(value) || isWebUrl(value);
 }
 
 // ===============================================================

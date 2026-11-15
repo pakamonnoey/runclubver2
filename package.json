@@ -8,7 +8,8 @@
     "dev": "nodemon app.js",
     "db:setup": "node database/setup.js",
     "make-admin": "node database/make-admin.js",
-    "db:pull": "node database/pull.js"
+    "db:pull": "node database/pull.js",
+    "db:migrate": "node database/migrate.js"
   },
   "repository": {
     "type": "git",
@@ -29,6 +30,7 @@
     "express": "^5.3.0",
     "express-mysql-session": "^3.0.3",
     "express-session": "^1.19.0",
+    "multer": "^2.5.0",
     "mysql2": "^3.24.6"
   },
   "devDependencies": {

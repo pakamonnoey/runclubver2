@@ -1,7 +1,7 @@
 // ดึงข้อมูลคลับ + กิจกรรมจากเว็บจริง (production) ลงมาที่ DB ในเครื่อง:  npm run db:pull
 //
 // - ทิศทางเดียว: อ่านจาก .env.production → เขียนลง .env (ไม่เคยเขียนกลับขึ้น production)
-// - ดึงเฉพาะ clubs + run_sessions (ข้อมูลสาธารณะ)
+// - ดึงเฉพาะ images + clubs + run_sessions (ข้อมูลสาธารณะ)
 //   ไม่ดึง users / registrations เพราะมีข้อมูลส่วนตัวของผู้ใช้จริง → บัญชีในเครื่องยังเป็นของเดิม
 // - ก่อนเขียน: เทียบข้อมูลสองฝั่ง แล้วถามยืนยันถ้าข้อมูลในเครื่องจะถูกลบ/ทับ
 //   (ข้ามการถามได้ด้วย:  npm run db:pull -- --yes)
@@ -12,7 +12,7 @@ const dotenv = require("dotenv");
 const mysql = require("mysql2/promise");
 
 const ROOT = path.join(__dirname, "..");
-const TABLES = ["clubs", "run_sessions"]; // ลำดับสำคัญ: ตารางแม่ก่อน (run_sessions มี FK ไป clubs)
+const TABLES = ["images", "clubs", "run_sessions"]; // ลำดับสำคัญ: ตารางแม่ก่อน (run_sessions มี FK ไป clubs)
 const IGNORE_COLUMNS = ["created_at", "updated_at"]; // เวลาสร้าง/แก้ไขต่างกันได้ ไม่นับเป็นความต่าง
 const autoYes = process.argv.includes("--yes");
 
@@ -50,9 +50,7 @@ function compare(localRows, prodRows) {
       result.removed.push(row); // มีในเครื่อง แต่ไม่มีบนเว็บจริง → จะถูกลบ
       continue;
     }
-    const columns = Object.keys(prod).filter(
-      (col) => !IGNORE_COLUMNS.includes(col) && String(prod[col]) !== String(row[col])
-    );
+    const columns = Object.keys(prod).filter((col) => !IGNORE_COLUMNS.includes(col) && !same(prod[col], row[col]));
     if (columns.length > 0) result.changed.push({ row, columns }); // ค่าต่างกัน → จะถูกทับ
   }
   for (const row of prodRows) {
@@ -61,7 +59,10 @@ function compare(localRows, prodRows) {
   return result;
 }
 
-const label = (row) => `#${row.id} ${row.name || row.title}`;
+// เทียบค่า 1 ช่อง: ข้อมูลรูป (Buffer) เทียบทีละ byte / อย่างอื่นเทียบเป็นข้อความ
+const same = (a, b) => (Buffer.isBuffer(a) && Buffer.isBuffer(b) ? a.equals(b) : String(a) === String(b));
+
+const label = (row) => `#${row.id} ${row.name || row.title || `รูป ${row.mime_type}`}`;
 
 // ถามคำถามใน terminal (ถ้าไม่มีคนตอบ เช่น input ปิด → ถือว่าไม่ยืนยัน)
 function ask(question) {
@@ -137,20 +138,17 @@ async function main() {
     await local.query("DELETE FROM registrations"); // Join ในเครื่องผูกกับกิจกรรมชุดเดิม
     await local.query("DELETE FROM run_sessions");
     await local.query("DELETE FROM clubs");
+    await local.query("DELETE FROM images");
     for (const table of TABLES) {
-      const rows = prodData[table];
-      if (rows.length === 0) continue;
-      const columns = Object.keys(rows[0]);
-      // INSERT INTO table (col1, col2, ...) VALUES (...), (...)  — ใส่ id เดิม → URL ตรงกับเว็บจริง
-      await local.query("INSERT INTO ?? (??) VALUES ?", [
-        table,
-        columns,
-        rows.map((row) => columns.map((col) => row[col])),
-      ]);
+      for (const row of prodData[table]) {
+        // INSERT INTO table SET col1 = ..., col2 = ...  — ใส่ id เดิม → URL ตรงกับเว็บจริง
+        // ทีละแถว เพราะรูปหลายรูปรวมกันในคำสั่งเดียวอาจเกินขนาดที่ DB รับได้ต่อครั้ง
+        await local.query("INSERT INTO ?? SET ?", [table, row]);
+      }
     }
     await local.commit();
 
-    console.log(`\n✔ clubs ${prodData.clubs.length} แถว, run_sessions ${prodData.run_sessions.length} แถว`);
+    console.log(`\n✔ images ${prodData.images.length}, clubs ${prodData.clubs.length}, run_sessions ${prodData.run_sessions.length} แถว`);
     console.log("ข้อมูลในเครื่องตรงกับเว็บจริงแล้ว (users ในเครื่องไม่ถูกแตะ)");
   } catch (err) {
     await local.rollback().catch(() => {});

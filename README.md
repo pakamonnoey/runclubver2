@@ -9,7 +9,7 @@
 |---|---|
 | ทุกคน | Home, FAQ, Register, Login |
 | Member (login แล้ว) | ดูคลับ/กิจกรรม + รายละเอียด, Search / Filter / Sort, Join / Cancel, My Runs, แก้ Profile / เปลี่ยนรหัสผ่าน |
-| Admin | ทุกอย่างของ Member + เพิ่ม/แก้/ลบคลับ, เพิ่ม/แก้/ยกเลิก/ลบกิจกรรม, ดูรายชื่อผู้เข้าร่วม, จัดการผู้ใช้ |
+| Admin | ทุกอย่างของ Member + เพิ่ม/แก้/ลบคลับ, เพิ่ม/แก้/ยกเลิก/ลบกิจกรรม (อัปโหลดรูปได้), ดูรายชื่อผู้เข้าร่วม, จัดการผู้ใช้ |
 
 ## Tech Stack
 
@@ -17,6 +17,7 @@
 - **Backend:** Node.js, Express 5
 - **Database:** MySQL (mysql2) — พัฒนาบน MariaDB, deploy บน TiDB Cloud (MySQL-compatible)
 - **Auth:** express-session + express-mysql-session (เก็บ session ใน DB), bcrypt
+- **Upload:** multer — รูปเก็บใน DB (ตาราง `images`) เพราะ server ฟรีไม่เก็บไฟล์ถาวร
 
 ## โครงสร้างโปรเจกต์
 
@@ -24,11 +25,11 @@
 app.js              จุดเริ่มเซิร์ฟเวอร์: EJS, static, session, routes, error handler
 config/db.js        connection pool ของ MySQL
 middleware/auth.js  requireLogin / requireRole / requireGuest
-routes/             pages, auth, clubs, events, member, admin
-utils/              format.js (วันที่/ระยะ), validators.js (ตรวจฟอร์ม)
+routes/             pages, auth, clubs, events, member, admin, uploads (ส่งรูปจาก DB)
+utils/              format.js (วันที่/ระยะ), validators.js (ตรวจฟอร์ม), upload.js (รับ/ตรวจ/เก็บรูป)
 views/              หน้า EJS + partials (head, navbar, footer, flash)
 public/             CSS, รูป, Bootstrap, validate.js (ตรวจฟอร์มฝั่ง client)
-database/           runbkk.sql (ตาราง), seed.sql (ข้อมูลเริ่มต้น), setup.js, make-admin.js, README.md (ER Diagram)
+database/           runbkk.sql (ตาราง), seed.sql (ข้อมูลเริ่มต้น), migrations/, setup.js, migrate.js, pull.js, make-admin.js, README.md (ER Diagram)
 ```
 
 ## รันในเครื่อง
@@ -73,6 +74,7 @@ npm run make-admin -- your@email.com
 - Cookie: `HttpOnly`, `SameSite=Lax`, `Secure` (production)
 - ทุก query ใช้ parameterized (`?`) กัน SQL Injection / ORDER BY ใช้ whitelist
 - ตรวจข้อมูลทั้งฝั่ง client และ server / EJS escape ข้อมูล (`<%= %>`) กัน XSS / รับเฉพาะลิงก์ http(s)
+- อัปโหลดรูป: admin เท่านั้น, ≤ 2 MB, ตรวจชนิดจากเนื้อไฟล์จริง (JPG/PNG/WEBP — ไม่รับ SVG), ส่งรูปพร้อม `nosniff`
 - ตรวจสิทธิ์ฝั่ง server ทุก route (login + role) / role อ่านจาก DB ทุก request
 - Join ใช้ transaction + `SELECT ... FOR UPDATE` กันจำนวนคนเกิน / UNIQUE กันสมัครซ้ำ
 - ค่าลับเก็บใน environment variables (`.env` ไม่ขึ้น Git)

@@ -1,0 +1,44 @@
+<%#
+  ช่องรูปภาพ (ใช้ในฟอร์มคลับและกิจกรรมของ Admin)
+  - image_file : เลือกไฟล์จากเครื่อง → server เก็บลง DB (utils/upload.js) แล้วใส่ path /uploads/<id> ให้
+  - image      : ลิงก์/พาธของรูป (รูปปัจจุบันอยู่ในช่องนี้ — ลบข้อความออก = เอารูปออก)
+  ฟอร์มที่ include ไฟล์นี้ต้องมี enctype="multipart/form-data"
+%>
+<% const current = values.image || '';
+   const canPreview = /^(\/image\/[\w.-]+|\/uploads\/\d+|https?:\/\/\S+)$/.test(current); %>
+<label class="form-label" for="image_file"><%= label %></label>
+
+<div class="image-field">
+  <img
+    class="image-preview <%= canPreview ? '' : 'd-none' %>"
+    src="<%= canPreview ? current : '' %>"
+    alt="ตัวอย่างรูป"
+    data-image-preview
+  />
+
+  <input
+    type="file"
+    id="image_file"
+    name="image_file"
+    accept="image/jpeg,image/png,image/webp"
+    class="form-control <%= errors.image ? 'is-invalid' : '' %>"
+    data-image-input
+  />
+  <div class="form-text">
+    JPG / PNG / WEBP ไม่เกิน 2 MB
+    <% if (errors.image || Object.keys(errors).length > 0) { %>
+    · ถ้าเคยเลือกไฟล์ไว้ กรุณาเลือกใหม่อีกครั้ง
+    <% } %>
+  </div>
+  <div class="invalid-feedback"><%= errors.image || '' %></div>
+
+  <label for="image" class="form-label form-label-sub">หรือใช้ลิงก์รูป / รูปปัจจุบัน</label>
+  <input
+    type="text"
+    id="image"
+    name="image"
+    placeholder="https://... (เว้นว่าง = ไม่มีรูป)"
+    class="form-control"
+    value="<%= current %>"
+  />
+</div>

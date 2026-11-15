@@ -13,6 +13,7 @@ const clubRoutes = require("./routes/clubs");
 const eventRoutes = require("./routes/events");
 const memberRoutes = require("./routes/member");
 const adminRoutes = require("./routes/admin");
+const uploadRoutes = require("./routes/uploads");
 const format = require("./utils/format");
 
 const app = express();
@@ -93,6 +94,7 @@ app.use("/clubs", clubRoutes); // /clubs, /clubs/:id (ต้อง login)
 app.use("/events", eventRoutes); // /events, /events/:id, join, cancel (ต้อง login)
 app.use("/", memberRoutes); // /my-runs, /profile (ต้อง login)
 app.use("/admin", adminRoutes); // Admin Dashboard (admin เท่านั้น)
+app.use("/uploads", uploadRoutes); // รูปที่อัปโหลด (เก็บใน DB)
 
 // 7) ไม่เจอ route ไหนเลย → หน้า 404
 app.use((req, res) => {

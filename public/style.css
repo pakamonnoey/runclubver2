@@ -1356,3 +1356,28 @@ html {
   color: #ff6b35;
   font-weight: bold;
 }
+
+/* Image upload field (admin forms) */
+
+.image-field .image-preview {
+  display: block;
+  width: 100%;
+  max-width: 320px;
+  height: 180px;
+  margin-bottom: 10px;
+  object-fit: cover;
+  border-radius: 12px;
+  background-color: #f7f5ef;
+}
+
+.auth-card .image-field input[type="file"].form-control {
+  height: auto;
+  padding: 10px 12px;
+}
+
+.form-label-sub {
+  margin-top: 12px;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  color: #666;
+}

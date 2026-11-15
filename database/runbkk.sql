@@ -15,6 +15,7 @@ DROP TABLE IF EXISTS club_owner_requests;  -- ตารางจากเวอ�
 DROP TABLE IF EXISTS clubs;
 DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS sessions;
+DROP TABLE IF EXISTS images;
 
 -- ---------------------------------------------------------------------
 -- 1) users : สมาชิกทุกคน + role
@@ -89,7 +90,19 @@ CREATE TABLE registrations (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ---------------------------------------------------------------------
--- 5) sessions : ที่เก็บ login session (ใช้โดย express-mysql-session ใน Phase 4)
+-- 5) images : รูปที่ Admin อัปโหลด (เก็บใน DB เพราะ server ฟรีลบไฟล์ทุกครั้งที่ restart)
+--    clubs.image / run_sessions.image เก็บเป็น path "/uploads/<id>" → routes/uploads.js ส่งรูปให้ browser
+-- ---------------------------------------------------------------------
+CREATE TABLE images (
+  id         INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  mime_type  VARCHAR(50) NOT NULL,                   -- image/jpeg | image/png | image/webp
+  data       MEDIUMBLOB NOT NULL,                    -- ข้อมูลไฟล์รูป (จำกัด 2 MB ในโค้ด)
+  size       INT UNSIGNED NOT NULL,                  -- ขนาดไฟล์ (bytes)
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ---------------------------------------------------------------------
+-- 6) sessions : ที่เก็บ login session (ใช้โดย express-mysql-session ใน Phase 4)
 --    โครงสร้างตรงตามที่ library กำหนด
 -- ---------------------------------------------------------------------
 CREATE TABLE sessions (

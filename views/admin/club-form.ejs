@@ -6,7 +6,8 @@
           <a href="/admin/clubs" class="back-link">← Clubs</a>
           <h1><%= heading %></h1>
 
-          <form action="<%= action %>" method="POST" novalidate>
+          <!-- multipart/form-data = ฟอร์มที่ส่งไฟล์ได้ (อ่านด้วย multer ใน routes/admin.js) -->
+          <form action="<%= action %>" method="POST" enctype="multipart/form-data" novalidate>
             <div class="mb-3">
               <label for="name" class="form-label">ชื่อคลับ *</label>
               <input type="text" id="name" name="name" required maxlength="150"
@@ -36,10 +37,7 @@
             </div>
 
             <div class="mb-3">
-              <label for="image" class="form-label">รูปภาพ</label>
-              <input type="text" id="image" name="image" placeholder="/image/club1.png หรือ https://..."
-                     class="form-control <%= errors.image ? 'is-invalid' : '' %>" value="<%= values.image || '' %>" />
-              <div class="invalid-feedback"><%= errors.image || '' %></div>
+              <%- include('../partials/image-field', { label: 'รูปภาพคลับ' }) %>
             </div>
 
             <div class="mb-3">
@@ -56,5 +54,7 @@
         </div>
       </div>
     </section>
+
+<script src="/js/image-field.js"></script>
 
 <%- include('../partials/footer') %>

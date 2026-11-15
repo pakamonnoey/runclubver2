@@ -10,7 +10,8 @@
           <div class="alert alert-info">มีผู้เข้าร่วมแล้ว <%= joinedCount %> คน — ถ้าเปลี่ยนวันเวลา/สถานที่ ควรแจ้งผู้เข้าร่วมด้วย</div>
           <% } %>
 
-          <form action="<%= action %>" method="POST" novalidate>
+          <!-- multipart/form-data = ฟอร์มที่ส่งไฟล์ได้ (อ่านด้วย multer ใน routes/admin.js) -->
+          <form action="<%= action %>" method="POST" enctype="multipart/form-data" novalidate>
             <div class="mb-3">
               <label for="club_id" class="form-label">คลับ *</label>
               <select id="club_id" name="club_id" class="form-select <%= errors.club_id ? 'is-invalid' : '' %>">
@@ -102,13 +103,11 @@
               </div>
             </div>
 
+            <div class="mb-3">
+              <%- include('../partials/image-field', { label: 'รูปภาพกิจกรรม (ไม่ใส่ = ใช้รูปคลับ)' }) %>
+            </div>
+
             <div class="row g-3 mb-4">
-              <div class="col-sm-7">
-                <label for="image" class="form-label">รูปภาพ (เว้นว่าง = ใช้รูปคลับ)</label>
-                <input type="text" id="image" name="image" placeholder="/image/... หรือ https://..."
-                       class="form-control <%= errors.image ? 'is-invalid' : '' %>" value="<%= values.image || '' %>" />
-                <div class="invalid-feedback"><%= errors.image || '' %></div>
-              </div>
               <div class="col-sm-5">
                 <label for="status" class="form-label">สถานะ</label>
                 <select id="status" name="status" class="form-select <%= errors.status ? 'is-invalid' : '' %>">
@@ -125,5 +124,7 @@
         </div>
       </div>
     </section>
+
+<script src="/js/image-field.js"></script>
 
 <%- include('../partials/footer') %>
