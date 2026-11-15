@@ -54,7 +54,7 @@
       </div>
     </section>
 
-    <!-- Upcoming Events Section -->
+    <!-- Upcoming Events Section (3 กิจกรรมที่ใกล้ที่สุด จาก routes/pages.js) -->
     <section class="events-section">
       <div class="container">
         <div class="section-heading">
@@ -64,87 +64,38 @@
           </div>
         </div>
 
+        <% if (events.length === 0) { %>
+        <p class="empty-state">ยังไม่มีกิจกรรมที่กำลังจะมาถึง — ติดตามได้เร็วๆ นี้</p>
+        <% } %>
+
         <div class="row g-4">
-          <!-- Event 1 -->
+          <% events.forEach(function (event) { %>
           <div class="col-md-4">
-            <div class="event-card">
+            <a href="/events/<%= event.id %>" class="event-card card-link">
               <div class="event-image">
                 <img
-                  src="/image/event1.webp"
-                  alt="IHG RUN FOR GOOD 2026"
+                  src="<%= event.image || event.club_image || '/image/about.jpg' %>"
+                  alt="<%= event.title %>"
                   loading="lazy"
                 />
 
                 <div class="event-date">
-                  <strong>20</strong>
-                  <small>SEP</small>
+                  <strong><%= fmt.dayNumber(event.start_at) %></strong>
+                  <small><%= fmt.monthShort(event.start_at) %></small>
                 </div>
               </div>
 
               <div class="event-info">
-                <p class="event-type">Fun RUN</p>
+                <p class="event-type"><%= fmt.runTypeLabel(event.run_type) %></p>
 
-                <h3>IHG RUN FOR GOOD 2026</h3>
+                <h3><%= event.title %></h3>
 
-                <p>📍 Rot Fai Park</p>
-                <p>🕐 06:00 AM</p>
+                <p>📍 <%= event.meeting_point %></p>
+                <p>🕐 <%= fmt.timeText(event.start_at) %></p>
               </div>
-            </div>
+            </a>
           </div>
-
-          <!-- Event 2 -->
-          <div class="col-md-4">
-            <div class="event-card">
-              <div class="event-image">
-                <img
-                  src="/image/event2.png"
-                  alt="WORLD HEART DAY FUN RUN 2026"
-                  loading="lazy"
-                />
-
-                <div class="event-date">
-                  <strong>27</strong>
-                  <small>SEP</small>
-                </div>
-              </div>
-
-              <div class="event-info">
-                <p class="event-type">Fun RUN</p>
-
-                <h3>เดิน-วิ่ง วันหัวใจโลก WORLD HEART DAY FUN RUN 2026</h3>
-
-                <p>📍 สะพานพระราม 8</p>
-                <p>🕐 04:00 AM</p>
-              </div>
-            </div>
-          </div>
-
-          <!-- Event 3 -->
-          <div class="col-md-4">
-            <div class="event-card">
-              <div class="event-image">
-                <img
-                  src="/image/event3.webp"
-                  alt="SANRIO CHARACTERS HALF MARATHON"
-                  loading="lazy"
-                />
-
-                <div class="event-date">
-                  <strong>27</strong>
-                  <small>SEP</small>
-                </div>
-              </div>
-
-              <div class="event-info">
-                <p class="event-type">Fun RUN</p>
-
-                <h3>SANRIO CHARACTERS HALF MARATHON</h3>
-
-                <p>📍 One Bangkok</p>
-                <p>🕐 07:00 AM</p>
-              </div>
-            </div>
-          </div>
+          <% }); %>
         </div>
         <a href="/events" class="view-events">All Events</a>
       </div>

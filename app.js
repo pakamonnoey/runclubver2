@@ -9,6 +9,10 @@ const MySQLStore = require("express-mysql-session")(session);
 const pool = require("./config/db");
 const pageRoutes = require("./routes/pages");
 const authRoutes = require("./routes/auth");
+const clubRoutes = require("./routes/clubs");
+const eventRoutes = require("./routes/events");
+const memberRoutes = require("./routes/member");
+const format = require("./utils/format");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -23,6 +27,9 @@ if (!process.env.SESSION_SECRET) {
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
+// ฟังก์ชันจัดรูปแบบวันที่/ระยะทาง ใช้ได้ในทุก view เช่น <%= fmt.thaiDate(event.start_at) %>
+app.locals.fmt = format;
+
 // บน Render แอปอยู่หลัง proxy (HTTPS) → ต้องบอก Express ให้เชื่อ proxy ไม่งั้น secure cookie จะไม่ถูกส่ง
 if (isProduction) app.set("trust proxy", 1);
 
@@ -31,6 +38,11 @@ app.use(express.static(path.join(__dirname, "public")));
 
 // 3) อ่านข้อมูลจาก <form method="POST"> ให้อยู่ใน req.body
 app.use(express.urlencoded({ extended: false }));
+// Express 5: ถ้า request ไม่มี body เลย req.body จะเป็น undefined → ตั้งเป็น {} กันโค้ดพัง
+app.use((req, res, next) => {
+  req.body = req.body || {};
+  next();
+});
 
 // 4) Session: เก็บข้อมูล session ในตาราง sessions (ไม่หายเมื่อรีสตาร์ทเซิร์ฟเวอร์)
 //    browser เก็บแค่ cookie ที่มี session id (ที่ถูก sign ด้วย SESSION_SECRET)
@@ -60,8 +72,11 @@ app.use((req, res, next) => {
 });
 
 // 6) Routes
-app.use("/", pageRoutes);
-app.use("/", authRoutes);
+app.use("/", pageRoutes); // Home, FAQ (สาธารณะ)
+app.use("/", authRoutes); // /register /login /logout
+app.use("/clubs", clubRoutes); // /clubs, /clubs/:id (ต้อง login)
+app.use("/events", eventRoutes); // /events, /events/:id, join, cancel (ต้อง login)
+app.use("/", memberRoutes); // /my-runs, /profile (ต้อง login)
 
 // 7) ไม่เจอ route ไหนเลย → หน้า 404
 app.use((req, res) => {

@@ -37,6 +37,8 @@
                 <div class="club-bottom">
                   <p>📍 <%= club.location %></p>
 
+                  <a href="/clubs/<%= club.id %>" class="instagram-button club-detail-link">ดูรายละเอียด</a>
+
                   <% if (club.instagram_url) { %>
                   <a
                     href="<%= club.instagram_url %>"

@@ -1,0 +1,76 @@
+<%- include('../partials/head', { title: 'My Runs - RUN BKK' }) %>
+
+    <section class="events-page">
+      <div class="container">
+        <div class="events-header">
+          <h1>My Runs</h1>
+        </div>
+
+        <!-- กำลังจะมาถึง: ยกเลิกได้ -->
+        <div class="events-title">
+          <p class="small-title">UPCOMING</p>
+          <h2>กิจกรรมที่กำลังจะมาถึง (<%= upcoming.length %>)</h2>
+        </div>
+
+        <div class="event-list">
+          <% if (upcoming.length === 0) { %>
+          <p class="empty-state">ยังไม่ได้เข้าร่วมกิจกรรมใด — <a href="/events">ดูกิจกรรมทั้งหมด</a></p>
+          <% } %>
+
+          <% upcoming.forEach(function (run) { %>
+          <div class="event-list-card">
+            <img src="<%= run.image || run.club_image || '/image/about.jpg' %>" alt="<%= run.title %>" />
+
+            <div class="event-date-box">
+              <strong><%= fmt.dayNumber(run.start_at) %></strong>
+              <span><%= fmt.monthShort(run.start_at) %></span>
+            </div>
+
+            <div class="event-list-info">
+              <p class="event-type"><%= fmt.runTypeLabel(run.run_type) %> · <%= run.club_name %></p>
+              <h3><a href="/events/<%= run.id %>" class="plain-link"><%= run.title %></a></h3>
+              <p>📍 <%= run.meeting_point %></p>
+              <p>🕐 <%= fmt.timeText(run.start_at) %>
+                <% if (run.status === 'cancelled') { %> · <span class="text-danger">กิจกรรมถูกยกเลิก</span><% } %>
+              </p>
+            </div>
+
+            <form action="/events/<%= run.id %>/cancel" method="POST"
+                  onsubmit="return confirm('ยืนยันยกเลิกการเข้าร่วม?')">
+              <!-- from = บอก server ให้พากลับมาหน้า My Runs หลังยกเลิก -->
+              <input type="hidden" name="from" value="my-runs" />
+              <button type="submit" class="outline-button">Cancel</button>
+            </form>
+          </div>
+          <% }); %>
+        </div>
+
+        <!-- ที่ผ่านมา -->
+        <% if (past.length > 0) { %>
+        <div class="events-title mt-5">
+          <p class="small-title">HISTORY</p>
+          <h2>กิจกรรมที่ผ่านมา (<%= past.length %>)</h2>
+        </div>
+
+        <div class="event-list past-list">
+          <% past.forEach(function (run) { %>
+          <a href="/events/<%= run.id %>" class="event-list-card">
+            <img src="<%= run.image || run.club_image || '/image/about.jpg' %>" alt="<%= run.title %>" />
+            <div class="event-date-box">
+              <strong><%= fmt.dayNumber(run.start_at) %></strong>
+              <span><%= fmt.monthShort(run.start_at) %></span>
+            </div>
+            <div class="event-list-info">
+              <p class="event-type"><%= fmt.runTypeLabel(run.run_type) %> · <%= run.club_name %></p>
+              <h3><%= run.title %></h3>
+              <p>📍 <%= run.meeting_point %></p>
+            </div>
+            <div class="event-distance"><%= fmt.distanceText(run.distance_km) %></div>
+          </a>
+          <% }); %>
+        </div>
+        <% } %>
+      </div>
+    </section>
+
+<%- include('../partials/footer') %>

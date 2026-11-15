@@ -1,0 +1,76 @@
+<%- include('partials/head', { title: event.title + ' - RUN BKK' }) %>
+
+    <section class="detail-page">
+      <div class="container">
+        <a href="/events" class="back-link">← All Events</a>
+
+        <div class="detail-layout">
+          <!-- รูป + รายละเอียด -->
+          <div class="detail-main">
+            <div class="detail-image">
+              <img src="<%= event.image || event.club_image || '/image/about.jpg' %>" alt="<%= event.title %>" />
+            </div>
+
+            <p class="event-type"><%= fmt.runTypeLabel(event.run_type) %></p>
+            <h1><%= event.title %></h1>
+            <p class="detail-club">
+              โดย <a href="/clubs/<%= event.club_id %>"><%= event.club_name %></a>
+            </p>
+
+            <% if (event.description) { %>
+            <!-- white-space: pre-line ใน CSS → ขึ้นบรรทัดใหม่ตามที่พิมพ์ไว้ โดยยัง escape ข้อความอยู่ -->
+            <p class="detail-description"><%= event.description %></p>
+            <% } %>
+          </div>
+
+          <!-- กล่องข้อมูล + ปุ่ม Join -->
+          <aside class="detail-box">
+            <ul class="detail-facts">
+              <li><span>📅 วันที่</span><strong><%= fmt.thaiDate(event.start_at) %></strong></li>
+              <li><span>🕐 เวลา</span><strong><%= fmt.timeText(event.start_at) %></strong></li>
+              <li><span>📍 จุดนัดพบ</span><strong><%= event.meeting_point %></strong></li>
+              <% if (event.distance_km !== null) { %>
+              <li><span>🏃 ระยะทาง</span><strong><%= fmt.distanceText(event.distance_km) %></strong></li>
+              <% } %>
+              <% if (event.pace) { %>
+              <li><span>⏱️ Pace</span><strong><%= event.pace %></strong></li>
+              <% } %>
+              <% if (event.registration_type === 'internal') { %>
+              <li>
+                <span>👥 ผู้เข้าร่วม</span>
+                <strong>
+                  <%= event.joined_count %><%= event.max_participants !== null ? ' / ' + event.max_participants : '' %> คน
+                  <% if (spotsLeft !== null && !isPast) { %>(เหลือ <%= spotsLeft %> ที่)<% } %>
+                </strong>
+              </li>
+              <% } %>
+            </ul>
+
+            <!-- ปุ่มเปลี่ยนตามสถานะ — server ตรวจเงื่อนไขซ้ำอีกครั้งตอนกด (routes/events.js) -->
+            <% if (event.status === 'cancelled') { %>
+              <p class="detail-status status-cancelled">กิจกรรมนี้ถูกยกเลิก</p>
+            <% } else if (isPast) { %>
+              <p class="detail-status">กิจกรรมนี้ผ่านไปแล้ว</p>
+            <% } else if (event.registration_type === 'external') { %>
+              <a href="<%= event.external_url %>" class="main-button detail-button" target="_blank" rel="noopener noreferrer">
+                สมัครผ่านเว็บไซต์ภายนอก ↗
+              </a>
+            <% } else if (isJoined) { %>
+              <p class="detail-status status-joined">✓ คุณเข้าร่วมกิจกรรมนี้แล้ว</p>
+              <form action="/events/<%= event.id %>/cancel" method="POST"
+                    onsubmit="return confirm('ยืนยันยกเลิกการเข้าร่วม?')">
+                <button type="submit" class="outline-button detail-button">ยกเลิกการเข้าร่วม</button>
+              </form>
+            <% } else if (isFull) { %>
+              <p class="detail-status status-cancelled">กิจกรรมนี้เต็มแล้ว</p>
+            <% } else { %>
+              <form action="/events/<%= event.id %>/join" method="POST">
+                <button type="submit" class="main-button detail-button">Join Event →</button>
+              </form>
+            <% } %>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+<%- include('partials/footer') %>

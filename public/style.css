@@ -851,3 +851,259 @@ html {
     width: fit-content;
   }
 }
+
+/* ---------- Phase 5: events, detail pages, my runs ---------- */
+
+.card-link {
+  color: inherit;
+  text-decoration: none;
+  transition: transform 0.2s;
+}
+
+.card-link:hover {
+  color: inherit;
+  transform: translateY(-4px);
+}
+
+.empty-state {
+  padding: 30px 0;
+  color: #666;
+  text-align: center;
+}
+
+.empty-state a,
+.search-summary a {
+  color: #ff6b35;
+}
+
+.search-summary {
+  margin: 15px 0 0;
+  font-size: 14px;
+  color: #666;
+}
+
+.club-detail-link {
+  margin-right: 6px;
+  background-color: #ff6b35;
+}
+
+.club-detail-link:hover {
+  background-color: #17202a;
+}
+
+.plain-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.plain-link:hover {
+  color: #ff6b35;
+}
+
+.past-list {
+  opacity: 0.7;
+}
+
+.outline-button {
+  display: inline-block;
+  padding: 10px 20px;
+  border: 2px solid #17202a;
+  border-radius: 30px;
+  background-color: transparent;
+  color: #17202a;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.outline-button:hover {
+  background-color: #17202a;
+  color: white;
+}
+
+/* Detail pages (event / club) */
+
+.detail-page {
+  padding: 40px 0 90px;
+}
+
+.back-link {
+  display: inline-block;
+  margin-bottom: 25px;
+  color: #17202a;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.back-link:hover {
+  color: #ff6b35;
+}
+
+.back-link-light {
+  color: white;
+}
+
+.back-link-light:hover {
+  color: #17202a;
+}
+
+.detail-layout {
+  display: flex;
+  gap: 40px;
+  align-items: flex-start;
+}
+
+.detail-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.detail-image {
+  height: 360px;
+  margin-bottom: 25px;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.detail-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.detail-main h1 {
+  font-size: 40px;
+  font-weight: bold;
+  margin: 5px 0 10px;
+}
+
+.detail-club a {
+  color: #ff6b35;
+  font-weight: bold;
+}
+
+.detail-description {
+  color: #444;
+  line-height: 1.8;
+  white-space: pre-line;
+}
+
+.detail-box {
+  width: 360px;
+  padding: 28px;
+  background-color: white;
+  border-radius: 20px;
+  position: sticky;
+  top: 100px;
+}
+
+.clubs-section .detail-box {
+  background-color: #f7f5ef;
+}
+
+.detail-box-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+.detail-facts {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 20px;
+}
+
+.detail-facts li {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+  font-size: 14px;
+}
+
+.detail-facts span {
+  color: #666;
+  white-space: nowrap;
+}
+
+.detail-facts strong {
+  text-align: right;
+}
+
+.detail-button {
+  width: 100%;
+  border: none;
+  text-align: center;
+}
+
+.outline-button.detail-button {
+  border: 2px solid #17202a;
+}
+
+.detail-status {
+  padding: 12px;
+  border-radius: 10px;
+  background-color: #f7f5ef;
+  text-align: center;
+  font-weight: bold;
+}
+
+.status-joined {
+  background-color: #e6f6ec;
+  color: #1a7f45;
+}
+
+.status-cancelled {
+  background-color: #fdecea;
+  color: #b42318;
+}
+
+.mini-event {
+  display: flex;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid #ddd;
+  color: #17202a;
+  text-decoration: none;
+}
+
+.mini-event:hover h3 {
+  color: #ff6b35;
+}
+
+.mini-event h3 {
+  font-size: 17px;
+  margin: 0 0 4px;
+}
+
+.mini-event p {
+  margin: 0;
+  font-size: 13px;
+  color: #666;
+}
+
+.form-section-title {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+@media (max-width: 768px) {
+  .detail-layout {
+    flex-direction: column;
+  }
+
+  .detail-box {
+    width: 100%;
+    position: static;
+  }
+
+  .detail-image {
+    height: 240px;
+  }
+
+  .detail-main h1 {
+    font-size: 30px;
+  }
+}

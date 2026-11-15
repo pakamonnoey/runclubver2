@@ -12,18 +12,22 @@
         <div class="events-title">
           <p class="small-title">DON'T MISS OUT</p>
 
-          <h2>Upcoming Events</h2>
+          <h2>Upcoming Runs</h2>
         </div>
 
-        <!-- Search -->
+        <!-- Search: method="GET" → ค่าไปอยู่ใน URL เช่น /events?q=social&type=morning
+             server (routes/events.js) อ่านจาก req.query แล้วค้นใน DB -->
         <section class="search-section">
-          <div class="search-box">
+          <form class="search-box" action="/events" method="GET">
             <div class="search-field">
               <label class="visually-hidden" for="searchInput">Search events</label>
               <input
                 type="text"
                 id="searchInput"
-                placeholder="Search events..."
+                name="q"
+                value="<%= filters.q %>"
+                placeholder="Search events or clubs..."
+                maxlength="100"
               />
             </div>
 
@@ -32,237 +36,87 @@
               <input
                 type="text"
                 id="locationInput"
+                name="location"
+                value="<%= filters.location %>"
                 placeholder="Search location..."
+                maxlength="100"
               />
             </div>
 
             <div class="search-field">
-              <label class="visually-hidden" for="distanceSelect">Event distance</label>
-              <select id="distanceSelect">
-                <option value="all">All distances</option>
-                <option value="3">3 KM</option>
-                <option value="5">5 KM</option>
-                <option value="10">10 KM</option>
+              <label class="visually-hidden" for="typeSelect">Run type</label>
+              <select id="typeSelect" name="type">
+                <option value="">All types</option>
+                <% Object.entries(runTypes).forEach(function ([value, label]) { %>
+                <option value="<%= value %>" <%= filters.type === value ? 'selected' : '' %>><%= label %></option>
+                <% }); %>
               </select>
             </div>
 
-            <button class="search-button" onclick="searchEvents()">
-              Search
-            </button>
-          </div>
+            <div class="search-field">
+              <label class="visually-hidden" for="distanceSelect">Event distance</label>
+              <select id="distanceSelect" name="distance">
+                <option value="">All distances</option>
+                <% Object.entries(distances).forEach(function ([value, d]) { %>
+                <option value="<%= value %>" <%= filters.distance === value ? 'selected' : '' %>><%= d.label %></option>
+                <% }); %>
+              </select>
+            </div>
+
+            <div class="search-field">
+              <label class="visually-hidden" for="sortSelect">Sort by</label>
+              <select id="sortSelect" name="sort">
+                <% Object.entries(sorts).forEach(function ([value, s]) { %>
+                <option value="<%= value %>" <%= filters.sort === value ? 'selected' : '' %>>เรียง: <%= s.label %></option>
+                <% }); %>
+              </select>
+            </div>
+
+            <button type="submit" class="search-button">Search</button>
+          </form>
+
+          <p class="search-summary">
+            พบ <strong><%= events.length %></strong> กิจกรรม
+            <% if (filters.q || filters.location || filters.type || filters.distance) { %>
+            · <a href="/events">ล้างตัวกรอง</a>
+            <% } %>
+          </p>
         </section>
-    
+
         <!-- Event List -->
         <div class="event-list">
-          <!-- Event 1 -->
-          <a
-            href="https://www.runlah.com/th/ihg2026"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="event-list-card"
-            data-distance="5"
-          >
-            <img src="/image/event1.webp" alt="IHG RUN FOR GOOD 2026" />
+          <% if (events.length === 0) { %>
+          <p class="empty-state">ไม่พบกิจกรรมที่ตรงกับเงื่อนไข</p>
+          <% } %>
+
+          <% events.forEach(function (event) { %>
+          <a href="/events/<%= event.id %>" class="event-list-card">
+            <img src="<%= event.image || event.club_image || '/image/about.jpg' %>" alt="<%= event.title %>" />
 
             <div class="event-date-box">
-              <strong>20</strong>
-              <span>SEP</span>
+              <strong><%= fmt.dayNumber(event.start_at) %></strong>
+              <span><%= fmt.monthShort(event.start_at) %></span>
             </div>
 
             <div class="event-list-info">
-              <p class="event-type">Fun RUN</p>
+              <p class="event-type"><%= fmt.runTypeLabel(event.run_type) %> · <%= event.club_name %></p>
 
-              <h3>IHG RUN FOR GOOD 2026</h3>
+              <h3><%= event.title %></h3>
 
-              <p>📍 Rot Fai Park (สวนรถไฟ)</p>
+              <p>📍 <%= event.meeting_point %></p>
 
-              <p>🕐 06:00 AM</p>
+              <p>🕐 <%= fmt.timeText(event.start_at) %>
+                <% if (event.max_participants !== null) { %>
+                · 👥 <%= event.joined_count %>/<%= event.max_participants %>
+                <% } %>
+              </p>
             </div>
 
-            <div class="event-distance">5 KM</div>
+            <div class="event-distance"><%= fmt.distanceText(event.distance_km) %></div>
           </a>
-
-          <!-- Event 2 -->
-          <a
-            href="https://race.thai.run/thaiheartfoundation26?utm_source=runclubbangkok&utm_medium=referral&utm_campaign=events_index&utm_content=thairun-thaiheartfoundation26"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="event-list-card"
-            data-distance="5,10"
-          >
-            <img src="/image/event2.png" alt="WORLD HEART DAY FUN RUN 2026" />
-
-            <div class="event-date-box">
-              <strong>27</strong>
-              <span>SEP</span>
-            </div>
-
-            <div class="event-list-info">
-              <p class="event-type">Fun Run</p>
-
-              <h3>เดิน-วิ่ง วันหัวใจโลก WORLD HEART DAY FUN RUN 2026</h3>
-
-              <p>📍 Rama VIII Bridge (สะพานพระราม8)</p>
-
-              <p>🕐 04:00 AM</p>
-            </div>
-
-            <div class="event-distance">5 / 10 KM</div>
-          </a>
-
-          <!-- Event 3 -->
-          <a
-            href="https://www.runlah.com/th/u9dZslLQ"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="event-list-card"
-            data-distance="3,5"
-          >
-            <img
-              src="/image/event3.webp"
-              alt="SANRIO CHARACTERS HALF MARATHON"
-            />
-
-            <div class="event-date-box">
-              <strong>27</strong>
-              <span>SEP</span>
-            </div>
-
-            <div class="event-list-info">
-              <p class="event-type">Fun Run</p>
-
-              <h3>SANRIO CHARACTERS HALF MARATHON</h3>
-
-              <p>📍 One Bangkok (วันแบงค็อก)</p>
-
-              <p>🕐 07:00 AM</p>
-            </div>
-
-            <div class="event-distance">3 / 5 KM</div>
-          </a>
-
-          <!-- Event 4 -->
-          <a
-            href="https://race.thai.run/sponsorrunbangkok2026?utm_source=runclubbangkok&utm_medium=referral&utm_campaign=events_index&utm_content=thairun-sponsorrunbangkok2026"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="event-list-card"
-            data-distance="5"
-          >
-            <img src="/image/event4.jpeg" alt="SPONSOR RUN BANGKOK 2026" />
-
-            <div class="event-date-box">
-              <strong>4</strong>
-              <span>OCT</span>
-            </div>
-
-            <div class="event-list-info">
-              <p class="event-type">HALF MARATHON</p>
-
-              <h3>SPONSOR RUN BANGKOK 2026</h3>
-
-              <p>📍 Rama VIII Bridge (สะพานพระราม8)</p>
-
-              <p>🕐 06:00 AM</p>
-            </div>
-
-            <div class="event-distance">5 KM</div>
-          </a>
-
-          <!-- Event 5 -->
-          <a
-            href="https://www.runlah.com/th/Z2Kybfat"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="event-list-card"
-            data-distance="3,5"
-          >
-            <img src="/image/event5.webp" alt="Run to the Rhythm 2026" />
-
-            <div class="event-date-box">
-              <strong>18</strong>
-              <span>OCT</span>
-            </div>
-
-            <div class="event-list-info">
-              <p class="event-type">Marathon</p>
-
-              <h3>Run to the Rhythm 2026</h3>
-
-              <p>📍 Suan Luang Rama IX Public Park (สวนหลวง ร.9)</p>
-
-              <p>🕐 07:00 AM</p>
-            </div>
-
-            <div class="event-distance">3 / 5 KM</div>
-          </a>
-
-          <!-- Event 6 -->
-          <a
-            href="https://www.runlah.com/th/ZjLrENYS"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="event-list-card"
-            data-distance="5,10"
-          >
-            <img src="/image/event6.webp" alt="Thailand Post EMS RUN 2026" />
-
-            <div class="event-date-box">
-              <strong>18</strong>
-              <span>OCT</span>
-            </div>
-
-            <div class="event-list-info">
-              <p class="event-type">Fun Run</p>
-
-              <h3>Thailand Post EMS RUN 2026</h3>
-
-              <p>📍 General Post Office (ไปรษณีย์กลาง บางรัก)</p>
-
-              <p>🕐 07:00 PM</p>
-            </div>
-
-            <div class="event-distance">5 / 10 KM</div>
-          </a>
+          <% }); %>
         </div>
       </div>
     </section>
-
-    
-
-    <script>
-      function searchEvents() {
-        let keyword = document
-          .getElementById("searchInput")
-          .value.toLowerCase();
-
-        let location = document
-          .getElementById("locationInput")
-          .value.toLowerCase();
-
-        let distance = document.getElementById("distanceSelect").value;
-
-        let events = document.querySelectorAll(".event-list-card");
-
-        events.forEach(function (event) {
-          let eventText = event.textContent.toLowerCase();
-
-          let eventDistance = event.getAttribute("data-distance");
-
-          let keywordMatch = eventText.includes(keyword);
-
-          let locationMatch = eventText.includes(location);
-
-          let distanceMatch =
-            distance === "all" || eventDistance.includes(distance);
-
-          if (keywordMatch && locationMatch && distanceMatch) {
-            event.style.display = "flex";
-          } else {
-            event.style.display = "none";
-          }
-        });
-      }
-    </script>
 
 <%- include('partials/footer') %>
