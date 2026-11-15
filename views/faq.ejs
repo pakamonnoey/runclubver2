@@ -1,5 +1,72 @@
 <%- include('partials/head', { title: 'FAQ | RUN BKK' }) %>
 
+<%
+  // คำถาม-คำตอบ: แก้/เพิ่มที่ array นี้ที่เดียว แล้วลูปด้านล่างสร้าง accordion ให้
+  // answer เป็นข้อความที่เราเขียนเอง (ไม่ใช่ข้อมูลจากผู้ใช้) จึงใส่ลิงก์ HTML ได้
+  // และแสดงแบบไม่ escape (แท็กขีดลบ) ด้านล่าง — ห้ามใช้วิธีนี้กับข้อมูลจากผู้ใช้/DB
+  const faqs = [
+    {
+      q: "What is RUN BKK?",
+      answer:
+        "RUN BKK เป็นเว็บรวมชมรมวิ่ง (Running Clubs) และกิจกรรมวิ่งทั่วไปในกรุงเทพฯ เช่น Morning Run, Social Run, Night Run และ Beginner Friendly Run " +
+        "ช่วยให้หากลุ่มวิ่งและกิจกรรมที่เหมาะกับตัวเองได้ง่ายขึ้น — RUN BKK ไม่ใช่เว็บสมัครงานวิ่งแข่งขันหรือขายบัตร",
+    },
+    {
+      q: "Do I need an account?",
+      answer:
+        "หน้า Home และ FAQ ดูได้เลย ส่วนหน้า Clubs, Events และการเข้าร่วมกิจกรรมต้อง " +
+        "<a href='/register'>สมัครสมาชิก</a> และ <a href='/login'>เข้าสู่ระบบ</a> ก่อน (สมัครฟรี ใช้แค่ชื่อ อีเมล และรหัสผ่าน)",
+    },
+    {
+      q: "How do I find a run that suits me?",
+      answer:
+        "ไปที่หน้า Events แล้วค้นหาจากชื่อกิจกรรมหรือชื่อคลับ ค้นหาตามสถานที่ " +
+        "กรองตามประเภท (Morning / Social / Night / Beginner Friendly) และระยะทาง หรือเรียงตามวันที่และระยะทางได้",
+    },
+    {
+      q: "How do I join a run?",
+      answer:
+        "เปิดหน้ารายละเอียดกิจกรรม แล้วดูปุ่มด้านขวา ซึ่งมี 2 แบบ<br />" +
+        "• <strong>Join Event</strong> — กดแล้วเข้าร่วมได้ทันที (ถ้ายังมีที่ว่าง)<br />" +
+        "• <strong>สมัครผ่านเว็บไซต์ภายนอก</strong> — ผู้จัดรับสมัครเอง เช่น Google Forms ให้กดลิงก์ไปสมัครที่เว็บนั้น",
+    },
+    {
+      q: "Can I cancel after joining?",
+      answer:
+        "ได้ ก่อนกิจกรรมเริ่ม — กด Cancel ที่หน้า My Runs หรือ \"ยกเลิกการเข้าร่วม\" ในหน้ารายละเอียดกิจกรรม " +
+        "ที่ว่างจะคืนให้คนอื่นสมัครต่อได้",
+    },
+    {
+      q: "Where can I see the runs I joined?",
+      answer:
+        "หน้า My Runs แสดงกิจกรรมที่กำลังจะมาถึงและกิจกรรมที่ผ่านมาแล้ว " +
+        "ถ้าผู้จัดยกเลิกกิจกรรม จะมีข้อความแจ้งว่ากิจกรรมถูกยกเลิกในหน้านี้",
+    },
+    {
+      q: "Can beginners join?",
+      answer:
+        "ได้ ลองกรองประเภท <strong>Beginner Friendly</strong> ในหน้า Events " +
+        "และดูระยะทางกับ Pace ในหน้ารายละเอียดกิจกรรมก่อนเข้าร่วม เพื่อเลือกกลุ่มที่เหมาะกับตัวเอง",
+    },
+    {
+      q: "Is it free?",
+      answer:
+        "การใช้งาน RUN BKK ไม่มีค่าใช้จ่าย และเว็บไม่มีระบบชำระเงิน " +
+        "ถ้ากิจกรรมใดมีค่าใช้จ่าย จะขึ้นอยู่กับคลับหรือผู้จัด กรุณาตรวจสอบจากรายละเอียดกิจกรรมหรือช่องทางของคลับโดยตรง",
+    },
+    {
+      q: "Where does the information come from?",
+      answer:
+        "ข้อมูลคลับและกิจกรรมรวบรวมจากช่องทางทางการของแต่ละคลับ เช่น Instagram และตรวจสอบก่อนเผยแพร่ " +
+        "แต่วัน เวลา หรือสถานที่อาจเปลี่ยนได้ แนะนำให้เช็กช่องทางของคลับอีกครั้งก่อนไปวิ่ง",
+    },
+    {
+      q: "Where can I run in Bangkok?",
+      answer: "ดูสวนและเส้นทางยอดนิยมได้ที่ส่วน <a href='/#spots'>Popular Running Spots</a> ในหน้า Home",
+    },
+  ];
+%>
+
     <!-- FAQ Hero -->
     <section class="faq-hero">
       <div class="container">
@@ -11,125 +78,31 @@
     <section class="faq-section">
       <div class="container">
         <div class="accordion" id="faqAccordion">
+          <% faqs.forEach(function (faq, i) { const first = i === 0; %>
           <div class="accordion-item">
             <h2 class="accordion-header">
               <button
-                class="accordion-button"
+                class="accordion-button <%= first ? '' : 'collapsed' %>"
                 type="button"
                 data-bs-toggle="collapse"
-                data-bs-target="#question1"
+                data-bs-target="#question<%= i + 1 %>"
+                aria-expanded="<%= first %>"
+                aria-controls="question<%= i + 1 %>"
               >
-                What is RUN BKK?
+                <%= faq.q %>
               </button>
             </h2>
 
+            <!-- ข้อแรกเปิดไว้ (show) / data-bs-parent: เปิดข้อหนึ่ง ข้ออื่นปิดอัตโนมัติ -->
             <div
-              id="question1"
-              class="accordion-collapse collapse show"
+              id="question<%= i + 1 %>"
+              class="accordion-collapse collapse <%= first ? 'show' : '' %>"
               data-bs-parent="#faqAccordion"
             >
-              <div class="accordion-body">
-                RUN BKK is a website that helps runners discover running events,
-                clubs and places to run around Bangkok.
-              </div>
+              <div class="accordion-body"><%- faq.answer %></div>
             </div>
           </div>
-
-          <div class="accordion-item">
-            <h2 class="accordion-header">
-              <button
-                class="accordion-button collapsed"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#question2"
-              >
-                How can I find running events?
-              </button>
-            </h2>
-
-            <div
-              id="question2"
-              class="accordion-collapse collapse"
-              data-bs-parent="#faqAccordion"
-            >
-              <div class="accordion-body">
-                You can visit the Events page to find upcoming running events in
-                Bangkok.
-              </div>
-            </div>
-          </div>
-
-          <div class="accordion-item">
-            <h2 class="accordion-header">
-              <button
-                class="accordion-button collapsed"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#question3"
-              >
-                Where can I find running clubs?
-              </button>
-            </h2>
-
-            <div
-              id="question3"
-              class="accordion-collapse collapse"
-              data-bs-parent="#faqAccordion"
-            >
-              <div class="accordion-body">
-                Visit the Clubs page to discover running communities and clubs
-                around Bangkok.
-              </div>
-            </div>
-          </div>
-
-          <div class="accordion-item">
-            <h2 class="accordion-header">
-              <button
-                class="accordion-button collapsed"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#question4"
-              >
-                Can beginners join a running club?
-              </button>
-            </h2>
-
-            <div
-              id="question4"
-              class="accordion-collapse collapse"
-              data-bs-parent="#faqAccordion"
-            >
-              <div class="accordion-body">
-                Yes. Many running clubs welcome runners of different experience
-                levels, including beginners.
-              </div>
-            </div>
-          </div>
-
-          <div class="accordion-item">
-            <h2 class="accordion-header">
-              <button
-                class="accordion-button collapsed"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#question5"
-              >
-                How can I find places to run?
-              </button>
-            </h2>
-
-            <div
-              id="question5"
-              class="accordion-collapse collapse"
-              data-bs-parent="#faqAccordion"
-            >
-              <div class="accordion-body">
-                Check the Spots section on the Home page to discover popular
-                running areas in Bangkok.
-              </div>
-            </div>
-          </div>
+          <% }); %>
         </div>
       </div>
     </section>

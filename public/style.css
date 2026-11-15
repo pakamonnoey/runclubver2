@@ -1345,3 +1345,14 @@ html {
     padding: 18px;
   }
 }
+
+/* FAQ: links and line height inside answers */
+
+.accordion-body {
+  line-height: 1.8;
+}
+
+.accordion-body a {
+  color: #ff6b35;
+  font-weight: bold;
+}
