@@ -739,3 +739,115 @@ html {
     flex-wrap: wrap;
   }
 }
+
+/* =====================================================================
+   Added for full-stack version (Phase 4+) — existing styles above unchanged
+   ===================================================================== */
+
+/* Navbar: login state */
+
+.menu-user {
+  color: #666;
+  font-size: 14px;
+}
+
+.menu-logout {
+  margin: 0;
+  display: flex;
+}
+
+.menu-logout button,
+.menu-register {
+  padding: 0 14px;
+  border: none;
+  border-radius: 20px;
+  background-color: #17202a;
+  color: white !important;
+  font-size: 14px;
+  line-height: 30px;
+  cursor: pointer;
+}
+
+.menu-logout button:hover,
+.menu-register:hover {
+  background-color: #ff6b35;
+}
+
+.menu-login {
+  font-weight: bold;
+}
+
+/* Flash message */
+
+.flash-message {
+  margin: 10px 0 0;
+  border-radius: 10px;
+}
+
+/* Login / Register */
+
+.auth-section {
+  padding: 60px 0 90px;
+}
+
+.auth-card {
+  max-width: 460px;
+  margin: 0 auto;
+  padding: 40px 35px;
+  background-color: white;
+  border-radius: 20px;
+}
+
+.auth-card h1 {
+  font-size: 40px;
+  font-weight: bold;
+  color: #ff6b35;
+  margin: 5px 0 25px;
+}
+
+.auth-card .form-label {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.auth-card .form-control {
+  height: 48px;
+  border-radius: 8px;
+  border-color: #ccc;
+}
+
+.auth-card .form-control:focus {
+  border-color: #ff6b35;
+  box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.2);
+}
+
+.auth-card .form-control.is-invalid {
+  border-color: #dc3545;
+}
+
+.auth-button {
+  width: 100%;
+  border: none;
+}
+
+.auth-switch {
+  margin: 20px 0 0;
+  text-align: center;
+  font-size: 14px;
+}
+
+.auth-switch a {
+  color: #ff6b35;
+  font-weight: bold;
+}
+
+@media (max-width: 768px) {
+  .auth-card {
+    padding: 30px 20px;
+  }
+
+  .menu-logout button,
+  .menu-register {
+    width: fit-content;
+  }
+}

@@ -1,0 +1,51 @@
+<%- include('../partials/head', { title }) %>
+
+    <section class="auth-section">
+      <div class="container">
+        <div class="auth-card">
+          <p class="small-title">WELCOME BACK</p>
+          <h1>Login</h1>
+
+          <% if (error) { %>
+          <div class="alert alert-danger" role="alert"><%= error %></div>
+          <% } %>
+
+          <form action="/login" method="POST" data-validate novalidate>
+            <div class="mb-3">
+              <label for="email" class="form-label">อีเมล</label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                class="form-control"
+                value="<%= values.email || '' %>"
+                required
+                autocomplete="email"
+              />
+              <div class="invalid-feedback"></div>
+            </div>
+
+            <div class="mb-4">
+              <label for="password" class="form-label">รหัสผ่าน</label>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                class="form-control"
+                required
+                autocomplete="current-password"
+              />
+              <div class="invalid-feedback"></div>
+            </div>
+
+            <button type="submit" class="main-button auth-button">Login</button>
+          </form>
+
+          <p class="auth-switch">ยังไม่มีบัญชี? <a href="/register">สมัครสมาชิก</a></p>
+        </div>
+      </div>
+    </section>
+
+    <script src="/js/validate.js"></script>
+
+<%- include('../partials/footer') %>
