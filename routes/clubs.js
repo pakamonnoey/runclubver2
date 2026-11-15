@@ -10,7 +10,7 @@ router.use(requireLogin);
 // GET /clubs — เฉพาะคลับที่ published (ข้อมูลที่ยืนยันแล้ว)
 router.get("/", async (req, res) => {
   const [clubs] = await pool.query(
-    `SELECT id, name, description, location, instagram_url, image
+    `SELECT id, name, description, location, regular_schedule, instagram_url, image
      FROM clubs
      WHERE status = 'published'
      ORDER BY id`

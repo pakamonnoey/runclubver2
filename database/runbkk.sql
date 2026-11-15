@@ -39,6 +39,7 @@ CREATE TABLE clubs (
   name          VARCHAR(150) NOT NULL,
   description   TEXT NULL,
   location      VARCHAR(255) NULL,
+  regular_schedule VARCHAR(500) NULL,               -- ตารางวิ่งประจำ เช่น 'ทุกวันอาทิตย์ 07:15 · สวนเบญจกิตติ'
   instagram_url VARCHAR(500) NULL,
   image         VARCHAR(255) NULL,                  -- path รูป เช่น /image/club1.png
   status        ENUM('pending', 'published') NOT NULL DEFAULT 'pending',
@@ -61,9 +62,11 @@ CREATE TABLE run_sessions (
   meeting_point     VARCHAR(255) NOT NULL,
   distance_km       DECIMAL(4,1) NULL,              -- เช่น 5.0, 10.5
   pace              VARCHAR(50) NULL,               -- เช่น '6:30–7:30 min/km'
+  fee               VARCHAR(100) NULL,              -- ค่าใช้จ่าย เช่น 'ฟรี', '200 บาท' (NULL = ไม่ระบุ)
   max_participants  INT UNSIGNED NULL,              -- NULL = ไม่จำกัดจำนวน
   registration_type ENUM('internal', 'external') NOT NULL DEFAULT 'internal',
   external_url      VARCHAR(500) NULL,              -- ใช้เมื่อ registration_type = 'external'
+  source_url        VARCHAR(500) NULL,              -- แหล่งที่มาของข้อมูล เช่น ลิงก์โพสต์ IG
   image             VARCHAR(255) NULL,
   status            ENUM('draft', 'published', 'cancelled') NOT NULL DEFAULT 'draft',
   created_at        TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,

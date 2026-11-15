@@ -36,6 +36,9 @@
 
                 <div class="club-bottom">
                   <p>📍 <%= club.location %></p>
+                  <% if (club.regular_schedule) { %>
+                  <p class="club-schedule">📅 <%= club.regular_schedule %></p>
+                  <% } %>
 
                   <a href="/clubs/<%= club.id %>" class="instagram-button club-detail-link">ดูรายละเอียด</a>
 

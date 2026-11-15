@@ -35,6 +35,9 @@
               <% if (event.pace) { %>
               <li><span>⏱️ Pace</span><strong><%= event.pace %></strong></li>
               <% } %>
+              <% if (event.fee) { %>
+              <li><span>💰 ค่าใช้จ่าย</span><strong><%= event.fee %></strong></li>
+              <% } %>
               <% if (event.registration_type === 'internal') { %>
               <li>
                 <span>👥 ผู้เข้าร่วม</span>
@@ -67,6 +70,10 @@
               <form action="/events/<%= event.id %>/join" method="POST">
                 <button type="submit" class="main-button detail-button">Join Event →</button>
               </form>
+            <% } %>
+            <% if (event.source_url) { %>
+            <!-- ลิงก์แหล่งที่มา: ผ่านการตรวจว่าเป็น http(s) ตอนบันทึก (utils/validators.js) -->
+            <a href="<%= event.source_url %>" class="source-link" target="_blank" rel="noopener noreferrer">ดูโพสต์ต้นทาง ↗</a>
             <% } %>
           </aside>
         </div>

@@ -26,6 +26,11 @@
           </div>
 
           <aside class="detail-box">
+            <% if (club.regular_schedule) { %>
+            <h2 class="detail-box-title">วิ่งประจำ</h2>
+            <p class="club-schedule mb-4">📅 <%= club.regular_schedule %></p>
+            <% } %>
+
             <h2 class="detail-box-title">Upcoming Runs</h2>
 
             <% if (events.length === 0) { %>
@@ -45,6 +50,9 @@
               </div>
             </a>
             <% }); %>
+
+            <!-- updated_at: DB อัปเดตให้อัตโนมัติทุกครั้งที่แก้ข้อมูลคลับ -->
+            <p class="data-updated">ข้อมูลอัปเดตล่าสุด <%= fmt.thaiDate(club.updated_at) %></p>
           </aside>
         </div>
       </div>

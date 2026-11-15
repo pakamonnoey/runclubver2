@@ -107,8 +107,9 @@ router.post("/clubs", acceptImage, async (req, res) => {
 
   try {
     await pool.query(
-      "INSERT INTO clubs (name, description, location, instagram_url, image, status) VALUES (?, ?, ?, ?, ?, ?)",
-      [data.name, data.description, data.location, data.instagram_url, data.image, data.status]
+      `INSERT INTO clubs (name, description, location, regular_schedule, instagram_url, image, status)
+       VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      [data.name, data.description, data.location, data.regular_schedule, data.instagram_url, data.image, data.status]
     );
   } catch (err) {
     await removeImageIfUnused(data.image); // บันทึกคลับไม่สำเร็จ → ลบรูปที่เพิ่งอัปโหลดทิ้ง
@@ -141,8 +142,9 @@ router.post("/clubs/:id", acceptImage, async (req, res, next) => {
 
   try {
     await pool.query(
-      "UPDATE clubs SET name = ?, description = ?, location = ?, instagram_url = ?, image = ?, status = ? WHERE id = ?",
-      [data.name, data.description, data.location, data.instagram_url, data.image, data.status, id]
+      `UPDATE clubs SET name = ?, description = ?, location = ?, regular_schedule = ?,
+         instagram_url = ?, image = ?, status = ? WHERE id = ?`,
+      [data.name, data.description, data.location, data.regular_schedule, data.instagram_url, data.image, data.status, id]
     );
   } catch (err) {
     if (req.file) await removeImageIfUnused(data.image);
@@ -229,13 +231,13 @@ router.post("/events", acceptImage, async (req, res) => {
 
   await pool.query(
     `INSERT INTO run_sessions
-       (club_id, title, run_type, description, start_at, meeting_point, distance_km, pace,
-        max_participants, registration_type, external_url, image, status)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+       (club_id, title, run_type, description, start_at, meeting_point, distance_km, pace, fee,
+        max_participants, registration_type, external_url, source_url, image, status)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     [
       data.club_id, data.title, data.run_type, data.description, data.start_at, data.meeting_point,
-      data.distance_km, data.pace, data.max_participants, data.registration_type, data.external_url,
-      data.image, data.status,
+      data.distance_km, data.pace, data.fee, data.max_participants, data.registration_type,
+      data.external_url, data.source_url, data.image, data.status,
     ]
   );
   flash(req, "success", "เพิ่มกิจกรรมแล้ว");
@@ -276,13 +278,13 @@ router.post("/events/:id", acceptImage, async (req, res, next) => {
   await pool.query(
     `UPDATE run_sessions SET
        club_id = ?, title = ?, run_type = ?, description = ?, start_at = ?, meeting_point = ?,
-       distance_km = ?, pace = ?, max_participants = ?, registration_type = ?, external_url = ?,
-       image = ?, status = ?
+       distance_km = ?, pace = ?, fee = ?, max_participants = ?, registration_type = ?,
+       external_url = ?, source_url = ?, image = ?, status = ?
      WHERE id = ?`,
     [
       data.club_id, data.title, data.run_type, data.description, data.start_at, data.meeting_point,
-      data.distance_km, data.pace, data.max_participants, data.registration_type, data.external_url,
-      data.image, data.status, event.id,
+      data.distance_km, data.pace, data.fee, data.max_participants, data.registration_type,
+      data.external_url, data.source_url, data.image, data.status, event.id,
     ]
   );
   if (event.image !== data.image) await removeImageIfUnused(event.image);

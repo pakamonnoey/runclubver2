@@ -30,6 +30,15 @@
             </div>
 
             <div class="mb-3">
+              <label for="regular_schedule" class="form-label">ตารางวิ่งประจำ</label>
+              <textarea id="regular_schedule" name="regular_schedule" rows="3" maxlength="500"
+                        placeholder="เช่น ทุกวันอาทิตย์ 07:15 · สวนเบญจกิตติ (จุดนัด: ...) · ฟรี ทุก pace"
+                        class="form-control <%= errors.regular_schedule ? 'is-invalid' : '' %>"><%= values.regular_schedule || '' %></textarea>
+              <div class="form-text">ขึ้นบรรทัดใหม่ได้ถ้ามีหลายรอบ · เว้นว่าง = ไม่มีวิ่งประจำ (ดูเฉพาะกิจกรรมพิเศษ)</div>
+              <div class="invalid-feedback"><%= errors.regular_schedule || '' %></div>
+            </div>
+
+            <div class="mb-3">
               <label for="instagram_url" class="form-label">Instagram URL</label>
               <input type="url" id="instagram_url" name="instagram_url" placeholder="https://www.instagram.com/..."
                      class="form-control <%= errors.instagram_url ? 'is-invalid' : '' %>" value="<%= values.instagram_url || '' %>" />

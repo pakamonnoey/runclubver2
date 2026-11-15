@@ -1381,3 +1381,26 @@ html {
   font-weight: 500 !important;
   color: #666;
 }
+
+/* Club regular schedule, fee, source link */
+
+.club-schedule {
+  white-space: pre-line;
+  color: #17202a !important;
+  font-weight: 600;
+}
+
+.data-updated {
+  margin: 20px 0 0;
+  font-size: 12px;
+  color: #999;
+}
+
+.source-link {
+  display: block;
+  margin-top: 15px;
+  text-align: center;
+  font-size: 14px;
+  color: #ff6b35;
+  font-weight: bold;
+}

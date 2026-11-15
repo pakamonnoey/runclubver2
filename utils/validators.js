@@ -30,6 +30,7 @@ function readClubForm(body) {
     name: str(body.name),
     description: str(body.description),
     location: str(body.location),
+    regular_schedule: str(body.regular_schedule),
     instagram_url: str(body.instagram_url),
     image: str(body.image),
     status: str(body.status),
@@ -39,6 +40,7 @@ function readClubForm(body) {
   if (values.name.length < 2 || values.name.length > 150) errors.name = "ชื่อคลับต้องมี 2–150 ตัวอักษร";
   if (values.description.length > 2000) errors.description = "คำอธิบายยาวเกิน 2000 ตัวอักษร";
   if (values.location.length > 255) errors.location = "สถานที่ยาวเกิน 255 ตัวอักษร";
+  if (values.regular_schedule.length > 500) errors.regular_schedule = "ตารางวิ่งประจำยาวเกิน 500 ตัวอักษร";
   if (values.instagram_url && !isWebUrl(values.instagram_url))
     errors.instagram_url = "ต้องเป็นลิงก์ที่ขึ้นต้นด้วย https://";
   if (!isImagePath(values.image)) errors.image = "ใส่เป็น /image/ชื่อไฟล์ หรือลิงก์ https://";
@@ -48,6 +50,7 @@ function readClubForm(body) {
     name: values.name,
     description: values.description || null, // ช่องว่าง → NULL ใน DB
     location: values.location || null,
+    regular_schedule: values.regular_schedule || null,
     instagram_url: values.instagram_url || null,
     image: values.image || null,
     status: values.status,
@@ -72,9 +75,11 @@ function readEventForm(body, { clubIds, isNew, minMax = 0 }) {
     meeting_point: str(body.meeting_point),
     distance_km: str(body.distance_km),
     pace: str(body.pace),
+    fee: str(body.fee),
     max_participants: str(body.max_participants),
     registration_type: str(body.registration_type),
     external_url: str(body.external_url),
+    source_url: str(body.source_url),
     image: str(body.image),
     status: str(body.status),
   };
@@ -109,6 +114,7 @@ function readEventForm(body, { clubIds, isNew, minMax = 0 }) {
   }
 
   if (values.pace.length > 50) errors.pace = "Pace ยาวเกิน 50 ตัวอักษร";
+  if (values.fee.length > 100) errors.fee = "ค่าใช้จ่ายยาวเกิน 100 ตัวอักษร";
 
   let maxParticipants = null;
   if (values.max_participants !== "") {
@@ -126,6 +132,8 @@ function readEventForm(body, { clubIds, isNew, minMax = 0 }) {
   if (values.external_url && !isWebUrl(values.external_url))
     errors.external_url = "ต้องเป็นลิงก์ที่ขึ้นต้นด้วย https://";
 
+  if (values.source_url && !isWebUrl(values.source_url)) errors.source_url = "ต้องเป็นลิงก์ที่ขึ้นต้นด้วย https://";
+
   if (!isImagePath(values.image)) errors.image = "ใส่เป็น /image/ชื่อไฟล์ หรือลิงก์ https://";
   if (!["draft", "published", "cancelled"].includes(values.status)) errors.status = "สถานะไม่ถูกต้อง";
 
@@ -138,9 +146,11 @@ function readEventForm(body, { clubIds, isNew, minMax = 0 }) {
     meeting_point: values.meeting_point,
     distance_km: distance,
     pace: values.pace || null,
+    fee: values.fee || null,
     max_participants: maxParticipants,
     registration_type: values.registration_type,
     external_url: values.registration_type === "external" ? values.external_url : null,
+    source_url: values.source_url || null,
     image: values.image || null,
     status: values.status,
   };

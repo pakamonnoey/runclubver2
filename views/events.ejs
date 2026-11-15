@@ -106,6 +106,7 @@
               <p>📍 <%= event.meeting_point %></p>
 
               <p>🕐 <%= fmt.timeText(event.start_at) %>
+                <% if (event.fee) { %> · 💰 <%= event.fee %><% } %>
                 <% if (event.max_participants !== null) { %>
                 · 👥 <%= event.joined_count %>/<%= event.max_participants %>
                 <% } %>

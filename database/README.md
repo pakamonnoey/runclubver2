@@ -22,6 +22,7 @@ erDiagram
         VARCHAR name UK
         TEXT description
         VARCHAR location
+        VARCHAR regular_schedule "weekly runs"
         VARCHAR instagram_url
         VARCHAR image
         ENUM status "pending | published"
@@ -35,9 +36,11 @@ erDiagram
         VARCHAR meeting_point
         DECIMAL distance_km
         VARCHAR pace
+        VARCHAR fee "e.g. free"
         INT max_participants "NULL = unlimited"
         ENUM registration_type "internal | external"
         VARCHAR external_url
+        VARCHAR source_url "IG post"
         ENUM status "draft | published | cancelled"
     }
     registrations {

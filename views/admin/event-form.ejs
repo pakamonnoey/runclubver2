@@ -103,6 +103,21 @@
               </div>
             </div>
 
+            <div class="row g-3 mb-3">
+              <div class="col-sm-5">
+                <label for="fee" class="form-label">ค่าใช้จ่าย</label>
+                <input type="text" id="fee" name="fee" maxlength="100" placeholder="เช่น ฟรี / 200 บาท"
+                       class="form-control <%= errors.fee ? 'is-invalid' : '' %>" value="<%= values.fee || '' %>" />
+                <div class="invalid-feedback"><%= errors.fee || '' %></div>
+              </div>
+              <div class="col-sm-7">
+                <label for="source_url" class="form-label">แหล่งที่มาของข้อมูล</label>
+                <input type="url" id="source_url" name="source_url" placeholder="ลิงก์โพสต์ IG ที่ประกาศกิจกรรมนี้"
+                       class="form-control <%= errors.source_url ? 'is-invalid' : '' %>" value="<%= values.source_url || '' %>" />
+                <div class="invalid-feedback"><%= errors.source_url || '' %></div>
+              </div>
+            </div>
+
             <div class="mb-3">
               <%- include('../partials/image-field', { label: 'รูปภาพกิจกรรม (ไม่ใส่ = ใช้รูปคลับ)' }) %>
             </div>
