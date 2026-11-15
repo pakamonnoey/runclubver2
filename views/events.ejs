@@ -3,16 +3,11 @@
     <!-- Events Page -->
     <section class="events-page">
       <div class="container">
-        <!-- Page Header -->
-        <div class="events-header">
-          <h1>Events</h1>
-        </div>
-
-        <!-- Page Title -->
-        <div class="events-title">
-          <p class="small-title">DON'T MISS OUT</p>
-
-          <h2>Upcoming Runs</h2>
+        <!-- หัวข้อหน้า (หัวข้อเดียว) -->
+        <div class="page-title">
+          <p class="small-title">EVENTS</p>
+          <h1>Upcoming Runs</h1>
+          <p class="page-lead">กิจกรรมวิ่งที่กำลังจะมาถึงจากคลับในกรุงเทพฯ</p>
         </div>
 
         <!-- Search: method="GET" → ค่าไปอยู่ใน URL เช่น /events?q=social&type=morning
@@ -20,33 +15,33 @@
         <section class="search-section">
           <form class="search-box" action="/events" method="GET">
             <div class="search-field">
-              <label class="visually-hidden" for="searchInput">Search events</label>
+              <label class="visually-hidden" for="searchInput">ค้นหากิจกรรมหรือคลับ</label>
               <input
                 type="text"
                 id="searchInput"
                 name="q"
                 value="<%= filters.q %>"
-                placeholder="Search events or clubs..."
+                placeholder="ค้นหากิจกรรมหรือคลับ..."
                 maxlength="100"
               />
             </div>
 
             <div class="search-field">
-              <label class="visually-hidden" for="locationInput">Search location</label>
+              <label class="visually-hidden" for="locationInput">ค้นหาสถานที่</label>
               <input
                 type="text"
                 id="locationInput"
                 name="location"
                 value="<%= filters.location %>"
-                placeholder="Search location..."
+                placeholder="ค้นหาสถานที่..."
                 maxlength="100"
               />
             </div>
 
             <div class="search-field">
-              <label class="visually-hidden" for="typeSelect">Run type</label>
-              <select id="typeSelect" name="type">
-                <option value="">All types</option>
+              <label class="visually-hidden" for="typeSelect">ประเภท</label>
+              <select id="typeSelect" name="type" class="filter-select">
+                <option value="">ทุกประเภท</option>
                 <% Object.entries(runTypes).forEach(function ([value, label]) { %>
                 <option value="<%= value %>" <%= filters.type === value ? 'selected' : '' %>><%= label %></option>
                 <% }); %>
@@ -54,9 +49,9 @@
             </div>
 
             <div class="search-field">
-              <label class="visually-hidden" for="distanceSelect">Event distance</label>
-              <select id="distanceSelect" name="distance">
-                <option value="">All distances</option>
+              <label class="visually-hidden" for="distanceSelect">ระยะทาง</label>
+              <select id="distanceSelect" name="distance" class="filter-select">
+                <option value="">ทุกระยะทาง</option>
                 <% Object.entries(distances).forEach(function ([value, d]) { %>
                 <option value="<%= value %>" <%= filters.distance === value ? 'selected' : '' %>><%= d.label %></option>
                 <% }); %>
@@ -64,15 +59,15 @@
             </div>
 
             <div class="search-field">
-              <label class="visually-hidden" for="sortSelect">Sort by</label>
-              <select id="sortSelect" name="sort">
+              <label class="visually-hidden" for="sortSelect">เรียงตาม</label>
+              <select id="sortSelect" name="sort" class="filter-select">
                 <% Object.entries(sorts).forEach(function ([value, s]) { %>
                 <option value="<%= value %>" <%= filters.sort === value ? 'selected' : '' %>>เรียง: <%= s.label %></option>
                 <% }); %>
               </select>
             </div>
 
-            <button type="submit" class="search-button">Search</button>
+            <button type="submit" class="search-button">ค้นหา</button>
           </form>
 
           <p class="search-summary">
@@ -103,11 +98,13 @@
 
               <h3><%= event.title %></h3>
 
-              <p>📍 <%= event.meeting_point %></p>
-
-              <p>🕐 <%= fmt.timeText(event.start_at) %> · 💰 <%= event.fee || 'ฟรี' %>
-                <% if (event.saved_count > 0) { %> · ⭐ <%= event.saved_count %> คนสนใจ<% } %>
-              </p>
+              <!-- ข้อมูลแยกทีละบรรทัด อ่านง่ายกว่าเขียนต่อกันด้วย · -->
+              <ul class="event-meta">
+                <li>🕐 <%= fmt.timeText(event.start_at) %></li>
+                <li>📍 <%= event.meeting_point %></li>
+                <li>💰 <%= event.fee || 'ฟรี' %></li>
+                <% if (event.saved_count > 0) { %><li>⭐ <%= event.saved_count %> คนสนใจ</li><% } %>
+              </ul>
             </div>
 
             <div class="event-distance"><%= fmt.distanceText(event.distance_km) %></div>

@@ -16,7 +16,7 @@ function requireLogin(req, res, next) {
 
   // จำหน้าที่ตั้งใจจะเข้า (เฉพาะ GET) เพื่อพากลับมาหลัง login
   if (req.method === "GET") req.session.returnTo = req.originalUrl;
-  req.session.flash = { type: "warning", message: "กรุณาเข้าสู่ระบบก่อนใช้งานหน้านี้" };
+  req.session.flash = { type: "warning", message: "กรุณาเข้าสู่ระบบก่อนใช้งาน" };
   res.redirect("/login");
 }
 

@@ -23,6 +23,25 @@ function isImagePath(value) {
 }
 
 // ===============================================================
+// รหัสผ่านใหม่ — ใช้ร่วมกันทั้ง สมัครสมาชิก / เปลี่ยนรหัส (Profile) / ตั้งรหัสใหม่ (ลืมรหัสผ่าน)
+// คืน { password?: "...", confirmPassword?: "..." } — ว่าง = ผ่าน
+// ===============================================================
+function checkNewPassword(password, confirmPassword) {
+  const errors = {};
+  if (password.length < 8) {
+    errors.password = "รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร";
+  } else if (Buffer.byteLength(password) > 72) {
+    errors.password = "รหัสผ่านยาวเกินไป"; // bcrypt ใช้ได้สูงสุด 72 bytes
+  } else if (!/[A-Za-z]/.test(password) || !/[0-9]/.test(password)) {
+    errors.password = "รหัสผ่านต้องมีทั้งตัวอักษรภาษาอังกฤษและตัวเลข";
+  }
+  if (password !== confirmPassword) {
+    errors.confirmPassword = "รหัสผ่านยืนยันไม่ตรงกัน";
+  }
+  return errors;
+}
+
+// ===============================================================
 // ฟอร์มคลับ
 // ===============================================================
 function readClubForm(body) {
@@ -138,4 +157,4 @@ function readEventForm(body, { clubIds, isNew }) {
   return { values, errors, data };
 }
 
-module.exports = { readClubForm, readEventForm, isWebUrl };
+module.exports = { readClubForm, readEventForm, isWebUrl, checkNewPassword };

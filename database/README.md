@@ -7,6 +7,7 @@
 ```mermaid
 erDiagram
     users ||--o{ registrations : "saves"
+    users ||--o{ password_resets : "requests"
     clubs ||--o{ run_sessions : "hosts"
     run_sessions ||--o{ registrations : "has"
 
@@ -39,6 +40,12 @@ erDiagram
         VARCHAR external_url "organizer sign-up link"
         VARCHAR source_url "IG post"
         ENUM status "draft | published | cancelled"
+    }
+    password_resets {
+        INT id PK
+        INT user_id FK
+        CHAR token_hash UK "SHA-256 of emailed token"
+        DATETIME expires_at "30 min"
     }
     registrations {
         INT id PK
@@ -127,7 +134,7 @@ ENV_FILE=.env.production npm run db:migrate     # เว็บจริง
 ```
 
 รันทุกไฟล์ใน `database/migrations/` ตามลำดับ (เช่น `001_images.sql`) — เขียนแบบรันซ้ำได้
-(`003` ลบคอลัมน์ที่เลิกใช้: pace, max_participants, registration_type)
+(`003` ลบคอลัมน์ที่เลิกใช้: pace, max_participants, registration_type · `004` ตาราง password_resets)
 
 ## Development vs Production
 
@@ -154,3 +161,14 @@ npm run db:pull
 New Database Connection → **MySQL** → Host / Port `4000` / Database `runbkk` / Username / Password จาก `.env.production`
 → แท็บ **SSL**: ติ๊ก Use SSL + Require SSL
 → **General**: ตั้งชื่อ `RUN BKK – PRODUCTION` และ Connection type = **Production** (DBeaver จะแสดงสีแดงและถามยืนยันก่อนแก้ข้อมูล)
+
+ถ้า Test Connection ขึ้น `Could not load trustJKS keystore ...` (DBeaver หาไฟล์ certificate ของตัวเองไม่เจอ):
+1. แท็บ **SSL** → เอา ✓ ออกจาก **Use SSL**
+2. แท็บ **Driver properties** → ตั้ง `sslMode` = `REQUIRED` (ไม่มีให้คลิกขวา → Add new property)
+
+→ ยังเข้ารหัสการเชื่อมต่อเหมือนเดิม แค่ไม่ใช้ไฟล์ keystore ของ DBeaver
+
+ข้อควรจำ:
+- ข้อมูลใน DBeaver ไม่อัปเดตเอง → กด **F5** ที่ตาราง / คลิกขวา connection → Refresh (เมื่อคอลัมน์เปลี่ยน)
+- กรอก/แก้ข้อมูลจริงผ่านหน้า Admin ของเว็บ (มีการตรวจข้อมูล) — DBeaver ใช้ดูข้อมูลเป็นหลัก
+- `SELECT command denied ... mysql.user` = DBeaver พยายามอ่านรายชื่อผู้ใช้ระบบ ไม่ใช่ปัญหา กดปิดได้

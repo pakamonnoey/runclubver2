@@ -9,6 +9,7 @@
 SET NAMES utf8mb4;
 
 -- ลบจากตารางลูก → ตารางแม่ (ตารางที่มี FK ชี้ไปหาคนอื่นต้องลบก่อน)
+DROP TABLE IF EXISTS password_resets;
 DROP TABLE IF EXISTS registrations;
 DROP TABLE IF EXISTS run_sessions;
 DROP TABLE IF EXISTS club_owner_requests;  -- ตารางจากเวอร์ชันเก่า (ไม่ใช้แล้ว)
@@ -110,3 +111,17 @@ CREATE TABLE sessions (
   expires    INT UNSIGNED NOT NULL,
   data       MEDIUMTEXT COLLATE utf8mb4_bin
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ---------------------------------------------------------------------
+-- 7) password_resets : ลิงก์ "ลืมรหัสผ่าน" (เก็บเฉพาะ hash ของ token ใช้ได้ 30 นาที ครั้งเดียว)
+-- ---------------------------------------------------------------------
+CREATE TABLE password_resets (
+  id         INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  user_id    INT UNSIGNED NOT NULL,
+  token_hash CHAR(64) NOT NULL,                       -- SHA-256 ของ token ในลิงก์ (ไม่เก็บ token จริง)
+  expires_at DATETIME NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE KEY uq_reset_token (token_hash),
+  CONSTRAINT fk_reset_user FOREIGN KEY (user_id) REFERENCES users (id)
+    ON DELETE CASCADE                                 -- ลบผู้ใช้ → ลิงก์ของเขาหายตาม
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

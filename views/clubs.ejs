@@ -32,13 +32,15 @@
               <div class="club-info">
                 <h2><%= club.name %></h2>
 
-                <p><%= club.description %></p>
+                <!-- line-clamp ใน CSS ตัดคำอธิบายไว้ 3 บรรทัด → การ์ดสูงเท่ากัน (อ่านเต็มได้ในหน้ารายละเอียด) -->
+                <p class="club-description"><%= club.description %></p>
 
                 <div class="club-bottom">
-                  <p>📍 <%= club.location %></p>
-                  <% if (club.regular_schedule) { %>
-                  <p class="club-schedule">📅 <%= club.regular_schedule %></p>
-                  <% } %>
+                  <!-- รูปแบบเดียวกันทุกการ์ด: 📍 สถานที่ / 📅 เวลา — ไม่มีข้อมูลก็ไม่แสดงบรรทัดนั้น -->
+                  <ul class="club-meta">
+                    <% if (club.location) { %><li>📍 <%= club.location %></li><% } %>
+                    <% if (club.regular_schedule) { %><li>📅 <%= club.regular_schedule %></li><% } %>
+                  </ul>
 
                   <a href="/clubs/<%= club.id %>" class="instagram-button club-detail-link">ดูรายละเอียด</a>
 

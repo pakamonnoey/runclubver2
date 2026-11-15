@@ -9,6 +9,7 @@ const MySQLStore = require("express-mysql-session")(session);
 const pool = require("./config/db");
 const pageRoutes = require("./routes/pages");
 const authRoutes = require("./routes/auth");
+const passwordRoutes = require("./routes/password");
 const clubRoutes = require("./routes/clubs");
 const eventRoutes = require("./routes/events");
 const memberRoutes = require("./routes/member");
@@ -90,6 +91,7 @@ app.use(async (req, res, next) => {
 // 6) Routes
 app.use("/", pageRoutes); // Home, FAQ (สาธารณะ)
 app.use("/", authRoutes); // /register /login /logout
+app.use("/", passwordRoutes); // /forgot-password /reset-password/:token (ลืมรหัสผ่าน)
 app.use("/clubs", clubRoutes); // /clubs, /clubs/:id (ต้อง login)
 app.use("/events", eventRoutes); // /events, /events/:id, join, cancel (ต้อง login)
 app.use("/", memberRoutes); // /my-runs, /profile (ต้อง login)

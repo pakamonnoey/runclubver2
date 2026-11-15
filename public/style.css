@@ -12,6 +12,8 @@ body {
   margin: 0;
   background-color: #f7f5ef;
   color: #17202a;
+  font-size: 16px;
+  line-height: 1.65; /* ภาษาไทยมีสระบน-ล่าง ต้องเว้นบรรทัดมากกว่าภาษาอังกฤษ */
 }
 
 html {
@@ -337,7 +339,7 @@ html {
 /* Running Clubs*/
 
 .clubs-hero {
-  padding: 80px 0;
+  padding: 64px 0;
   background-color: #ff6b35;
   color: white;
 }
@@ -353,7 +355,7 @@ html {
 }
 
 .clubs-section {
-  padding: 80px 0;
+  padding: 64px 0;
   background-color: white;
 }
 
@@ -390,8 +392,8 @@ html {
 }
 
 .club-info p {
-  color: #666;
-  line-height: 1.6;
+  color: #555;
+  line-height: 1.65;
 }
 
 .club-bottom {
@@ -400,6 +402,10 @@ html {
 
 .club-bottom p {
   margin-bottom: 10px;
+}
+
+.club-bottom .instagram-button {
+  margin-top: 4px;
 }
 
 .instagram-button {
@@ -418,24 +424,7 @@ html {
 /* Events Page */
 
 .events-page {
-  padding: 70px 0 100px;
-}
-
-.events-header {
-  text-align: center;
-  margin-bottom: 40px;
-}
-
-.events-header h1 {
-  font-weight: bold;
-  font-size: 52px;
-  color: #ff6b35;
-  margin: 0;
-}
-
-.events-subtitle {
-  margin: 10px 0 0;
-  color: #666;
+  padding: 56px 0 64px;
 }
 
 .events-title {
@@ -455,8 +444,8 @@ html {
 .event-list-card {
   display: flex;
   align-items: center;
-  gap: 20px;
-  padding: 18px 0;
+  gap: 24px;
+  padding: 24px 0;
   border-bottom: 1px solid #ddd;
   text-decoration: none;
   color: #17202a;
@@ -481,7 +470,7 @@ html {
 }
 
 .event-date-box span {
-  font-size: 12px;
+  font-size: 14px;
   font-weight: bold;
 }
 
@@ -491,12 +480,13 @@ html {
 
 .event-list-info h3 {
   font-size: 21px;
-  margin: 0 0 7px;
+  line-height: 1.35;
+  margin: 2px 0 10px;
 }
 
 .event-list-info p {
   font-size: 14px;
-  color: #666;
+  color: #555;
   margin: 3px 0;
 }
 
@@ -508,7 +498,7 @@ html {
 /* Search*/
 
 .search-section {
-  padding: 10px 0 50px;
+  padding: 0 0 40px;
 }
 
 .search-box {
@@ -521,8 +511,7 @@ html {
   flex: 1;
 }
 
-.search-field input,
-.search-field select {
+.search-field input {
   width: 100%;
   height: 48px;
 
@@ -532,12 +521,39 @@ html {
   padding: 0 14px;
 
   background-color: transparent;
-  font-size: 14px;
+  font-size: 16px; /* 16px ขึ้นไป: iPhone จะไม่ซูมหน้าเองตอนแตะช่อง */
   outline: none;
 }
 
-.search-field input:focus,
-.search-field select:focus {
+.search-field input:focus {
+  border-color: #ff6b35;
+}
+
+/* dropdown: ซ่อนลูกศรเดิมของ browser (ชิดขอบ) แล้ววาดลูกศร SVG เอง เว้นจากขอบขวา 16px
+   ขนาด/ขอบ/ตัวอักษรเท่ากับช่องค้นหา */
+.filter-select {
+  width: 100%;
+  height: 48px;
+  padding: 0 40px 0 14px;
+
+  border: 1px solid #ccc;
+  border-radius: 8px;
+
+  appearance: none;
+  -webkit-appearance: none;
+  background-color: transparent;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%2317202a' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  background-size: 12px;
+
+  color: #17202a;
+  font-size: 16px;
+  outline: none;
+  cursor: pointer;
+}
+
+.filter-select:focus {
   border-color: #ff6b35;
 }
 
@@ -792,7 +808,7 @@ html {
 /* Login / Register */
 
 .auth-section {
-  padding: 60px 0 90px;
+  padding: 56px 0 64px;
 }
 
 .auth-card {
@@ -844,6 +860,28 @@ html {
 .auth-switch a {
   color: #ff6b35;
   font-weight: bold;
+}
+
+/* "รหัสผ่าน" ชิดซ้าย / "ลืมรหัสผ่าน?" ชิดขวา บรรทัดเดียวกัน */
+.label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.forgot-link {
+  font-size: 14px;
+  color: #ff6b35;
+  text-decoration: none;
+}
+
+.forgot-link:hover {
+  text-decoration: underline;
+}
+
+.auth-hint {
+  color: #555;
+  margin-bottom: 20px;
 }
 
 @media (max-width: 768px) {
@@ -925,10 +963,14 @@ html {
   color: white;
 }
 
+a.outline-button {
+  text-decoration: none; /* ปุ่มที่เป็นลิงก์ ไม่ต้องมีขีดเส้นใต้ */
+}
+
 /* Detail pages (event / club) */
 
 .detail-page {
-  padding: 40px 0 90px;
+  padding: 48px 0 64px;
 }
 
 .back-link {
@@ -995,11 +1037,10 @@ html {
 
 .detail-box {
   width: 360px;
-  padding: 28px;
+  padding: 24px;
   background-color: white;
   border-radius: 20px;
-  position: sticky;
-  top: 100px;
+  align-self: flex-start; /* สูงตามเนื้อหาของตัวเอง ไม่ยืดตามคอลัมน์ซ้าย (ไม่ใช้ sticky แล้ว — กล่องอยู่กับที่ ไม่เลื่อนตาม) */
 }
 
 .clubs-section .detail-box {
@@ -1007,9 +1048,14 @@ html {
 }
 
 .detail-box-title {
-  font-size: 24px;
+  font-size: 22px;
   font-weight: bold;
-  margin-bottom: 15px;
+  margin-bottom: 16px;
+}
+
+/* หัวข้อที่ 2 ในกล่องเดียวกัน — เว้นระยะจากส่วนบน */
+.detail-box-section {
+  margin-top: 32px;
 }
 
 .detail-facts {
@@ -1095,8 +1141,8 @@ html {
 
 .mini-event p {
   margin: 0;
-  font-size: 13px;
-  color: #666;
+  font-size: 14px;
+  color: #555;
 }
 
 .form-section-title {
@@ -1112,7 +1158,6 @@ html {
 
   .detail-box {
     width: 100%;
-    position: static;
   }
 
   .detail-image {
@@ -1400,16 +1445,10 @@ html {
 
 /* Club regular schedule, fee, source link */
 
-.club-schedule {
-  white-space: pre-line;
-  color: #17202a !important;
-  font-weight: 600;
-}
-
 .data-updated {
   margin: 20px 0 0;
-  font-size: 12px;
-  color: #999;
+  font-size: 14px;
+  color: #666;
 }
 
 .source-link {
@@ -1419,4 +1458,108 @@ html {
   font-size: 14px;
   color: #ff6b35;
   font-weight: bold;
+}
+
+/* ---------- UI polish: หัวข้อหน้า, ข้อมูลกิจกรรม/คลับแบบทีละบรรทัด ---------- */
+
+/* หัวข้อหน้าแบบเดียวทั้งเว็บ: ป้ายเล็กสีส้ม + หัวข้อใหญ่ + คำอธิบายสั้น */
+.page-title {
+  margin-bottom: 32px;
+}
+
+.page-title h1 {
+  margin: 0;
+  font-size: 44px;
+  font-weight: bold;
+  line-height: 1.2;
+  color: #17202a;
+}
+
+.page-lead {
+  margin: 8px 0 0;
+  color: #555;
+}
+
+/* ข้อมูลกิจกรรม (เวลา / สถานที่ / ค่าใช้จ่าย) บรรทัดละ 1 อย่าง */
+.event-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 15px;
+  color: #555; /* #555 บนพื้นครีม contrast ≈ 7:1 ผ่าน WCAG AA */
+}
+
+/* คำอธิบายคลับ: แสดงไม่เกิน 3 บรรทัด */
+.club-description {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  overflow: hidden;
+}
+
+/* ข้อมูลคลับ (📍 สถานที่ / 📅 เวลา) รูปแบบเดียวกันทั้งการ์ดและหน้ารายละเอียด */
+.club-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0 0 16px;
+  padding: 0;
+  list-style: none;
+  font-size: 15px;
+  color: #444;
+  white-space: pre-line;
+}
+
+.detail-box .club-meta {
+  margin-bottom: 20px;
+}
+
+@media (max-width: 768px) {
+  .page-title h1 {
+    font-size: 34px;
+  }
+
+  .clubs-hero {
+    padding: 48px 0;
+  }
+
+  .clubs-hero h1 {
+    font-size: 38px;
+    line-height: 1.2;
+  }
+
+  /* มือถือ: ปุ่ม/ลิงก์ที่กดได้ สูงอย่างน้อย 44px (นิ้วกดง่าย) */
+  .main-button,
+  .outline-button,
+  .instagram-button,
+  .search-button,
+  .menu a,
+  .menu-logout button {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .detail-button {
+    display: flex;
+  }
+
+  /* มือถือ: วันที่ + ข้อมูลอยู่แถวเดียวกัน ระยะทางลงไปอยู่บรรทัดใต้ข้อมูล (ข้อมูลไม่ถูกบีบ) */
+  .event-list-card {
+    align-items: flex-start;
+    gap: 12px 16px;
+  }
+
+  .event-list-info {
+    flex-basis: calc(100% - 76px);
+  }
+
+  .event-distance {
+    margin-left: 76px;
+  }
 }

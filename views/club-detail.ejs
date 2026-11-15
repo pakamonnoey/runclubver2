@@ -6,7 +6,6 @@
         <a href="/clubs" class="back-link back-link-light">← All Clubs</a>
         <p class="small-title">RUNNING CLUB</p>
         <h1><%= club.name %></h1>
-        <p>📍 <%= club.location %></p>
       </div>
     </section>
 
@@ -18,20 +17,22 @@
               <img src="<%= club.image || '/image/about.jpg' %>" alt="<%= club.name %>" />
             </div>
             <p class="detail-description"><%= club.description %></p>
-            <% if (club.instagram_url) { %>
-            <a href="<%= club.instagram_url %>" class="instagram-button" target="_blank" rel="noopener noreferrer">
-              Instagram →
-            </a>
-            <% } %>
           </div>
 
+          <!-- ข้อมูลคลับรวมไว้ที่กล่องขวาที่เดียว (สถานที่ / วิ่งประจำ / Instagram) ไม่ซ้ำกับส่วนหัว -->
           <aside class="detail-box">
-            <% if (club.regular_schedule) { %>
-            <h2 class="detail-box-title">วิ่งประจำ</h2>
-            <p class="club-schedule mb-4">📅 <%= club.regular_schedule %></p>
+            <h2 class="detail-box-title">ข้อมูลคลับ</h2>
+            <ul class="club-meta">
+              <% if (club.location) { %><li>📍 <%= club.location %></li><% } %>
+              <% if (club.regular_schedule) { %><li>📅 วิ่งประจำ: <%= club.regular_schedule %></li><% } %>
+            </ul>
+            <% if (club.instagram_url) { %>
+            <a href="<%= club.instagram_url %>" class="outline-button detail-button" target="_blank" rel="noopener noreferrer">
+              ดู Instagram ของคลับ ↗
+            </a>
             <% } %>
 
-            <h2 class="detail-box-title">Upcoming Runs</h2>
+            <h2 class="detail-box-title detail-box-section">Upcoming Runs</h2>
 
             <% if (events.length === 0) { %>
             <p class="empty-state">ยังไม่มีกิจกรรมที่กำลังจะมาถึง</p>
@@ -46,7 +47,7 @@
               <div>
                 <p class="event-type"><%= fmt.runTypeLabel(event.run_type) %></p>
                 <h3><%= event.title %></h3>
-                <p>🕐 <%= fmt.timeText(event.start_at) %> · <%= fmt.distanceText(event.distance_km) %></p>
+                <p>🕐 <%= fmt.timeText(event.start_at) %><% if (event.distance_km !== null) { %> · <%= fmt.distanceText(event.distance_km) %><% } %></p>
               </div>
             </a>
             <% }); %>

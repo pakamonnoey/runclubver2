@@ -3,6 +3,7 @@ const express = require("express");
 const bcrypt = require("bcrypt");
 const pool = require("../config/db");
 const { requireGuest } = require("../middleware/auth");
+const { checkNewPassword } = require("../utils/validators");
 
 const router = express.Router();
 
@@ -14,23 +15,13 @@ const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 // คืนค่าเป็น object { ชื่อช่อง: "ข้อความ error" } — ว่าง = ผ่าน
 // ---------------------------------------------------------------
 function validateRegister({ name, email, password, confirmPassword }) {
-  const errors = {};
+  const errors = checkNewPassword(password, confirmPassword); // กฎรหัสผ่าน (utils/validators.js)
 
   if (name.length < 2 || name.length > 100) {
     errors.name = "ชื่อต้องมี 2–100 ตัวอักษร";
   }
   if (!EMAIL_PATTERN.test(email) || email.length > 255) {
     errors.email = "รูปแบบอีเมลไม่ถูกต้อง";
-  }
-  if (password.length < 8) {
-    errors.password = "รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร";
-  } else if (Buffer.byteLength(password) > 72) {
-    errors.password = "รหัสผ่านยาวเกินไป"; // bcrypt ใช้ได้สูงสุด 72 bytes
-  } else if (!/[A-Za-z]/.test(password) || !/[0-9]/.test(password)) {
-    errors.password = "รหัสผ่านต้องมีทั้งตัวอักษรภาษาอังกฤษและตัวเลข";
-  }
-  if (password !== confirmPassword) {
-    errors.confirmPassword = "รหัสผ่านยืนยันไม่ตรงกัน";
   }
   return errors;
 }

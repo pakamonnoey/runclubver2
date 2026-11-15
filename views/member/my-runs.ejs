@@ -2,9 +2,10 @@
 
     <section class="events-page">
       <div class="container">
-        <div class="events-header">
+        <div class="page-title">
+          <p class="small-title">MY LIST</p>
           <h1>My Runs</h1>
-          <p class="events-subtitle">กิจกรรมที่คุณกด "สนใจ" เก็บไว้ — การสมัครจริงให้กดลิงก์ของผู้จัดในหน้ากิจกรรม</p>
+          <p class="page-lead">กิจกรรมที่คุณกด "สนใจ" เก็บไว้ — การสมัครจริงให้กดลิงก์ของผู้จัดในหน้ากิจกรรม</p>
         </div>
 
         <!-- กำลังจะมาถึง: เอาออกจากลิสต์ได้ -->
@@ -30,10 +31,11 @@
             <div class="event-list-info">
               <p class="event-type"><%= fmt.runTypeLabel(run.run_type) %> · <%= run.club_name %></p>
               <h3><a href="/events/<%= run.id %>" class="plain-link"><%= run.title %></a></h3>
-              <p>📍 <%= run.meeting_point %></p>
-              <p>🕐 <%= fmt.timeText(run.start_at) %>
-                <% if (run.status === 'cancelled') { %> · <span class="text-danger">กิจกรรมถูกยกเลิก</span><% } %>
-              </p>
+              <ul class="event-meta">
+                <li>🕐 <%= fmt.timeText(run.start_at) %></li>
+                <li>📍 <%= run.meeting_point %></li>
+                <% if (run.status === 'cancelled') { %><li class="text-danger">กิจกรรมถูกยกเลิก</li><% } %>
+              </ul>
             </div>
 
             <form action="/events/<%= run.id %>/unsave" method="POST"
@@ -64,7 +66,9 @@
             <div class="event-list-info">
               <p class="event-type"><%= fmt.runTypeLabel(run.run_type) %> · <%= run.club_name %></p>
               <h3><%= run.title %></h3>
-              <p>📍 <%= run.meeting_point %></p>
+              <ul class="event-meta">
+                <li>📍 <%= run.meeting_point %></li>
+              </ul>
             </div>
             <div class="event-distance"><%= fmt.distanceText(run.distance_km) %></div>
           </a>

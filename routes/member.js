@@ -3,6 +3,7 @@ const express = require("express");
 const bcrypt = require("bcrypt");
 const pool = require("../config/db");
 const { requireLogin } = require("../middleware/auth");
+const { checkNewPassword } = require("../utils/validators");
 
 const router = express.Router();
 
@@ -63,18 +64,11 @@ router.post("/profile/password", requireLogin, async (req, res) => {
   const currentPassword = String(req.body.currentPassword || "");
   const newPassword = String(req.body.newPassword || "");
   const confirmPassword = String(req.body.confirmPassword || "");
+  // กฎรหัสผ่านเดียวกับตอนสมัคร (utils/validators.js) — ฟอร์มนี้ใช้ชื่อช่อง newPassword
+  const check = checkNewPassword(newPassword, confirmPassword);
   const errors = {};
-
-  if (newPassword.length < 8) {
-    errors.newPassword = "รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร";
-  } else if (Buffer.byteLength(newPassword) > 72) {
-    errors.newPassword = "รหัสผ่านยาวเกินไป";
-  } else if (!/[A-Za-z]/.test(newPassword) || !/[0-9]/.test(newPassword)) {
-    errors.newPassword = "รหัสผ่านต้องมีทั้งตัวอักษรภาษาอังกฤษและตัวเลข";
-  }
-  if (newPassword !== confirmPassword) {
-    errors.confirmPassword = "รหัสผ่านยืนยันไม่ตรงกัน";
-  }
+  if (check.password) errors.newPassword = check.password;
+  if (check.confirmPassword) errors.confirmPassword = check.confirmPassword;
 
   const [rows] = await pool.query("SELECT password_hash FROM users WHERE id = ?", [req.session.user.id]);
   if (!(await bcrypt.compare(currentPassword, rows[0].password_hash))) {
