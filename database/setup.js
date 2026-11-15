@@ -3,7 +3,8 @@
 //
 // ⚠️ runbkk.sql ลบตารางเดิมทิ้งก่อนสร้างใหม่ → ถ้าใน DB มีข้อมูลอยู่แล้ว สคริปต์จะหยุดก่อน
 //    ถ้าต้องการล้างจริงๆ:  npm run db:setup -- --force
-require("dotenv").config({ quiet: true });
+// ENV_FILE=.env.production → ใช้ค่าเชื่อมต่อ DB บน cloud แทน (ค่าเริ่มต้นคือ .env)
+require("dotenv").config({ path: process.env.ENV_FILE || ".env", quiet: true });
 
 const fs = require("fs");
 const path = require("path");
@@ -20,9 +21,11 @@ async function main() {
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
     charset: "utf8mb4",
-    ssl: process.env.DB_SSL === "true" ? { rejectUnauthorized: true } : undefined,
+    ssl: process.env.DB_SSL === "true" ? { minVersion: "TLSv1.2", rejectUnauthorized: true } : undefined,
     multipleStatements: true, // อนุญาตให้รันหลายคำสั่งในครั้งเดียว (ใช้เฉพาะสคริปต์นี้)
   });
+
+  console.log(`→ ${process.env.DB_HOST} / ${process.env.DB_NAME}`); // บอกว่ากำลังจะทำกับ DB ไหน
 
   try {
     // ---- ตัวกันพลาด: มีตารางของโปรเจกต์อยู่แล้วหรือยัง ----

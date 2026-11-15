@@ -1,7 +1,8 @@
 // เลื่อนบัญชีที่สมัครไว้แล้วให้เป็น admin
 // วิธีใช้:  npm run make-admin -- you@example.com
 // (สมัครผ่านหน้าเว็บก่อน → รหัสผ่านถูก hash ด้วยโค้ดเดียวกับผู้ใช้ทั่วไป สคริปต์นี้ไม่ยุ่งกับรหัสผ่าน)
-require("dotenv").config({ quiet: true });
+// ENV_FILE=.env.production → ใช้ค่าเชื่อมต่อ DB บน cloud แทน (ค่าเริ่มต้นคือ .env)
+require("dotenv").config({ path: process.env.ENV_FILE || ".env", quiet: true });
 const pool = require("../config/db");
 
 async function main() {
