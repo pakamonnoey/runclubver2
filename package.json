@@ -7,7 +7,8 @@
     "start": "node app.js",
     "dev": "nodemon app.js",
     "db:setup": "node database/setup.js",
-    "make-admin": "node database/make-admin.js"
+    "make-admin": "node database/make-admin.js",
+    "db:pull": "node database/pull.js"
   },
   "repository": {
     "type": "git",

@@ -109,3 +109,29 @@ Host `127.0.0.1` · Port `3306` · Database `runbkk` · Username `runbkk_app` ·
 - `run_sessions.status` ต้องเป็น `published` ถึงจะแสดงบนเว็บ / ข้อมูลที่ยังไม่ยืนยันใช้ `draft`
 - `start_at` เป็นเวลาไทย รูปแบบ `2026-11-22 06:00:00`
 - กรอกเสร็จ → export ข้อมูลไปไว้ใน `seed.sql` เพื่อให้ตอน deploy มีข้อมูลเดียวกัน
+
+## Development vs Production
+
+| | Development (ในเครื่อง) | Production (เว็บจริง) |
+|---|---|---|
+| DB | MariaDB ในเครื่อง (`.env`) | TiDB Cloud (`.env.production` / Environment ของ Render) |
+| ข้อมูล | ข้อมูลทดสอบ — พัง/ลบได้ | ข้อมูลจริง — กรอกผ่านหน้า Admin ของเว็บจริง |
+| โครงสร้างตาราง | `runbkk.sql` ไฟล์เดียวกัน | `runbkk.sql` ไฟล์เดียวกัน |
+
+### ดึงข้อมูลจริงลงเครื่อง
+
+```bash
+npm run db:pull
+```
+
+- copy `clubs` + `run_sessions` จากเว็บจริง → DB ในเครื่อง (ทางเดียว ไม่เขียนกลับขึ้นเว็บจริง)
+- ไม่ดึง `users` / `registrations` (ข้อมูลส่วนตัว) → บัญชีในเครื่องยังเป็นของเดิม
+- การ Join ในเครื่องถูกล้าง (เพราะกิจกรรมเปลี่ยนเป็นชุดจากเว็บจริง)
+- ก่อนเขียน จะแสดงสิ่งที่ต่างกัน (เพิ่ม / แก้คอลัมน์ไหน / ลบ — ไม่นับ `created_at`, `updated_at`)
+  และ**ถามยืนยัน (พิมพ์ `y`)** ถ้าข้อมูลในเครื่องจะถูกลบหรือทับ · ถ้ามีแค่ข้อมูลใหม่จะทำต่อเลย · ข้ามการถาม: `npm run db:pull -- --yes`
+
+### DBeaver: เชื่อมต่อ DB เว็บจริง (TiDB)
+
+New Database Connection → **MySQL** → Host / Port `4000` / Database `runbkk` / Username / Password จาก `.env.production`
+→ แท็บ **SSL**: ติ๊ก Use SSL + Require SSL
+→ **General**: ตั้งชื่อ `RUN BKK – PRODUCTION` และ Connection type = **Production** (DBeaver จะแสดงสีแดงและถามยืนยันก่อนแก้ข้อมูล)
