@@ -16,7 +16,7 @@
 
         <div class="event-list">
           <% if (upcoming.length === 0) { %>
-          <p class="empty-state">ยังไม่มีกิจกรรมในลิสต์ — <a href="/events">ดูกิจกรรมทั้งหมด</a> แล้วกด ☆ สนใจ</p>
+          <p class="empty-state">ยังไม่มีกิจกรรมในลิสต์ — <a href="/events">ดูกิจกรรมทั้งหมด</a> แล้วกดสนใจ</p>
           <% } %>
 
           <% upcoming.forEach(function (run) { %>
@@ -30,10 +30,10 @@
 
             <div class="event-list-info">
               <p class="event-type"><%= fmt.runTypeLabel(run.run_type) %> · <%= run.club_name %></p>
-              <h3><a href="/events/<%= run.id %>" class="plain-link"><%= run.title %></a></h3>
+              <h3><a href="/events/<%= run.id %>?from=my-runs" class="plain-link"><%= run.title %></a></h3>
               <ul class="event-meta">
-                <li>🕐 <%= fmt.timeText(run.start_at) %></li>
-                <li>📍 <%= run.meeting_point %></li>
+                <li><%- include('../partials/icon', { name: 'clock' }) %> <%= fmt.timeText(run.start_at) %></li>
+                <li><%- include('../partials/icon', { name: 'pin' }) %> <%= run.meeting_point %></li>
                 <% if (run.status === 'cancelled') { %><li class="text-danger">กิจกรรมถูกยกเลิก</li><% } %>
               </ul>
             </div>
@@ -57,7 +57,7 @@
 
         <div class="event-list past-list">
           <% past.forEach(function (run) { %>
-          <a href="/events/<%= run.id %>" class="event-list-card">
+          <a href="/events/<%= run.id %>?from=my-runs" class="event-list-card">
             <img src="<%= run.image || run.club_image || '/image/about.jpg' %>" alt="<%= run.title %>" />
             <div class="event-date-box">
               <strong><%= fmt.dayNumber(run.start_at) %></strong>
@@ -67,7 +67,7 @@
               <p class="event-type"><%= fmt.runTypeLabel(run.run_type) %> · <%= run.club_name %></p>
               <h3><%= run.title %></h3>
               <ul class="event-meta">
-                <li>📍 <%= run.meeting_point %></li>
+                <li><%- include('../partials/icon', { name: 'pin' }) %> <%= run.meeting_point %></li>
               </ul>
             </div>
             <div class="event-distance"><%= fmt.distanceText(run.distance_km) %></div>

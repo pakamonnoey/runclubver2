@@ -1,61 +1,49 @@
 <%- include('partials/head', { title: club.name + ' - RUN BKK' }) %>
 
-    <!-- ใช้ส่วนหัวสีส้มแบบเดียวกับหน้า Clubs -->
-    <section class="clubs-hero">
+    <section class="detail-page">
       <div class="container">
-        <a href="/clubs" class="back-link back-link-light">← All Clubs</a>
-        <p class="small-title">RUNNING CLUB</p>
-        <h1><%= club.name %></h1>
-      </div>
-    </section>
+        <a href="/clubs" class="back-link">← กลับไป All Clubs</a>
 
-    <section class="clubs-section">
-      <div class="container">
-        <div class="detail-layout">
-          <div class="detail-main">
-            <div class="detail-image">
-              <img src="<%= club.image || '/image/about.jpg' %>" alt="<%= club.name %>" />
+        <!-- ส่วนบน: ข้อมูลคลับทั้งหมดรวมในการ์ดเดียว (โลโก้ / ชื่อ / ข้อมูลย่อ / คำอธิบาย) -->
+        <div class="club-profile">
+          <div class="club-detail-head">
+            <img class="club-logo club-logo-lg" src="<%= club.image || '/image/about.jpg' %>" alt="<%= club.name %>" />
+            <div>
+              <p class="small-title">RUNNING CLUB</p>
+              <h1><%= club.name %></h1>
             </div>
-            <p class="detail-description"><%= club.description %></p>
           </div>
 
-          <!-- ข้อมูลคลับรวมไว้ที่กล่องขวาที่เดียว (สถานที่ / วิ่งประจำ / Instagram) ไม่ซ้ำกับส่วนหัว -->
-          <aside class="detail-box">
-            <h2 class="detail-box-title">ข้อมูลคลับ</h2>
-            <ul class="club-meta">
-              <% if (club.location) { %><li>📍 <%= club.location %></li><% } %>
-              <% if (club.regular_schedule) { %><li>📅 วิ่งประจำ: <%= club.regular_schedule %></li><% } %>
-            </ul>
+          <p class="detail-description"><%= club.description %></p>
+
+          <ul class="club-meta club-profile-meta">
+            <% if (club.location) { %><li><%- include('partials/icon', { name: 'pin' }) %> <%= club.location %></li><% } %>
+            <% if (club.regular_schedule) { %><li><%- include('partials/icon', { name: 'calendar' }) %> วิ่งประจำ: <%= club.regular_schedule %></li><% } %>
             <% if (club.instagram_url) { %>
-            <a href="<%= club.instagram_url %>" class="outline-button detail-button" target="_blank" rel="noopener noreferrer">
-              ดู Instagram ของคลับ ↗
-            </a>
+            <li><%- include('partials/icon', { name: 'instagram' }) %> <a href="<%= club.instagram_url %>" class="ig-link" target="_blank" rel="noopener noreferrer"><%= fmt.instagramHandle(club.instagram_url) %></a></li>
             <% } %>
-
-            <h2 class="detail-box-title detail-box-section">Upcoming Runs</h2>
-
-            <% if (events.length === 0) { %>
-            <p class="empty-state">ยังไม่มีกิจกรรมที่กำลังจะมาถึง</p>
-            <% } %>
-
-            <% events.forEach(function (event) { %>
-            <a href="/events/<%= event.id %>" class="mini-event">
-              <div class="event-date-box">
-                <strong><%= fmt.dayNumber(event.start_at) %></strong>
-                <span><%= fmt.monthShort(event.start_at) %></span>
-              </div>
-              <div>
-                <p class="event-type"><%= fmt.runTypeLabel(event.run_type) %></p>
-                <h3><%= event.title %></h3>
-                <p>🕐 <%= fmt.timeText(event.start_at) %><% if (event.distance_km !== null) { %> · <%= fmt.distanceText(event.distance_km) %><% } %></p>
-              </div>
-            </a>
-            <% }); %>
-
-            <!-- updated_at: DB อัปเดตให้อัตโนมัติทุกครั้งที่แก้ข้อมูลคลับ -->
-            <p class="data-updated">ข้อมูลอัปเดตล่าสุด <%= fmt.thaiDate(club.updated_at) %></p>
-          </aside>
+          </ul>
         </div>
+
+        <!-- ส่วนหลักของหน้า: กิจกรรมที่กำลังจะมาถึงของคลับนี้ (การ์ดแบบเดียวกับหน้า Events) -->
+        <h2 class="club-events-title">กิจกรรมที่กำลังจะมาถึง <span>(<%= events.length %>)</span></h2>
+
+        <div class="event-list">
+          <% if (events.length === 0) { %>
+          <p class="empty-state">
+            ยังไม่มีกิจกรรมที่กำลังจะมาถึง
+            <% if (club.instagram_url) { %><br />ติดตามประกาศของคลับได้ที่ <a href="<%= club.instagram_url %>" target="_blank" rel="noopener noreferrer"><%= fmt.instagramHandle(club.instagram_url) %></a><% } %>
+          </p>
+          <% } %>
+
+          <% events.forEach(function (event) { %>
+          <!-- ?from=club → หน้ากิจกรรมจะมีลิงก์ย้อนกลับมาที่คลับนี้ -->
+          <%- include('partials/event-row', { event, href: '/events/' + event.id + '?from=club', showClub: false }) %>
+          <% }); %>
+        </div>
+
+        <!-- updated_at: DB อัปเดตให้อัตโนมัติทุกครั้งที่แก้ข้อมูลคลับ -->
+        <p class="data-updated">ข้อมูลคลับอัปเดตล่าสุด <%= fmt.thaiDate(club.updated_at) %></p>
       </div>
     </section>
 

@@ -49,9 +49,26 @@
               เจอกิจกรรมที่ชอบก็กด "สนใจ" เก็บไว้ในลิสต์ของคุณ
               แล้วสมัครกับผู้จัดหรือไปตามจุดนัดได้เลย ไม่ว่าจะเป็นมือใหม่หรือวิ่งเป็นประจำ
             </p>
-
-            <a href="/clubs" class="main-button">ดูคลับวิ่งทั้งหมด →</a>
           </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Running Clubs: โลโก้คลับทั้งหมดจาก DB (routes/pages.js) — แสดงเป็นรูปอย่างเดียว ไม่มีลิงก์ -->
+    <section class="home-clubs-section" id="clubs">
+      <div class="container">
+        <div class="section-heading">
+          <div>
+            <p class="small-title">FIND YOUR CREW</p>
+            <h2>Running Clubs</h2>
+          </div>
+        </div>
+
+        <div class="club-logos">
+          <% clubs.forEach(function (club) { %>
+          <!-- alt = ชื่อคลับ (โปรแกรมอ่านหน้าจออ่านได้) / title = ชี้เมาส์แล้วเห็นชื่อ -->
+          <img src="<%= club.image %>" alt="<%= club.name %>" title="<%= club.name %>" loading="lazy" />
+          <% }); %>
         </div>
       </div>
     </section>
@@ -74,8 +91,11 @@
           <% events.forEach(function (event) { %>
           <div class="col-md-4">
             <a href="/events/<%= event.id %>" class="event-card card-link">
+              <!-- รูป 2 ชั้น: ชั้นล่าง = รูปเดิมเบลอเต็มกรอบ (พื้นหลัง) / ชั้นบน = โปสเตอร์เต็มรูป ไม่ถูกตัด -->
               <div class="event-image">
+                <img class="poster-bg" src="<%= event.image || event.club_image || '/image/about.jpg' %>" alt="" aria-hidden="true" loading="lazy" />
                 <img
+                  class="poster-main"
                   src="<%= event.image || event.club_image || '/image/about.jpg' %>"
                   alt="<%= event.title %>"
                   loading="lazy"
@@ -92,8 +112,8 @@
 
                 <h3><%= event.title %></h3>
 
-                <p>📍 <%= event.meeting_point %></p>
-                <p>🕐 <%= fmt.timeText(event.start_at) %></p>
+                <p><%- include('partials/icon', { name: 'pin' }) %> <%= event.meeting_point %></p>
+                <p><%- include('partials/icon', { name: 'clock' }) %> <%= fmt.timeText(event.start_at) %></p>
               </div>
             </a>
           </div>

@@ -2,13 +2,16 @@
 
     <section class="detail-page">
       <div class="container">
-        <a href="/events" class="back-link">← All Events</a>
+        <!-- back มาจาก routes/events.js: กลับไปหน้าที่เปิดมา (Events / หน้าคลับ / My Runs) -->
+        <a href="<%= back.href %>" class="back-link">← กลับไป <%= back.label %></a>
 
         <div class="detail-layout">
           <!-- รูป + รายละเอียด -->
           <div class="detail-main">
-            <div class="detail-image">
-              <img src="<%= event.image || event.club_image || '/image/about.jpg' %>" alt="<%= event.title %>" />
+            <!-- โปสเตอร์เต็มรูป (ไม่ตัด) + พื้นหลังเบลอจากรูปเดียวกัน — เทคนิคเดียวกับการ์ดหน้า Home -->
+            <div class="detail-image detail-poster">
+              <img class="poster-bg" src="<%= event.image || event.club_image || '/image/about.jpg' %>" alt="" aria-hidden="true" />
+              <img class="poster-main" src="<%= event.image || event.club_image || '/image/about.jpg' %>" alt="<%= event.title %>" />
             </div>
 
             <p class="event-type"><%= fmt.runTypeLabel(event.run_type) %></p>
@@ -26,15 +29,15 @@
           <!-- กล่องข้อมูล + ปุ่ม -->
           <aside class="detail-box">
             <ul class="detail-facts">
-              <li><span>📅 วันที่</span><strong><%= fmt.thaiDate(event.start_at) %></strong></li>
-              <li><span>🕐 เวลา</span><strong><%= fmt.timeText(event.start_at) %></strong></li>
-              <li><span>📍 จุดนัดพบ</span><strong><%= event.meeting_point %></strong></li>
+              <li><span><%- include('partials/icon', { name: 'calendar' }) %> วันที่</span><strong><%= fmt.thaiDate(event.start_at) %></strong></li>
+              <li><span><%- include('partials/icon', { name: 'clock' }) %> เวลา</span><strong><%= fmt.timeText(event.start_at) %></strong></li>
+              <li><span><%- include('partials/icon', { name: 'pin' }) %> จุดนัดพบ</span><strong><%= event.meeting_point %></strong></li>
               <% if (event.distance_km !== null) { %>
-              <li><span>🏃 ระยะทาง</span><strong><%= fmt.distanceText(event.distance_km) %></strong></li>
+              <li><span><%- include('partials/icon', { name: 'route' }) %> ระยะทาง</span><strong><%= fmt.distanceText(event.distance_km) %></strong></li>
               <% } %>
               <!-- fee ว่าง = ฟรี (กิจกรรมส่วนใหญ่ฟรี admin กรอกเฉพาะที่มีค่าใช้จ่าย) -->
-              <li><span>💰 ค่าใช้จ่าย</span><strong><%= event.fee || 'ฟรี' %></strong></li>
-              <li><span>⭐ คนสนใจ</span><strong><%= event.saved_count %> คน</strong></li>
+              <li><span><%- include('partials/icon', { name: 'coins' }) %> ค่าใช้จ่าย</span><strong><%= event.fee || 'ฟรี' %></strong></li>
+              <li><span><%- include('partials/icon', { name: 'star' }) %> คนสนใจ</span><strong><%= event.saved_count %> คน</strong></li>
             </ul>
 
             <% if (event.status === 'cancelled') { %>
@@ -54,11 +57,13 @@
               <% if (isSaved) { %>
               <p class="detail-status status-joined">✓ อยู่ในลิสต์ของคุณแล้ว</p>
               <form action="/events/<%= event.id %>/unsave" method="POST">
+                <% if (from) { %><input type="hidden" name="from" value="<%= from %>" /><% } %>
                 <button type="submit" class="outline-button detail-button">เอาออกจากลิสต์</button>
               </form>
               <% } else { %>
               <form action="/events/<%= event.id %>/save" method="POST">
-                <button type="submit" class="outline-button detail-button">☆ สนใจ · เพิ่มลงลิสต์ของฉัน</button>
+                <% if (from) { %><input type="hidden" name="from" value="<%= from %>" /><% } %>
+                <button type="submit" class="outline-button detail-button"><%- include('partials/icon', { name: 'star' }) %> สนใจ · เพิ่มลงลิสต์ของฉัน</button>
               </form>
               <% } %>
             </div>

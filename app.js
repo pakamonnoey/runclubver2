@@ -1,4 +1,4 @@
-// RUN BKK — จุดเริ่มต้นของเซิร์ฟเวอร์
+// RUN BKK จุดเริ่มต้นของเซิร์ฟเวอร์
 require("dotenv").config({ quiet: true }); // โหลดค่าจากไฟล์ .env เข้า process.env
 
 const path = require("path");

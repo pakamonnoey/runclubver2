@@ -8,9 +8,13 @@ const router = express.Router();
 router.use(requireLogin);
 
 // GET /clubs — เฉพาะคลับที่ published (ข้อมูลที่ยืนยันแล้ว)
+// ไม่มีช่องค้นหา: คลับมีไม่กี่คลับ ดูทั้งหมดในหน้าเดียวได้เลย
+// upcoming_count = จำนวนกิจกรรมที่กำลังจะมาถึงของคลับนั้น (subquery นับจาก run_sessions)
 router.get("/", async (req, res) => {
   const [clubs] = await pool.query(
-    `SELECT id, name, description, location, regular_schedule, instagram_url, image
+    `SELECT id, name, description, location, regular_schedule, instagram_url, image,
+            (SELECT COUNT(*) FROM run_sessions rs
+             WHERE rs.club_id = clubs.id AND rs.status = 'published' AND rs.start_at >= NOW()) AS upcoming_count
      FROM clubs
      WHERE status = 'published'
      ORDER BY id`

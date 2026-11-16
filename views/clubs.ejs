@@ -1,60 +1,46 @@
 <%- include('partials/head', { title: 'Running Clubs - RUN BKK' }) %>
 
-    <!-- Clubs Hero -->
-
-    <section class="clubs-hero">
+    <!-- หน้ารายการคลับ: หัวข้อแบบเดียวกับหน้า Events (พื้นครีม ป้ายส้มเล็ก หัวข้อเข้ม) -->
+    <section class="clubs-page">
       <div class="container">
-        <p class="small-title">RUN TOGETHER</p>
+        <div class="page-title">
+          <p class="small-title">RUN TOGETHER</p>
+          <h1>Running Clubs</h1>
+          <p class="page-lead">Find a running community and meet new people in Bangkok.</p>
+        </div>
 
-        <h1>Running Clubs</h1>
+        <% if (clubs.length === 0) { %>
+        <p class="empty-state">ยังไม่มีข้อมูลคลับ</p>
+        <% } %>
 
-        <p>Find a running community and meet new people in Bangkok.</p>
-      </div>
-    </section>
-
-    <!-- Club List -->
-
-    <section class="clubs-section">
-      <div class="container">
         <div class="row g-4 align-items-stretch">
-          <% if (clubs.length === 0) { %>
-          <p class="text-center">ยังไม่มีข้อมูลคลับ</p>
-          <% } %>
-
-          <!-- 1 การ์ด ต่อ 1 แถวใน clubs (ข้อมูลมาจาก routes/pages.js) -->
+          <!-- 1 การ์ด ต่อ 1 แถวใน clubs (ข้อมูลมาจาก routes/clubs.js) -->
           <% clubs.forEach(function (club) { %>
-          <div class="col-md-4">
+          <div class="col-md-6 col-lg-4">
             <div class="club-card">
-              <div class="club-image">
-                <img src="<%= club.image || '/image/about.jpg' %>" alt="<%= club.name %>" />
+              <!-- ส่วนหัวการ์ด: โลโก้เล็ก (สี่เหลี่ยมจัตุรัส = สัดส่วนเดียวกับโลโก้ → ไม่ถูกตัด) + ชื่อคลับ -->
+              <div class="club-card-head">
+                <img class="club-logo" src="<%= club.image || '/image/about.jpg' %>" alt="<%= club.name %>" loading="lazy" />
+                <h2><%= club.name %></h2>
               </div>
 
-              <div class="club-info">
-                <h2><%= club.name %></h2>
+              <!-- คำอธิบายแสดงเต็ม (แต่ละคลับยาวแค่ 2–4 บรรทัด) -->
+              <p class="club-description"><%= club.description %></p>
 
-                <!-- line-clamp ใน CSS ตัดคำอธิบายไว้ 3 บรรทัด → การ์ดสูงเท่ากัน (อ่านเต็มได้ในหน้ารายละเอียด) -->
-                <p class="club-description"><%= club.description %></p>
-
-                <div class="club-bottom">
-                  <!-- รูปแบบเดียวกันทุกการ์ด: 📍 สถานที่ / 📅 เวลา — ไม่มีข้อมูลก็ไม่แสดงบรรทัดนั้น -->
-                  <ul class="club-meta">
-                    <% if (club.location) { %><li>📍 <%= club.location %></li><% } %>
-                    <% if (club.regular_schedule) { %><li>📅 <%= club.regular_schedule %></li><% } %>
-                  </ul>
-
-                  <a href="/clubs/<%= club.id %>" class="instagram-button club-detail-link">ดูรายละเอียด</a>
-
+              <div class="club-bottom">
+                <!-- รูปแบบเดียวกันทุกการ์ด: สถานที่ / ตารางวิ่ง / IG — ไม่มีข้อมูลก็ไม่แสดงบรรทัดนั้น -->
+                <ul class="club-meta">
+                  <% if (club.location) { %><li><%- include('partials/icon', { name: 'pin' }) %> <%= club.location %></li><% } %>
+                  <% if (club.regular_schedule) { %><li><%- include('partials/icon', { name: 'calendar' }) %> <%= club.regular_schedule %></li><% } %>
                   <% if (club.instagram_url) { %>
-                  <a
-                    href="<%= club.instagram_url %>"
-                    class="instagram-button"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Instagram →
-                  </a>
+                  <li><%- include('partials/icon', { name: 'instagram' }) %> <a href="<%= club.instagram_url %>" class="ig-link" target="_blank" rel="noopener noreferrer"><%= fmt.instagramHandle(club.instagram_url) %></a></li>
                   <% } %>
-                </div>
+                </ul>
+
+                <!-- ปุ่มหลัก: พาไปดูกิจกรรมของคลับ — บอกจำนวนให้รู้ก่อนกด (upcoming_count จาก routes/clubs.js) -->
+                <a href="/clubs/<%= club.id %>" class="main-button club-button">
+                  <% if (club.upcoming_count > 0) { %>ดูกิจกรรมของคลับ (<%= club.upcoming_count %>)<% } else { %>ดูข้อมูลคลับ<% } %>
+                </a>
               </div>
             </div>
           </div>

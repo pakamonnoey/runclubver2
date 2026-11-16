@@ -38,6 +38,17 @@ module.exports = {
 
   runTypeLabel: (type) => RUN_TYPES[type] || type,
 
+  // ชื่อบัญชี IG จากลิงก์ เช่น "https://www.instagram.com/sabairunclub.bkk/" → "@sabairunclub.bkk"
+  // ดึงจาก URL ที่ admin กรอกไว้ ไม่ได้แต่งชื่อเอง; อ่านไม่ได้ → แสดงคำว่า Instagram แทน
+  instagramHandle: (url) => {
+    try {
+      const name = new URL(url).pathname.split("/").filter(Boolean)[0];
+      return name ? "@" + name : "Instagram";
+    } catch {
+      return "Instagram";
+    }
+  },
+
   // ค่าสำหรับเติมใน <input type="datetime-local"> เช่น "2026-11-22T06:00" (เวลาไทย)
   // locale sv-SE ให้รูปแบบ "2026-11-22 06:00:00" ซึ่งตัดต่อได้ง่าย
   inputDateTime: (date) =>

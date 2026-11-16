@@ -85,30 +85,7 @@
           <% } %>
 
           <% events.forEach(function (event) { %>
-          <a href="/events/<%= event.id %>" class="event-list-card">
-            <img src="<%= event.image || event.club_image || '/image/about.jpg' %>" alt="<%= event.title %>" />
-
-            <div class="event-date-box">
-              <strong><%= fmt.dayNumber(event.start_at) %></strong>
-              <span><%= fmt.monthShort(event.start_at) %></span>
-            </div>
-
-            <div class="event-list-info">
-              <p class="event-type"><%= fmt.runTypeLabel(event.run_type) %> · <%= event.club_name %></p>
-
-              <h3><%= event.title %></h3>
-
-              <!-- ข้อมูลแยกทีละบรรทัด อ่านง่ายกว่าเขียนต่อกันด้วย · -->
-              <ul class="event-meta">
-                <li>🕐 <%= fmt.timeText(event.start_at) %></li>
-                <li>📍 <%= event.meeting_point %></li>
-                <li>💰 <%= event.fee || 'ฟรี' %></li>
-                <% if (event.saved_count > 0) { %><li>⭐ <%= event.saved_count %> คนสนใจ</li><% } %>
-              </ul>
-            </div>
-
-            <div class="event-distance"><%= fmt.distanceText(event.distance_km) %></div>
-          </a>
+          <%- include('partials/event-row', { event, href: '/events/' + event.id, showClub: true }) %>
           <% }); %>
         </div>
       </div>

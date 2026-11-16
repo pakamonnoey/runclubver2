@@ -14,7 +14,17 @@ router.get("/", async (req, res) => {
      ORDER BY rs.start_at
      LIMIT 3`
   );
-  res.render("index", { events });
+
+  // โลโก้คลับทั้งหมด — แสดงเป็นรูปอย่างเดียว ให้คนที่เข้ามาเห็นว่าเว็บมีคลับอะไรบ้าง
+  // ดึงแค่ชื่อกับรูป (ข้อมูลเต็มของคลับอยู่ที่หน้า /clubs)
+  const [clubs] = await pool.query(
+    `SELECT name, image
+     FROM clubs
+     WHERE status = 'published' AND image IS NOT NULL
+     ORDER BY id`
+  );
+
+  res.render("index", { events, clubs });
 });
 
 router.get("/faq", (req, res) => res.render("faq"));

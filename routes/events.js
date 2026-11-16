@@ -102,8 +102,22 @@ router.get("/:id", async (req, res, next) => {
     [req.session.user.id, id]
   );
 
+  // ลิงก์ย้อนกลับ: ดู ?from= ว่าผู้ใช้เปิดมาจากหน้าไหน แล้วพากลับไปหน้านั้น
+  // รับเฉพาะ 2 ค่าที่กำหนดไว้ ค่าอื่นถือว่ามาจากหน้า Events (ไม่เอาค่าจาก URL ไปใช้เป็นลิงก์ตรงๆ)
+  let from = "";
+  let back = { href: "/events", label: "All Events" };
+  if (req.query.from === "club") {
+    from = "club";
+    back = { href: `/clubs/${event.club_id}`, label: event.club_name };
+  } else if (req.query.from === "my-runs") {
+    from = "my-runs";
+    back = { href: "/my-runs", label: "My Runs" };
+  }
+
   res.render("event-detail", {
     event,
+    from,
+    back,
     isSaved: saved.length > 0,
     isPast: new Date(event.start_at) < new Date(),
   });
@@ -114,7 +128,9 @@ router.get("/:id", async (req, res, next) => {
 // ===============================================================
 router.post("/:id/save", async (req, res) => {
   const id = Number(req.params.id);
-  const back = `/events/${id}`;
+  // กลับไปหน้าเดิมพร้อม ?from= เดิม (ลิงก์ย้อนกลับจะยังชี้ไปหน้าคลับ / My Runs ที่เปิดมา)
+  const from = ["club", "my-runs"].includes(req.body.from) ? req.body.from : "";
+  const back = from ? `/events/${id}?from=${from}` : `/events/${id}`;
   if (!Number.isInteger(id) || id <= 0) return res.redirect("/events");
 
   // ตรวจฝั่ง server ด้วย (ปุ่มในหน้าเว็บซ่อนได้ แต่คนยิง request ตรงได้):
@@ -156,8 +172,10 @@ router.post("/:id/unsave", async (req, res) => {
       ? { type: "success", message: "เอาออกจากลิสต์แล้ว" }
       : { type: "danger", message: "กิจกรรมนี้ไม่ได้อยู่ในลิสต์ของคุณ" };
 
-  // กลับไปหน้าที่กดมา (My Runs หรือ Event Detail) — รับเฉพาะ path ภายในเว็บ
-  const from = req.body.from === "my-runs" ? "/my-runs" : `/events/${id}`;
+  // กลับไปหน้าที่กดมา (My Runs หรือ Event Detail) — เลือกจากค่าที่กำหนดไว้เท่านั้น ไม่เอา URL จากผู้ใช้ไป redirect ตรงๆ
+  let from = `/events/${id}`;
+  if (req.body.from === "my-runs") from = "/my-runs";
+  if (req.body.from === "club") from = `/events/${id}?from=club`;
   res.redirect(from);
 });
 

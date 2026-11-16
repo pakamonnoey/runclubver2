@@ -11,7 +11,7 @@
       aria-expanded="false"
       onclick="toggleMenu()"
     >
-      ☰
+      <%- include('icon', { name: 'menu' }) %>
     </button>
     <div class="menu" id="menu">
       <a href="/">Home</a>
@@ -27,7 +27,7 @@
       <% if (currentUser.role === 'admin') { %>
       <a href="/admin" class="menu-dashboard">Admin</a>
       <% } %>
-      <a href="/profile" class="menu-user">👋 <%= currentUser.name %></a>
+      <a href="/profile" class="menu-user"><%- include('icon', { name: 'user' }) %> <%= currentUser.name %></a>
       <!-- confirm() คืน false เมื่อกด Cancel → return false หยุดการส่งฟอร์ม -->
       <form action="/logout" method="POST" class="menu-logout"
             onsubmit="return confirm('ต้องการออกจากระบบใช่ไหม?')">
