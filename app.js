@@ -82,6 +82,8 @@ app.use(async (req, res, next) => {
   }
 
   res.locals.currentUser = req.session.user || null;
+  // path ของหน้าที่เปิดอยู่ เช่น "/events/12" → navbar ใช้ไฮไลต์เมนูหน้านั้นเป็นสีส้ม
+  res.locals.currentPath = req.path;
   // flash = ข้อความแจ้งเตือนครั้งเดียว: แสดงแล้วลบทิ้ง
   res.locals.flash = req.session.flash || null;
   delete req.session.flash;

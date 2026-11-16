@@ -1,4 +1,11 @@
 <!-- Navigation -->
+<%
+  // หมวดของหน้าที่เปิดอยู่ = ส่วนแรกของ path เช่น "/events/12" → "/events", "/" → "/"
+  // หน้าย่อยจึงไฮไลต์เมนูแม่ด้วย (รายละเอียดกิจกรรม → Events, รายละเอียดคลับ → Clubs)
+  const section = "/" + (locals.currentPath || "/").split("/")[1];
+  // aria-current="page" = บอกโปรแกรมอ่านหน้าจอว่าเป็นหน้าปัจจุบัน และ CSS ใช้ทำสีส้ม
+  const current = (href) => (section === href ? "page" : "false");
+%>
 <nav class="navbar">
   <div class="container">
     <a href="/" class="logo">RUN<span>BKK</span></a>
@@ -14,27 +21,27 @@
       <%- include('icon', { name: 'menu' }) %>
     </button>
     <div class="menu" id="menu">
-      <a href="/">Home</a>
-      <a href="/events">Events</a>
-      <a href="/clubs">Clubs</a>
+      <a href="/" aria-current="<%= current('/') %>">Home</a>
+      <a href="/events" aria-current="<%= current('/events') %>">Events</a>
+      <a href="/clubs" aria-current="<%= current('/clubs') %>">Clubs</a>
       <a href="/#spots">Spots</a>
       <a href="/#about">About</a>
-      <a href="/faq">FAQ</a>
+      <a href="/faq" aria-current="<%= current('/faq') %>">FAQ</a>
 
       <!-- locals.currentUser: ใช้ locals. เพื่อไม่ error ถ้าบางหน้าไม่มีตัวแปรนี้ -->
       <% if (locals.currentUser) { %>
-      <a href="/my-runs">My Runs</a>
+      <a href="/my-runs" aria-current="<%= current('/my-runs') %>">My Runs</a>
       <% if (currentUser.role === 'admin') { %>
-      <a href="/admin" class="menu-dashboard">Admin</a>
+      <a href="/admin" class="menu-dashboard" aria-current="<%= current('/admin') %>">Admin</a>
       <% } %>
-      <a href="/profile" class="menu-user"><%- include('icon', { name: 'user' }) %> <%= currentUser.name %></a>
+      <a href="/profile" class="menu-user" aria-current="<%= current('/profile') %>"><%- include('icon', { name: 'user' }) %> <%= currentUser.name %></a>
       <!-- confirm() คืน false เมื่อกด Cancel → return false หยุดการส่งฟอร์ม -->
       <form action="/logout" method="POST" class="menu-logout"
             onsubmit="return confirm('ต้องการออกจากระบบใช่ไหม?')">
         <button type="submit">Logout</button>
       </form>
       <% } else { %>
-      <a href="/login" class="menu-login">Login</a>
+      <a href="/login" aria-current="<%= current('/login') %>" class="menu-login">Login</a>
       <a href="/register" class="menu-register">Register</a>
       <% } %>
     </div>
