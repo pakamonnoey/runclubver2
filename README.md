@@ -27,7 +27,8 @@ config/db.js        connection pool ของ MySQL
 middleware/auth.js  requireLogin / requireRole / requireGuest
 routes/             pages, auth, password (ลืมรหัสผ่าน), clubs, events, member, admin, uploads (ส่งรูปจาก DB)
 utils/              format.js (วันที่/ระยะ), validators.js (ตรวจฟอร์ม), upload.js (รับ/ตรวจ/เก็บรูป), mailer.js (ส่งอีเมลผ่าน Brevo)
-views/              หน้า EJS + partials (head, navbar, footer, flash)
+views/              หน้า EJS + partials (head, navbar, footer, flash, icon, event-row)
+tests/              ชุดทดสอบอัตโนมัติ (npm test)
 public/             CSS, รูป, Bootstrap, validate.js (ตรวจฟอร์มฝั่ง client)
 database/           runbkk.sql (ตาราง), seed.sql (ข้อมูลเริ่มต้น), migrations/, setup.js, migrate.js, pull.js, make-admin.js, README.md (ER Diagram)
 ```
@@ -48,6 +49,26 @@ npm run dev                 # http://localhost:3000
 ```bash
 npm run make-admin -- your@email.com
 ```
+
+## ทดสอบอัตโนมัติ
+
+ใช้ `node:test` + `fetch` ที่มีใน Node อยู่แล้ว (ไม่ต้องลง package เพิ่ม) — ทดสอบผ่าน HTTP เหมือนผู้ใช้กดจริง
+
+```bash
+npm run dev     # เทอร์มินัลที่ 1: เปิดเว็บไว้
+npm test        # เทอร์มินัลที่ 2: รันชุดทดสอบ
+```
+
+| ไฟล์ | ทดสอบอะไร |
+|---|---|
+| `tests/auth.test.js` | สมัคร (validation, อีเมลซ้ำ, bcrypt), login/logout, หน้าที่ต้อง login, returnTo, 404 |
+| `tests/admin.test.js` | member เข้าหน้า admin ไม่ได้ (403), admin เข้าได้ |
+| `tests/clubs.test.js` | รายการ/รายละเอียดคลับตรงกับ DB, ไม่แสดง draft, จำนวนกิจกรรม, ชื่อ IG |
+| `tests/events.test.js` | รายการ/ค้นหา/404, กดสนใจ–เอาออก, My Runs, ปุ่มย้อนกลับ, เมนูหน้าปัจจุบัน |
+| `tests/password.test.js` | ลืมรหัสผ่าน (token, hash, หมดอายุ, ใช้ครั้งเดียว), เปลี่ยนรหัสใน Profile |
+
+- ผู้ใช้ทดสอบใช้อีเมล `@example.test` และถูกลบเองเมื่อจบการทดสอบ (ไม่แตะข้อมูลคลับ/กิจกรรม)
+- รันได้เฉพาะกับ `localhost` — ถ้าตั้ง `ENV_FILE` (DB จริง) ชุดทดสอบจะไม่ยอมรัน
 
 ## Deploy (ฟรี)
 
