@@ -12,7 +12,7 @@
   <div class="event-list-info">
     <p class="event-type"><%= fmt.runTypeLabel(event.run_type) %><% if (showClub) { %> · <%= event.club_name %><% } %></p>
 
-    <h3><a href="<%= href %>" class="card-link"><%= event.title %></a></h3>
+    <h3><a href="<%= href %>" class="row-link"><%= event.title %></a></h3>
 
     <ul class="event-meta">
       <li><%- include('icon', { name: 'clock' }) %> <%= fmt.timeText(event.start_at) %></li>

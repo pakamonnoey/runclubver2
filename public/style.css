@@ -608,18 +608,19 @@ html {
   position: relative;
 }
 
-.card-link {
+/* จำกัดไว้ใน .event-list-card เท่านั้น (ถ้าไม่จำกัด ::after จะขยายคลุมทั้งหน้า) */
+.event-list-card .row-link {
   color: inherit;
   text-decoration: none;
 }
 
-.card-link::after {
+.event-list-card .row-link::after {
   content: "";
   position: absolute;
   inset: 0;
 }
 
-.event-list-card:hover .card-link {
+.event-list-card:hover .row-link {
   color: #ff6b35;
 }
 
