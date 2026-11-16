@@ -1517,6 +1517,102 @@ a.outline-button {
   .dashboard-card {
     padding: 18px;
   }
+
+  /* เมนูย่อย admin: 4 ปุ่มเรียงแถวเดียว กว้างเท่ากัน */
+  .admin-nav {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+  }
+
+  .admin-nav a {
+    padding: 8px 4px;
+    font-size: 13px;
+    text-align: center;
+  }
+
+  /* ---------- ตาราง admin บนมือถือ: 1 แถว = 1 การ์ด ----------
+     ตารางหลายคอลัมน์บีบลงจอ 375px ไม่ได้ (ตัวหนังสือตกบรรทัด / ปุ่มหลุดขอบ)
+     → ซ่อนหัวตาราง แล้วให้แต่ละช่องเรียงลงมา: "หัวข้อ (จาก data-label) ...... ค่า" */
+  .dashboard-table thead {
+    display: none;
+  }
+
+  .dashboard-table,
+  .dashboard-table tbody {
+    display: block;
+  }
+
+  .dashboard-table > tbody > tr {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 16px 0;
+    border-bottom: 1px solid #eee;
+  }
+
+  .dashboard-table > tbody > tr:last-child {
+    border-bottom: none;
+  }
+
+  /* td เดิมของ Bootstrap มี padding/เส้นขอบ → เอาออก แล้วจัดเป็นแถว ซ้าย-ขวา */
+  .dashboard-table > tbody > tr > td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 0;
+    border: none;
+    box-shadow: none;
+    background: none;
+    text-align: right;
+    overflow-wrap: anywhere; /* อีเมลยาวๆ ตัดบรรทัดได้ ไม่ดันจอ */
+  }
+
+  .dashboard-table td[data-label]::before {
+    content: attr(data-label);
+    flex-shrink: 0;
+    color: #666;
+    font-weight: 600;
+    text-align: left;
+  }
+
+  /* ชื่อ (คลับ / กิจกรรม / ผู้ใช้) ขึ้นบนสุดของการ์ด ตัวใหญ่ — order: -1 ย้ายขึ้นก่อนช่องอื่น */
+  .dashboard-table > tbody > tr > td.cell-title {
+    order: -1;
+    font-size: 17px;
+    font-weight: bold;
+    text-align: left;
+  }
+
+  .dashboard-table .cell-index {
+    display: none !important;
+  }
+
+  .dashboard-table > tbody > tr > td.cell-actions {
+    justify-content: flex-start;
+    margin-top: 6px;
+  }
+
+  /* ปุ่มจัดการ: ทำเป็นปุ่มขอบมน สูง 40px นิ้วกดง่าย ไม่กดพลาดไปโดนปุ่มข้างๆ */
+  .cell-actions .dashboard-actions {
+    gap: 8px;
+  }
+
+  .cell-actions .dashboard-actions a,
+  .cell-actions .link-danger-button {
+    display: inline-flex;
+    align-items: center;
+    min-height: 40px;
+    padding: 0 14px;
+    border: 1px solid #d9d5cb;
+    border-radius: 999px;
+    text-decoration: none;
+  }
+
+  .cell-actions .link-danger-button {
+    border-color: #f1c4bf;
+  }
 }
 
 /* FAQ: links and line height inside answers */

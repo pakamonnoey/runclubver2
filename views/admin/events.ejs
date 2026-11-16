@@ -13,17 +13,18 @@
           <p class="empty-state">ยังไม่มีกิจกรรม</p>
           <% } else { %>
           <div class="table-responsive">
+            <!-- data-label = ชื่อคอลัมน์ บนมือถือ CSS แสดงแต่ละแถวเป็นการ์ด และใช้ data-label เป็นหัวข้อของแต่ละช่อง -->
             <table class="table dashboard-table">
               <thead><tr><th>วันเวลา</th><th>กิจกรรม</th><th>คลับ</th><th>สถานะ</th><th>คนสนใจ</th><th></th></tr></thead>
               <tbody>
                 <% events.forEach(function (e) { const past = new Date(e.start_at) < now; %>
                 <tr class="<%= past ? 'row-past' : '' %>">
-                  <td><%= fmt.shortDateTime(e.start_at) %></td>
-                  <td><%= e.title %></td>
-                  <td><%= e.club_name %></td>
-                  <td><span class="status-badge status-<%= e.status %>"><%= e.status %></span></td>
-                  <td><%= e.saved_count %></td>
-                  <td>
+                  <td data-label="วันเวลา"><%= fmt.shortDateTime(e.start_at) %></td>
+                  <td class="cell-title"><%= e.title %></td>
+                  <td data-label="คลับ"><%= e.club_name %></td>
+                  <td data-label="สถานะ"><span class="status-badge status-<%= e.status %>"><%= e.status %></span></td>
+                  <td data-label="คนสนใจ"><%= e.saved_count %></td>
+                  <td class="cell-actions">
                     <!-- flex อยู่ใน div ไม่ใส่ที่ td ตรงๆ (td ที่เป็น flex จะหลุดจากตาราง เส้นแถวเลยไม่ตรงกัน) -->
                     <div class="dashboard-actions">
                       <a href="/admin/events/<%= e.id %>/participants">ผู้สนใจ</a>

@@ -32,10 +32,10 @@
               <tbody>
                 <% participants.forEach(function (p, i) { %>
                 <tr>
-                  <td><%= i + 1 %></td>
-                  <td><%= p.name %></td>
-                  <td><%= p.email %></td>
-                  <td><%= fmt.shortDateTime(p.saved_at) %></td>
+                  <td class="cell-index"><%= i + 1 %></td>
+                  <td class="cell-title"><%= p.name %></td>
+                  <td data-label="อีเมล"><%= p.email %></td>
+                  <td data-label="บันทึกเมื่อ"><%= fmt.shortDateTime(p.saved_at) %></td>
                 </tr>
                 <% }); %>
               </tbody>

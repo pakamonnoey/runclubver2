@@ -9,6 +9,7 @@
 
         <div class="dashboard-card">
           <div class="table-responsive">
+            <!-- data-label = ชื่อคอลัมน์ บนมือถือ CSS แสดงแต่ละแถวเป็นการ์ด และใช้ data-label เป็นหัวข้อของแต่ละช่อง -->
             <table class="table dashboard-table">
               <thead>
                 <tr><th>ชื่อ</th><th>อีเมล</th><th>สมัครเมื่อ</th><th>กิจกรรมในลิสต์</th><th>Role</th><th></th></tr>
@@ -16,11 +17,11 @@
               <tbody>
                 <% users.forEach(function (u) { const isMe = u.id === currentUser.id; %>
                 <tr>
-                  <td><%= u.name %><%= isMe ? ' (คุณ)' : '' %></td>
-                  <td><%= u.email %></td>
-                  <td><%= fmt.shortDateTime(u.created_at) %></td>
-                  <td><%= u.run_count %></td>
-                  <td>
+                  <td class="cell-title"><%= u.name %><%= isMe ? ' (คุณ)' : '' %></td>
+                  <td data-label="อีเมล"><%= u.email %></td>
+                  <td data-label="สมัครเมื่อ"><%= fmt.shortDateTime(u.created_at) %></td>
+                  <td data-label="กิจกรรมในลิสต์"><%= u.run_count %></td>
+                  <td data-label="Role">
                     <% if (isMe) { %>
                     <span class="status-badge status-published"><%= u.role %></span>
                     <% } else { %>
@@ -34,7 +35,7 @@
                     </form>
                     <% } %>
                   </td>
-                  <td>
+                  <td class="cell-actions">
                     <% if (!isMe) { %>
                     <form action="/admin/users/<%= u.id %>/delete" method="POST"
                           onsubmit="return confirm('ลบผู้ใช้คนนี้? ลิสต์กิจกรรมของผู้ใช้นี้จะถูกลบด้วย')">
