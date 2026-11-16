@@ -1,4 +1,4 @@
-// ทดสอบ: ลืมรหัสผ่าน → ลิงก์ตั้งรหัสใหม่ (token) + เปลี่ยนรหัสในหน้า Profile
+// ลืมรหัสผ่าน + เปลี่ยนรหัสในหน้า Profile
 const { test, before, after } = require("node:test");
 const assert = require("node:assert/strict");
 const crypto = require("crypto");
@@ -13,7 +13,6 @@ after(async () => {
 
 const sha256 = (v) => crypto.createHash("sha256").update(v).digest("hex");
 
-// สร้างผู้ใช้ทดสอบ (ยังไม่ login) คืน { email, id }
 async function newUser() {
   const email = testEmail(PREFIX);
   await new Client().post("/register", { name: "Reset Tester", email, password: PASSWORD, confirmPassword: PASSWORD });
@@ -21,7 +20,7 @@ async function newUser() {
   return { email, id: user.id };
 }
 
-// ลิงก์จริงอยู่ในอีเมล (เทสต์อ่านไม่ได้) → สร้าง token เองแล้วเก็บ hash ลง DB แบบเดียวกับ routes/password.js
+// ลิงก์จริงอยู่ในอีเมล เทสต์อ่านไม่ได้ เลยสร้าง token เองแบบเดียวกับ routes/password.js
 async function makeToken(userId, minutes = 30) {
   const token = crypto.randomBytes(32).toString("hex");
   await pool.query("DELETE FROM password_resets WHERE user_id = ?", [userId]);
@@ -37,7 +36,7 @@ test("ขอลิงก์: อีเมลที่มี / ไม่มีใ
   const unknown = testEmail(PREFIX);
   const a = await new Client().post("/forgot-password", { email });
   const b = await new Client().post("/forgot-password", { email: unknown });
-  // ดึงกล่องข้อความ แล้วเอาอีเมลออก (อีเมลที่กรอกต่างกัน แต่ข้อความที่เหลือต้องเหมือนกันทุกตัวอักษร)
+  // ตัดอีเมลออกแล้วข้อความต้องเหมือนกันทุกตัวอักษร
   const message = (html, mail) => html.match(/<div class="alert[\s\S]*?<\/div>/)[0].replace(mail, "EMAIL");
   assert.equal(a.status, 200);
   assert.equal(b.status, 200);

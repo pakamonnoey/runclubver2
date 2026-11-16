@@ -4,7 +4,6 @@
       <div class="container">
         <a href="/clubs" class="back-link">← กลับไป All Clubs</a>
 
-        <!-- ส่วนบน: ข้อมูลคลับทั้งหมดรวมในการ์ดเดียว (โลโก้ / ชื่อ / ข้อมูลย่อ / คำอธิบาย) -->
         <div class="club-profile">
           <div class="club-detail-head">
             <img class="club-logo club-logo-lg" src="<%= fmt.clubImage(club) %>" alt="<%= club.name %>" />
@@ -25,7 +24,6 @@
           </ul>
         </div>
 
-        <!-- ส่วนหลักของหน้า: กิจกรรมที่กำลังจะมาถึงของคลับนี้ (การ์ดแบบเดียวกับหน้า Events) -->
         <h2 class="club-events-title">กิจกรรมที่กำลังจะมาถึง <span>(<%= events.length %>)</span></h2>
 
         <div class="event-list">
@@ -37,12 +35,11 @@
           <% } %>
 
           <% events.forEach(function (event) { %>
-          <!-- ?from=club → หน้ากิจกรรมจะมีลิงก์ย้อนกลับมาที่คลับนี้ -->
+          <%# ?from=club ให้ปุ่มย้อนกลับพากลับมาหน้านี้ %>
           <%- include('partials/event-row', { event, href: '/events/' + event.id + '?from=club', showClub: false }) %>
           <% }); %>
         </div>
 
-        <!-- updated_at: DB อัปเดตให้อัตโนมัติทุกครั้งที่แก้ข้อมูลคลับ -->
         <p class="data-updated">ข้อมูลคลับอัปเดตล่าสุด <%= fmt.thaiDate(club.updated_at) %></p>
       </div>
     </section>

@@ -1,19 +1,16 @@
-// อัปเดตโครงสร้าง DB ที่มีข้อมูลอยู่แล้ว โดยไม่ลบข้อมูล:  npm run db:migrate
-// รันทุกไฟล์ใน database/migrations/ ตามลำดับชื่อ (001_, 002_, ...) ทีละคำสั่ง
-// รันซ้ำได้ปลอดภัย: ถ้าตาราง/คอลัมน์มีอยู่แล้ว จะข้ามคำสั่งนั้น (ไม่ถือเป็น error)
-//
-// เว็บจริง:  ENV_FILE=.env.production npm run db:migrate
+// อัปเดตโครงสร้าง DB โดยไม่ลบข้อมูล: npm run db:migrate
+// รันไฟล์ใน migrations/ ตามลำดับชื่อ รันซ้ำได้ (อะไรที่ทำไปแล้วจะข้าม)
+// เว็บจริง: ENV_FILE=.env.production npm run db:migrate
 require("dotenv").config({ path: process.env.ENV_FILE || ".env", quiet: true });
 
 const fs = require("fs");
 const path = require("path");
 const mysql = require("mysql2/promise");
 
-// error ที่แปลว่า "ทำไปแล้ว" → ข้ามได้
-// ER_CANT_DROP_FIELD_OR_KEY = คอลัมน์ที่จะลบ ถูกลบไปแล้ว
+// error พวกนี้แปลว่าทำไปแล้ว ข้ามได้
 const ALREADY_DONE = ["ER_TABLE_EXISTS_ERROR", "ER_DUP_FIELDNAME", "ER_DUP_KEYNAME", "ER_CANT_DROP_FIELD_OR_KEY"];
 
-// แยกไฟล์ SQL เป็นทีละคำสั่ง (ตัดคอมเมนต์ -- ออก แล้วแยกด้วย ;)
+// ตัดคอมเมนต์ -- ออก แล้วแยกคำสั่งด้วย ;
 function statements(sql) {
   return sql
     .split("\n")

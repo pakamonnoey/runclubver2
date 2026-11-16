@@ -1,4 +1,4 @@
-// ทดสอบ: รายการกิจกรรม / รายละเอียด / กด "สนใจ" เก็บลงลิสต์ / My Runs / ปุ่มย้อนกลับ
+// กิจกรรม, กดสนใจ, My Runs, ปุ่มย้อนกลับ
 const { test, before, after } = require("node:test");
 const assert = require("node:assert/strict");
 const { pool, Client, checkServer, cleanup, upcomingEvent } = require("./helpers");
@@ -17,7 +17,7 @@ after(async () => {
   await pool.end();
 });
 
-// ถ้า DB ยังไม่มีกิจกรรมที่กำลังจะมาถึงเลย → ข้ามเทสต์ที่ต้องใช้กิจกรรม
+// ไม่มีกิจกรรมใน DB ก็ข้ามเทสต์ที่ต้องใช้
 const needEvent = (t) => {
   if (!event) t.skip("ยังไม่มีกิจกรรมที่กำลังจะมาถึงใน DB");
   return !event;

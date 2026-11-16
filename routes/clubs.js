@@ -1,4 +1,4 @@
-// Clubs: รายการคลับ + รายละเอียดคลับ (พร้อมกิจกรรมที่จะมาถึงของคลับนั้น)
+// คลับ: รายการ + รายละเอียด
 const express = require("express");
 const pool = require("../config/db");
 const { requireLogin } = require("../middleware/auth");
@@ -7,9 +7,8 @@ const router = express.Router();
 
 router.use(requireLogin);
 
-// GET /clubs — เฉพาะคลับที่ published (ข้อมูลที่ยืนยันแล้ว)
-// ไม่มีช่องค้นหา: คลับมีไม่กี่คลับ ดูทั้งหมดในหน้าเดียวได้เลย
-// upcoming_count = จำนวนกิจกรรมที่กำลังจะมาถึงของคลับนั้น (subquery นับจาก run_sessions)
+// GET /clubs (คลับมีไม่กี่คลับ เลยไม่มีช่องค้นหา)
+// upcoming_count = จำนวนกิจกรรมที่กำลังจะมาถึง ใช้แสดงบนปุ่ม
 router.get("/", async (req, res) => {
   const [clubs] = await pool.query(
     `SELECT id, name, description, location, regular_schedule, instagram_url, image,
@@ -32,7 +31,7 @@ router.get("/:id", async (req, res, next) => {
     [id]
   );
   const club = rows[0];
-  if (!club) return next(); // ไม่พบ → 404
+  if (!club) return next(); // 404
 
   const [events] = await pool.query(
     `SELECT rs.*, c.image AS club_image,

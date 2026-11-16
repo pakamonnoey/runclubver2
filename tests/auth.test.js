@@ -1,4 +1,4 @@
-// ทดสอบ: สมัครสมาชิก (validation) / login / logout / หน้าที่ต้อง login (โจทย์อาจารย์ข้อ 1–2)
+// สมัคร / login / logout / หน้าที่ต้อง login
 const { test, before, after } = require("node:test");
 const assert = require("node:assert/strict");
 const { pool, PASSWORD, Client, testEmail, checkServer, cleanup } = require("./helpers");

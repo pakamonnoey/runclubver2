@@ -1,19 +1,16 @@
-// เครื่องมือกลางสำหรับชุดทดสอบ (ใช้ node:test + fetch ที่มีใน Node อยู่แล้ว ไม่ต้องลง package เพิ่ม)
-//
-// วิธีใช้:  เทอร์มินัลที่ 1: npm run dev     เทอร์มินัลที่ 2: npm test
-// ทดสอบกับเว็บที่รันอยู่ในเครื่อง + DB ในเครื่อง (อ่านค่าจาก .env เหมือนตัวเว็บ)
+// ตัวช่วยของชุดทดสอบ (node:test + fetch ไม่ต้องลง package เพิ่ม)
+// เปิด npm run dev ไว้ก่อน แล้วค่อย npm test
 require("dotenv").config({ quiet: true });
 const pool = require("../config/db");
 
 const BASE_URL = process.env.TEST_URL || "http://localhost:3000";
 
-// กันพลาด: ชุดทดสอบสร้าง/ลบข้อมูลจริง → ห้ามรันกับเว็บจริงหรือ DB จริงเด็ดขาด
+// ชุดทดสอบสร้าง/ลบข้อมูล ห้ามรันกับเว็บจริง
 if (!/^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(BASE_URL) || process.env.ENV_FILE) {
   throw new Error("ชุดทดสอบรันได้เฉพาะกับ localhost และ DB ในเครื่องเท่านั้น");
 }
 
-// อีเมลของผู้ใช้ทดสอบลงท้าย @example.test เสมอ (โดเมนที่จองไว้สำหรับทดสอบ ส่งเมลไม่ได้จริง)
-// → ลบทิ้งได้ทั้งหมดด้วยเงื่อนไขเดียว และไม่ไปโดนผู้ใช้จริง
+// ผู้ใช้ทดสอบใช้ @example.test ลบทิ้งได้ง่ายและไม่โดนผู้ใช้จริง
 const TEST_DOMAIN = "@example.test";
 const PASSWORD = "Test1234";
 
@@ -23,7 +20,7 @@ function testEmail(prefix) {
   return `${prefix}-${Date.now()}-${counter}${TEST_DOMAIN}`;
 }
 
-// "เบราว์เซอร์จำลอง": จำ cookie (session) ไว้ส่งไปกับทุก request เหมือนเบราว์เซอร์จริง
+// เบราว์เซอร์จำลอง: จำ cookie ไว้ส่งไปทุก request
 class Client {
   constructor() {
     this.cookies = {};
@@ -40,7 +37,7 @@ class Client {
       body = new URLSearchParams(form).toString();
     }
 
-    // redirect: "manual" → ไม่ตาม redirect เอง เราจะได้ตรวจว่า server สั่งไปหน้าไหน
+    // ไม่ตาม redirect เอง จะได้เช็กว่าไปหน้าไหน
     const res = await fetch(BASE_URL + path, { method, headers, body, redirect: "manual" });
 
     for (const line of res.headers.getSetCookie()) {
@@ -61,7 +58,6 @@ class Client {
     return this.request("POST", path, form);
   }
 
-  // สมัคร + login ในขั้นเดียว (ใช้เตรียมผู้ใช้สำหรับเทสต์อื่น)
   async registerAndLogin(prefix, name = "Test User") {
     const email = testEmail(prefix);
     await this.post("/register", { name, email, password: PASSWORD, confirmPassword: PASSWORD });
@@ -71,7 +67,6 @@ class Client {
   }
 }
 
-// เช็กว่าเปิด npm run dev ไว้หรือยัง
 async function checkServer() {
   try {
     await fetch(BASE_URL + "/faq");
@@ -80,12 +75,12 @@ async function checkServer() {
   }
 }
 
-// ลบผู้ใช้ทดสอบของไฟล์นั้น (ตาม prefix) — registrations / password_resets ถูกลบตามด้วย ON DELETE CASCADE
+// ลบผู้ใช้ทดสอบของไฟล์นั้น (ข้อมูลที่ผูกอยู่ถูกลบตาม)
 async function cleanup(prefix) {
   await pool.query("DELETE FROM users WHERE email LIKE ?", [`${prefix}-%${TEST_DOMAIN}`]);
 }
 
-// กิจกรรมที่ยังไม่ถึงวันและเปิดแสดงอยู่ 1 รายการ (ไม่ fix id ไว้ในโค้ด เพราะข้อมูลเปลี่ยนได้)
+// หยิบกิจกรรมที่ยังไม่ถึงวันมา 1 รายการ (ไม่ fix id เพราะข้อมูลเปลี่ยนได้)
 async function upcomingEvent() {
   const [rows] = await pool.query(
     `SELECT rs.id, rs.club_id, c.name AS club_name

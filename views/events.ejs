@@ -1,17 +1,14 @@
 <%- include('partials/head', { title: 'Events - RUN BKK' }) %>
 
-    <!-- Events Page -->
     <section class="events-page">
       <div class="container">
-        <!-- หัวข้อหน้า (หัวข้อเดียว) -->
         <div class="page-title">
           <p class="small-title">EVENTS</p>
           <h1>Upcoming Runs</h1>
           <p class="page-lead">กิจกรรมวิ่งที่กำลังจะมาถึงจากคลับในกรุงเทพฯ</p>
         </div>
 
-        <!-- Search: method="GET" → ค่าไปอยู่ใน URL เช่น /events?q=social&type=morning
-             server (routes/events.js) อ่านจาก req.query แล้วค้นใน DB -->
+        <%# method="GET" ค่าค้นหาไปอยู่ใน URL เช่น /events?q=social %>
         <section class="search-section">
           <form class="search-box" action="/events" method="GET">
             <div class="search-field">
@@ -78,7 +75,6 @@
           </p>
         </section>
 
-        <!-- Event List -->
         <div class="event-list">
           <% if (events.length === 0) { %>
           <p class="empty-state">ไม่พบกิจกรรมที่ตรงกับเงื่อนไข</p>

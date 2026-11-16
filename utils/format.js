@@ -1,10 +1,9 @@
-// ฟังก์ชันช่วยแสดงผล — app.js ใส่ไว้ใน app.locals ทำให้ทุกไฟล์ .ejs เรียกใช้ได้
+// ฟังก์ชันจัดรูปแบบ ใช้ใน view ผ่าน fmt (ตั้งไว้ใน app.js)
 const TZ = "Asia/Bangkok";
 
-// รูปสำรอง เมื่อกิจกรรม/คลับยังไม่มีรูป
-const DEFAULT_IMAGE = "/image/about.jpg";
+const DEFAULT_IMAGE = "/image/about.jpg"; // ใช้ตอนไม่มีรูป
 
-// ประเภทกิจกรรม (ค่าใน DB → ชื่อที่แสดง)
+// ค่าใน DB -> ชื่อที่แสดง
 const RUN_TYPES = {
   morning: "Morning Run",
   social: "Social Run",
@@ -36,20 +35,17 @@ module.exports = {
       year: "numeric",
     }),
 
-  // 5.0 → "5 KM", 10.5 → "10.5 KM", null → ""
+  // 5.0 -> "5 KM", null -> ""
   distanceText: (km) => (km === null || km === undefined ? "" : `${Number(km)} KM`),
 
   runTypeLabel: (type) => RUN_TYPES[type] || type,
 
-  // รูปกิจกรรม: ใช้โปสเตอร์ของกิจกรรม → ถ้าไม่มีใช้โลโก้คลับ → ถ้าไม่มีอีกใช้รูปสำรอง
-  // (SQL ต้อง SELECT c.image AS club_image มาด้วย)
+  // โปสเตอร์ -> โลโก้คลับ -> รูปสำรอง (SQL ต้องมี c.image AS club_image)
   eventImage: (event) => event.image || event.club_image || DEFAULT_IMAGE,
 
-  // รูปคลับ: โลโก้คลับ → ถ้าไม่มีใช้รูปสำรอง
   clubImage: (club) => club.image || DEFAULT_IMAGE,
 
-  // ชื่อบัญชี IG จากลิงก์ เช่น "https://www.instagram.com/sabairunclub.bkk/" → "@sabairunclub.bkk"
-  // ดึงจาก URL ที่ admin กรอกไว้ ไม่ได้แต่งชื่อเอง; อ่านไม่ได้ → แสดงคำว่า Instagram แทน
+  // "https://www.instagram.com/sabairunclub.bkk/" -> "@sabairunclub.bkk"
   instagramHandle: (url) => {
     try {
       const name = new URL(url).pathname.split("/").filter(Boolean)[0];
@@ -59,12 +55,12 @@ module.exports = {
     }
   },
 
-  // ค่าสำหรับเติมใน <input type="datetime-local"> เช่น "2026-11-22T06:00" (เวลาไทย)
-  // locale sv-SE ให้รูปแบบ "2026-11-22 06:00:00" ซึ่งตัดต่อได้ง่าย
+  // สำหรับ <input type="datetime-local"> เช่น "2026-11-22T06:00"
+  // (sv-SE ให้รูปแบบ "2026-11-22 06:00:00" ตัดต่อง่าย)
   inputDateTime: (date) =>
     new Date(date).toLocaleString("sv-SE", { timeZone: TZ }).slice(0, 16).replace(" ", "T"),
 
-  // วันที่ + เวลาแบบสั้น สำหรับตารางใน dashboard เช่น "22 พ.ย. 2569 06:00"
+  // "22 พ.ย. 2569 06:00" ใช้ในตาราง admin
   shortDateTime: (date) =>
     new Date(date).toLocaleString("th-TH", {
       timeZone: TZ,

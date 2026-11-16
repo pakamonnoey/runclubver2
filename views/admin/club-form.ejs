@@ -6,7 +6,7 @@
           <a href="/admin/clubs" class="back-link">← Clubs</a>
           <h1><%= heading %></h1>
 
-          <!-- multipart/form-data = ฟอร์มที่ส่งไฟล์ได้ (อ่านด้วย multer ใน routes/admin.js) -->
+          <%# multipart/form-data ต้องใช้กับฟอร์มที่ส่งไฟล์ %>
           <form action="<%= action %>" method="POST" enctype="multipart/form-data" novalidate>
             <div class="mb-3">
               <label for="name" class="form-label">ชื่อคลับ *</label>

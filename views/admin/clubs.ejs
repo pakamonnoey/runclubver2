@@ -10,7 +10,7 @@
 
         <div class="dashboard-card">
           <div class="table-responsive">
-            <!-- data-label = ชื่อคอลัมน์ บนมือถือ CSS แสดงแต่ละแถวเป็นการ์ด และใช้ data-label เป็นหัวข้อของแต่ละช่อง -->
+            <%# data-label ใช้เป็นหัวข้อตอนแสดงเป็นการ์ดบนมือถือ %>
             <table class="table dashboard-table">
               <thead><tr><th>ชื่อคลับ</th><th>กิจกรรม</th><th>สถานะ</th><th></th></tr></thead>
               <tbody>
@@ -23,7 +23,6 @@
                   <td data-label="กิจกรรม"><%= c.event_count %></td>
                   <td data-label="สถานะ"><span class="status-badge status-<%= c.status %>"><%= c.status %></span></td>
                   <td class="cell-actions">
-                    <!-- flex อยู่ใน div ไม่ใส่ที่ td ตรงๆ (td ที่เป็น flex จะหลุดจากตาราง เส้นแถวเลยไม่ตรงกัน) -->
                     <div class="dashboard-actions">
                       <a href="/admin/clubs/<%= c.id %>/edit">แก้ไข</a>
                       <a href="/admin/events/new?club=<%= c.id %>">+ กิจกรรม</a>

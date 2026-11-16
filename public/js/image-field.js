@@ -1,4 +1,4 @@
-// ช่องเลือกรูป: แสดงตัวอย่างทันที + เตือนถ้าไฟล์เกิน 2 MB (server ตรวจซ้ำอีกครั้งเสมอ)
+// แสดงตัวอย่างรูปทันที และเตือนถ้าไฟล์เกิน 2 MB (server ตรวจซ้ำอีกที)
 document.querySelectorAll("[data-image-input]").forEach(function (input) {
   const field = input.closest(".image-field");
   const preview = field.querySelector("[data-image-preview]");
@@ -11,13 +11,13 @@ document.querySelectorAll("[data-image-input]").forEach(function (input) {
     if (!file) return;
 
     if (file.size > MAX_SIZE) {
-      input.value = ""; // ล้างไฟล์ที่เลือก ไม่ให้ส่งไป server
+      input.value = "";
       input.classList.add("is-invalid");
       feedback.textContent = "ไฟล์รูปต้องไม่เกิน 2 MB";
       return;
     }
 
-    // URL.createObjectURL = สร้างลิงก์ชั่วคราวไปที่ไฟล์ในเครื่อง → แสดงตัวอย่างได้โดยไม่ต้องอัปโหลด
+    // ลิงก์ชั่วคราวไปที่ไฟล์ในเครื่อง แสดงรูปได้โดยยังไม่อัปโหลด
     preview.src = URL.createObjectURL(file);
     preview.classList.remove("d-none");
   });

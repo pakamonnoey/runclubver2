@@ -9,7 +9,7 @@
 
         <div class="dashboard-card">
           <div class="table-responsive">
-            <!-- data-label = ชื่อคอลัมน์ บนมือถือ CSS แสดงแต่ละแถวเป็นการ์ด และใช้ data-label เป็นหัวข้อของแต่ละช่อง -->
+            <%# data-label ใช้เป็นหัวข้อตอนแสดงเป็นการ์ดบนมือถือ %>
             <table class="table dashboard-table">
               <thead>
                 <tr><th>ชื่อ</th><th>อีเมล</th><th>สมัครเมื่อ</th><th>กิจกรรมในลิสต์</th><th>Role</th><th></th></tr>
@@ -39,7 +39,7 @@
                     <% if (!isMe) { %>
                     <form action="/admin/users/<%= u.id %>/delete" method="POST"
                           onsubmit="return confirm('ลบผู้ใช้คนนี้? ลิสต์กิจกรรมของผู้ใช้นี้จะถูกลบด้วย')">
-                      <%# ห้ามใส่ข้อมูลผู้ใช้ (เช่น email) ใน JS inline — escape ของ HTML ไม่พอสำหรับ JS → XSS %>
+                      <%# ไม่ใส่ชื่อ/อีเมลใน confirm() เพราะ escape แบบ HTML กัน XSS ใน JS ไม่ได้ %>
                       <button type="submit" class="link-danger-button">ลบ</button>
                     </form>
                     <% } %>

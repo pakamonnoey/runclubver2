@@ -1,5 +1,4 @@
-// Admin: คนเดียวที่กรอก/อัปเดตข้อมูลคลับและกิจกรรม + จัดการผู้ใช้
-// ทุก route ในไฟล์นี้ admin เท่านั้น (router.use ด้านล่าง)
+// Admin: จัดการคลับ กิจกรรม และผู้ใช้
 const express = require("express");
 const pool = require("../config/db");
 const { requireRole } = require("../middleware/auth");
@@ -9,18 +8,16 @@ const { acceptImage, checkUploadedImage, saveImage, removeImageIfUnused } = requ
 
 const router = express.Router();
 
-router.use(requireRole("admin")); // member → 403, ยังไม่ login → ไปหน้า login
+router.use(requireRole("admin")); // ทุก route ในไฟล์นี้
 
-// id จาก URL ต้องเป็นจำนวนเต็มบวก ไม่งั้นคืน null (→ 404) — กัน NaN หลุดไปถึง SQL
+// id ต้องเป็นจำนวนเต็มบวก ไม่งั้นได้ null (แล้วกลายเป็น 404)
 const toId = (value) => {
   const n = Number(value);
   return Number.isInteger(n) && n > 0 ? n : null;
 };
 const flash = (req, type, message) => (req.session.flash = { type, message });
 
-// ===============================================================
-// Dashboard — ตัวเลขสรุป
-// ===============================================================
+// ---------- Dashboard ----------
 router.get("/", async (req, res) => {
   const [[stats]] = await pool.query(
     `SELECT
@@ -34,9 +31,7 @@ router.get("/", async (req, res) => {
   res.render("admin/dashboard", { stats });
 });
 
-// ===============================================================
-// Users — เปลี่ยน role (member/admin), ลบ
-// ===============================================================
+// ---------- Users ----------
 router.get("/users", async (req, res) => {
   const [users] = await pool.query(
     `SELECT u.id, u.name, u.email, u.role, u.created_at,
@@ -67,16 +62,14 @@ router.post("/users/:id/delete", async (req, res) => {
   if (id === req.session.user.id) {
     flash(req, "danger", "ลบบัญชีตัวเองไม่ได้");
   } else {
-    // FK CASCADE: ลิสต์กิจกรรมที่ user นี้บันทึกไว้ถูกลบตาม
+    // ลิสต์ของ user นี้ถูกลบตาม (ON DELETE CASCADE)
     const [result] = await pool.query("DELETE FROM users WHERE id = ?", [id]);
     flash(req, result.affectedRows ? "success" : "danger", result.affectedRows ? "ลบผู้ใช้แล้ว" : "ไม่พบผู้ใช้");
   }
   res.redirect("/admin/users");
 });
 
-// ===============================================================
-// Clubs — รายการทุกสถานะ, เพิ่ม, แก้, ลบ
-// ===============================================================
+// ---------- Clubs ----------
 router.get("/clubs", async (req, res) => {
   const [clubs] = await pool.query(
     `SELECT c.id, c.name, c.status,
@@ -94,7 +87,7 @@ router.get("/clubs/new", (req, res) =>
   renderClubForm(res, { heading: "เพิ่มคลับ", action: "/admin/clubs", values: { status: "pending" } })
 );
 
-// acceptImage = รับไฟล์จากช่อง "เลือกไฟล์" (ฟอร์มต้องเป็น multipart/form-data)
+// acceptImage รับไฟล์รูปจากฟอร์ม (multipart/form-data)
 router.post("/clubs", acceptImage, async (req, res) => {
   const { values, errors, data } = readClubForm(req.body);
   const imageError = checkUploadedImage(req);
@@ -102,7 +95,7 @@ router.post("/clubs", acceptImage, async (req, res) => {
   const view = { heading: "เพิ่มคลับ", action: "/admin/clubs", values, status: 400 };
   if (Object.keys(errors).length > 0) return renderClubForm(res, { ...view, errors });
 
-  // ฟอร์มผ่านแล้วค่อยบันทึกรูป (ไม่ให้มีรูปค้างใน DB ถ้าฟอร์มผิด) — มีไฟล์ใหม่ = ใช้แทนลิงก์
+  // บันทึกรูปหลังฟอร์มผ่านแล้ว จะได้ไม่มีรูปค้างใน DB
   if (req.file) data.image = await saveImage(req.file);
 
   try {
@@ -112,8 +105,8 @@ router.post("/clubs", acceptImage, async (req, res) => {
       [data.name, data.description, data.location, data.regular_schedule, data.instagram_url, data.image, data.status]
     );
   } catch (err) {
-    await removeImageIfUnused(data.image); // บันทึกคลับไม่สำเร็จ → ลบรูปที่เพิ่งอัปโหลดทิ้ง
-    if (err.code !== "ER_DUP_ENTRY") throw err; // UNIQUE(name)
+    await removeImageIfUnused(data.image); // บันทึกไม่สำเร็จ ลบรูปที่เพิ่งอัปโหลด
+    if (err.code !== "ER_DUP_ENTRY") throw err; // ชื่อคลับซ้ำ
     return renderClubForm(res, { ...view, errors: { name: "มีคลับชื่อนี้แล้ว" } });
   }
   flash(req, "success", "เพิ่มคลับแล้ว");
@@ -122,7 +115,7 @@ router.post("/clubs", acceptImage, async (req, res) => {
 
 router.get("/clubs/:id/edit", async (req, res, next) => {
   const [rows] = await pool.query("SELECT * FROM clubs WHERE id = ?", [toId(req.params.id)]);
-  if (!rows[0]) return next(); // ไม่พบ → 404
+  if (!rows[0]) return next();
   renderClubForm(res, { heading: "แก้ไขคลับ", action: `/admin/clubs/${rows[0].id}`, values: rows[0] });
 });
 
@@ -151,30 +144,27 @@ router.post("/clubs/:id", acceptImage, async (req, res, next) => {
     if (err.code !== "ER_DUP_ENTRY") throw err;
     return renderClubForm(res, { ...view, errors: { name: "มีคลับชื่อนี้แล้ว" } });
   }
-  if (oldImage !== data.image) await removeImageIfUnused(oldImage); // เปลี่ยนรูป → ลบรูปเก่าถ้าไม่มีใครใช้
+  if (oldImage !== data.image) await removeImageIfUnused(oldImage);
   flash(req, "success", "บันทึกคลับแล้ว");
   res.redirect("/admin/clubs");
 });
 
 router.post("/clubs/:id/delete", async (req, res) => {
   const id = toId(req.params.id);
-  // เก็บรายการรูปของคลับและกิจกรรมไว้ก่อนลบ → ลบรูปที่ไม่มีใครใช้แล้วตามหลัง
+  // จำรูปของคลับและกิจกรรมไว้ก่อน ลบคลับแล้วค่อยลบรูปที่ไม่มีใครใช้
   const [imageRows] = await pool.query(
     "SELECT image FROM clubs WHERE id = ? UNION SELECT image FROM run_sessions WHERE club_id = ?",
     [id, id]
   );
-  // FK CASCADE: กิจกรรมของคลับ + รายการที่สมาชิกบันทึกไว้ถูกลบตาม
+  // กิจกรรมของคลับถูกลบตาม (ON DELETE CASCADE)
   const [result] = await pool.query("DELETE FROM clubs WHERE id = ?", [id]);
   for (const row of imageRows) await removeImageIfUnused(row.image);
   flash(req, result.affectedRows ? "success" : "danger", result.affectedRows ? "ลบคลับแล้ว" : "ไม่พบคลับ");
   res.redirect("/admin/clubs");
 });
 
-// ===============================================================
-// Events — รายการทุกสถานะ, เพิ่ม, แก้, ยกเลิก, ลบ, รายชื่อคนที่สนใจ (บันทึกลงลิสต์)
-// ===============================================================
+// ---------- Events ----------
 
-// หากิจกรรม + จำนวนคนที่บันทึกลงลิสต์ของตัวเอง
 async function findEvent(id) {
   if (!id) return null;
   const [rows] = await pool.query(
@@ -247,7 +237,7 @@ router.get("/events/:id/edit", async (req, res, next) => {
   const event = await findEvent(toId(req.params.id));
   if (!event) return next();
 
-  // แปลงค่าจาก DB → ค่าที่ใส่ในฟอร์มได้
+  // แปลงค่าจาก DB ให้ใส่ในฟอร์มได้
   const values = {
     ...event,
     club_id: String(event.club_id),
@@ -284,7 +274,7 @@ router.post("/events/:id", acceptImage, async (req, res, next) => {
   res.redirect("/admin/events");
 });
 
-// ยกเลิก = เปลี่ยน status (ไม่ลบ — คนที่บันทึกไว้จะเห็นว่าถูกยกเลิกใน My Runs)
+// ยกเลิกแค่เปลี่ยน status คนที่บันทึกไว้จะเห็นใน My Runs ว่าถูกยกเลิก
 router.post("/events/:id/cancel", async (req, res, next) => {
   const event = await findEvent(toId(req.params.id));
   if (!event) return next();
@@ -293,7 +283,7 @@ router.post("/events/:id/cancel", async (req, res, next) => {
   res.redirect("/admin/events");
 });
 
-// ลบถาวร (FK CASCADE: รายการที่สมาชิกบันทึกกิจกรรมนี้ไว้ถูกลบตาม)
+// ลบถาวร
 router.post("/events/:id/delete", async (req, res) => {
   const event = await findEvent(toId(req.params.id));
   const [result] = await pool.query("DELETE FROM run_sessions WHERE id = ?", [toId(req.params.id)]);

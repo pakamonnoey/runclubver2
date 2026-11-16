@@ -1,10 +1,7 @@
-// ลืมรหัสผ่าน: ขอลิงก์ทางอีเมล → กดลิงก์ → ตั้งรหัสผ่านใหม่
-//
-// หลักความปลอดภัย:
-// 1) ตอบข้อความเดียวกันเสมอ ไม่ว่ามีอีเมลนี้ในระบบหรือไม่ → เดาไม่ได้ว่าใครเป็นสมาชิก
-// 2) token สุ่มด้วย crypto (เดาไม่ได้) และใน DB เก็บแค่ hash ของ token
-//    → ถ้า DB หลุด ก็เอาไปใช้ตั้งรหัสใหม่ไม่ได้ (เหมือนเก็บรหัสผ่านเป็น hash)
-// 3) ลิงก์ใช้ได้ 30 นาที และใช้ได้ครั้งเดียว
+// ลืมรหัสผ่าน: ขอลิงก์ทางอีเมล -> กดลิงก์ -> ตั้งรหัสใหม่
+// - ตอบข้อความเดียวกันเสมอ จะได้เดาไม่ได้ว่าอีเมลไหนเป็นสมาชิก
+// - DB เก็บแค่ hash ของ token ถ้า DB หลุดก็เอาไปใช้ไม่ได้
+// - ลิงก์ใช้ได้ 30 นาที ครั้งเดียว
 const crypto = require("crypto");
 const express = require("express");
 const bcrypt = require("bcrypt");
@@ -18,12 +15,11 @@ const router = express.Router();
 const TOKEN_MINUTES = 30;
 const sha256 = (value) => crypto.createHash("sha256").update(value).digest("hex");
 
-// ที่อยู่เว็บสำหรับใส่ในลิงก์ — อ่านจาก .env (ไม่ใช้ Host header ที่ผู้ใช้ปลอมได้)
+// อ่านจาก .env ไม่ใช้ Host header เพราะปลอมได้
 const appUrl = () => process.env.APP_URL || `http://localhost:${process.env.PORT || 3000}`;
 
-// หา token ที่ยังใช้ได้ (ตรง hash + ยังไม่หมดอายุ)
 async function findValidToken(token) {
-  if (!/^[a-f0-9]{64}$/.test(token)) return null; // รูปแบบผิด ไม่ต้องถาม DB
+  if (!/^[a-f0-9]{64}$/.test(token)) return null;
   const [rows] = await pool.query(
     "SELECT id, user_id FROM password_resets WHERE token_hash = ? AND expires_at > NOW()",
     [sha256(token)]
@@ -31,9 +27,7 @@ async function findValidToken(token) {
   return rows[0] || null;
 }
 
-// ===============================================================
-// ขอลิงก์ตั้งรหัสใหม่
-// ===============================================================
+// ---------- ขอลิงก์ ----------
 router.get("/forgot-password", requireGuest, (req, res) => {
   res.render("auth/forgot-password", { title: "ลืมรหัสผ่าน - RUN BKK", sent: false, email: "" });
 });
@@ -44,14 +38,14 @@ router.post("/forgot-password", requireGuest, async (req, res) => {
   const user = rows[0];
 
   if (user) {
-    // กันกดส่งรัวๆ: ถ้าเพิ่งขอไปไม่ถึง 1 นาที ไม่ส่งซ้ำ
+    // เพิ่งขอไปไม่ถึง 1 นาที ไม่ส่งซ้ำ
     const [[recent]] = await pool.query(
       "SELECT COUNT(*) AS n FROM password_resets WHERE user_id = ? AND created_at > NOW() - INTERVAL 1 MINUTE",
       [user.id]
     );
 
     if (recent.n === 0) {
-      const token = crypto.randomBytes(32).toString("hex"); // 64 ตัวอักษรสุ่ม → ใส่ในลิงก์
+      const token = crypto.randomBytes(32).toString("hex");
       await pool.query("DELETE FROM password_resets WHERE user_id = ?", [user.id]); // ลิงก์เก่าใช้ไม่ได้แล้ว
       await pool.query(
         "INSERT INTO password_resets (user_id, token_hash, expires_at) VALUES (?, ?, NOW() + INTERVAL ? MINUTE)",
@@ -70,20 +64,17 @@ router.post("/forgot-password", requireGuest, async (req, res) => {
             `<p>ถ้าคุณไม่ได้ขอ ไม่ต้องทำอะไร รหัสผ่านเดิมยังใช้ได้</p>`,
         });
       } catch (err) {
-        console.error("ส่งอีเมลตั้งรหัสใหม่ไม่สำเร็จ:", err.message); // ผู้ใช้ยังเห็นข้อความเดิม
+        console.error("ส่งอีเมลตั้งรหัสใหม่ไม่สำเร็จ:", err.message);
       }
     }
   }
 
-  // ข้อความเดียวกันทุกกรณี
   res.render("auth/forgot-password", { title: "ลืมรหัสผ่าน - RUN BKK", sent: true, email });
 });
 
-// ===============================================================
-// ตั้งรหัสผ่านใหม่จากลิงก์ในอีเมล
-// ===============================================================
+// ---------- ตั้งรหัสใหม่จากลิงก์ ----------
 
-// token อยู่ใน URL → ห้ามส่ง URL นี้ต่อให้เว็บอื่นผ่าน Referer
+// token อยู่ใน URL ห้ามหลุดไปเว็บอื่นผ่าน Referer
 router.use("/reset-password", (req, res, next) => {
   res.set("Referrer-Policy", "no-referrer");
   next();

@@ -1,10 +1,6 @@
-// ดึงข้อมูลคลับ + กิจกรรมจากเว็บจริง (production) ลงมาที่ DB ในเครื่อง:  npm run db:pull
-//
-// - ทิศทางเดียว: อ่านจาก .env.production → เขียนลง .env (ไม่เคยเขียนกลับขึ้น production)
-// - ดึงเฉพาะ images + clubs + run_sessions (ข้อมูลสาธารณะ)
-//   ไม่ดึง users / registrations เพราะมีข้อมูลส่วนตัวของผู้ใช้จริง → บัญชีในเครื่องยังเป็นของเดิม
-// - ก่อนเขียน: เทียบข้อมูลสองฝั่ง แล้วถามยืนยันถ้าข้อมูลในเครื่องจะถูกลบ/ทับ
-//   (ข้ามการถามได้ด้วย:  npm run db:pull -- --yes)
+// ดึงคลับ + กิจกรรมจากเว็บจริงลง DB ในเครื่อง: npm run db:pull
+// อ่านจาก .env.production เขียนลง .env อย่างเดียว ไม่เขียนกลับขึ้นเว็บจริง
+// ไม่ดึง users เพราะเป็นข้อมูลส่วนตัว / ถ้าข้อมูลในเครื่องจะถูกทับจะถามก่อน (--yes = ไม่ถาม)
 const fs = require("fs");
 const path = require("path");
 const readline = require("readline");
@@ -12,11 +8,11 @@ const dotenv = require("dotenv");
 const mysql = require("mysql2/promise");
 
 const ROOT = path.join(__dirname, "..");
-const TABLES = ["images", "clubs", "run_sessions"]; // ลำดับสำคัญ: ตารางแม่ก่อน (run_sessions มี FK ไป clubs)
-const IGNORE_COLUMNS = ["created_at", "updated_at"]; // เวลาสร้าง/แก้ไขต่างกันได้ ไม่นับเป็นความต่าง
+const TABLES = ["images", "clubs", "run_sessions"]; // ตารางแม่ก่อน
+const IGNORE_COLUMNS = ["created_at", "updated_at"];
 const autoYes = process.argv.includes("--yes");
 
-// อ่านค่าจากไฟล์ env โดยไม่ยุ่งกับ process.env (เพราะต้องใช้ 2 ชุดพร้อมกัน)
+// อ่าน env 2 ไฟล์พร้อมกัน เลยไม่ใส่ลง process.env
 function readEnv(file) {
   const full = path.join(ROOT, file);
   if (!fs.existsSync(full)) throw new Error(`ไม่พบไฟล์ ${file}`);
@@ -31,14 +27,14 @@ async function connect(env) {
     password: env.DB_PASSWORD,
     database: env.DB_NAME,
     charset: "utf8mb4",
-    dateStrings: true, // วันเวลาเป็นข้อความ "2026-12-06 06:00:00" → copy ตรงๆ ไม่ต้องแปลงเขตเวลา
+    dateStrings: true, // copy วันเวลาเป็นข้อความ ไม่ต้องแปลงเขตเวลา
     ssl: env.DB_SSL === "true" ? { minVersion: "TLSv1.2", rejectUnauthorized: true } : undefined,
   });
   await conn.query("SET time_zone = '+07:00'");
   return conn;
 }
 
-// เทียบข้อมูลตาราง 1 ตาราง (จับคู่ด้วย id)
+// เทียบทีละตาราง จับคู่ด้วย id
 function compare(localRows, prodRows) {
   const prodById = new Map(prodRows.map((r) => [r.id, r]));
   const localById = new Map(localRows.map((r) => [r.id, r]));
@@ -47,24 +43,22 @@ function compare(localRows, prodRows) {
   for (const row of localRows) {
     const prod = prodById.get(row.id);
     if (!prod) {
-      result.removed.push(row); // มีในเครื่อง แต่ไม่มีบนเว็บจริง → จะถูกลบ
+      result.removed.push(row);
       continue;
     }
     const columns = Object.keys(prod).filter((col) => !IGNORE_COLUMNS.includes(col) && !same(prod[col], row[col]));
-    if (columns.length > 0) result.changed.push({ row, columns }); // ค่าต่างกัน → จะถูกทับ
+    if (columns.length > 0) result.changed.push({ row, columns });
   }
   for (const row of prodRows) {
-    if (!localById.has(row.id)) result.added.push(row); // ยังไม่มีในเครื่อง → เพิ่มใหม่
+    if (!localById.has(row.id)) result.added.push(row);
   }
   return result;
 }
 
-// เทียบค่า 1 ช่อง: ข้อมูลรูป (Buffer) เทียบทีละ byte / อย่างอื่นเทียบเป็นข้อความ
 const same = (a, b) => (Buffer.isBuffer(a) && Buffer.isBuffer(b) ? a.equals(b) : String(a) === String(b));
 
 const label = (row) => `#${row.id} ${row.name || row.title || `รูป ${row.mime_type}`}`;
 
-// ถามคำถามใน terminal (ถ้าไม่มีคนตอบ เช่น input ปิด → ถือว่าไม่ยืนยัน)
 function ask(question) {
   return new Promise((resolve) => {
     const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
@@ -84,7 +78,7 @@ async function main() {
   const prodEnv = readEnv(".env.production");
   const localEnv = readEnv(".env");
 
-  // กันพลาด: ถ้าสองไฟล์ชี้ DB เดียวกัน การ "ลบในเครื่อง" จะกลายเป็นลบข้อมูลจริง → หยุด
+  // สองไฟล์ชี้ DB เดียวกัน = จะลบข้อมูลจริง หยุดเลย
   if (prodEnv.DB_HOST === localEnv.DB_HOST && prodEnv.DB_NAME === localEnv.DB_NAME) {
     throw new Error(".env กับ .env.production ชี้ไปที่ DB เดียวกัน — หยุดเพื่อไม่ให้ข้อมูลจริงถูกลบ");
   }
@@ -96,7 +90,7 @@ async function main() {
   const local = await connect(localEnv);
 
   try {
-    // 1) อ่านทั้งสองฝั่ง (SELECT อย่างเดียว)
+    // 1) อ่านทั้งสองฝั่ง
     const prodData = {};
     const diff = {};
     for (const table of TABLES) {
@@ -106,7 +100,7 @@ async function main() {
     }
     const [[{ regs }]] = await local.query("SELECT COUNT(*) AS regs FROM registrations");
 
-    // 2) สรุปสิ่งที่จะเกิดขึ้นในเครื่อง
+    // 2) สรุปสิ่งที่จะเปลี่ยน
     let willLoseData = regs > 0;
     let anyChange = regs > 0;
     for (const table of TABLES) {
@@ -124,7 +118,7 @@ async function main() {
       return;
     }
 
-    // 3) ข้อมูลในเครื่องจะหาย/ถูกทับ → ต้องยืนยันก่อน
+    // 3) ถ้าข้อมูลในเครื่องจะหายต้องยืนยันก่อน
     if (willLoseData && !autoYes) {
       const answer = await ask("\nข้อมูลในเครื่องข้างบนจะถูกลบ/ทับ — ยืนยันพิมพ์ y แล้วกด Enter: ");
       if (answer.trim().toLowerCase() !== "y") {
@@ -133,15 +127,15 @@ async function main() {
       }
     }
 
-    // 4) เขียนลงเครื่องใน transaction — พังกลางทาง = rollback กลับเป็นเหมือนเดิม
+    // 4) เขียนใน transaction พังกลางทางก็ rollback
     await local.beginTransaction();
-    await local.query("DELETE FROM registrations"); // Join ในเครื่องผูกกับกิจกรรมชุดเดิม
+    await local.query("DELETE FROM registrations");
     await local.query("DELETE FROM run_sessions");
     await local.query("DELETE FROM clubs");
     await local.query("DELETE FROM images");
     for (const table of TABLES) {
       for (const row of prodData[table]) {
-        // INSERT INTO table SET col1 = ..., col2 = ...  — ใส่ id เดิม → URL ตรงกับเว็บจริง
+        // ใช้ id เดิม URL จะได้ตรงกับเว็บจริง
         // ทีละแถว เพราะรูปหลายรูปรวมกันในคำสั่งเดียวอาจเกินขนาดที่ DB รับได้ต่อครั้ง
         await local.query("INSERT INTO ?? SET ?", [table, row]);
       }

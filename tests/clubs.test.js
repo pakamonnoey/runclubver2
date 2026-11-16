@@ -1,4 +1,4 @@
-// ทดสอบ: หน้ารายการคลับ + หน้ารายละเอียดคลับ (ข้อมูลมาจาก DB)
+// หน้าคลับ: ข้อมูลต้องตรงกับ DB
 const { test, before, after } = require("node:test");
 const assert = require("node:assert/strict");
 const { pool, Client, checkServer, cleanup } = require("./helpers");

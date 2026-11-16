@@ -12,7 +12,7 @@
             <li><span>สมัครเมื่อ</span><strong><%= fmt.thaiDate(profile.created_at) %></strong></li>
           </ul>
 
-          <!-- ฟอร์ม 1: แก้ชื่อ -->
+          <!-- แก้ชื่อ -->
           <form action="/profile" method="POST" data-validate novalidate>
             <div class="mb-3">
               <label for="name" class="form-label">ชื่อ</label>
@@ -33,7 +33,7 @@
 
           <hr class="my-4" />
 
-          <!-- ฟอร์ม 2: เปลี่ยนรหัสผ่าน -->
+          <!-- เปลี่ยนรหัสผ่าน -->
           <h2 class="form-section-title">เปลี่ยนรหัสผ่าน</h2>
           <form action="/profile/password" method="POST" data-validate novalidate>
             <div class="mb-3">

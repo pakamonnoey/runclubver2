@@ -54,7 +54,7 @@
       </div>
     </section>
 
-    <!-- Running Clubs: โลโก้คลับทั้งหมดจาก DB (routes/pages.js) — แสดงเป็นรูปอย่างเดียว ไม่มีลิงก์ -->
+    <!-- Running Clubs -->
     <section class="home-clubs-section" id="clubs">
       <div class="container">
         <div class="section-heading">
@@ -66,14 +66,13 @@
 
         <div class="club-logos">
           <% clubs.forEach(function (club) { %>
-          <!-- alt = ชื่อคลับ (โปรแกรมอ่านหน้าจออ่านได้) / title = ชี้เมาส์แล้วเห็นชื่อ -->
           <img src="<%= club.image %>" alt="<%= club.name %>" title="<%= club.name %>" loading="lazy" />
           <% }); %>
         </div>
       </div>
     </section>
 
-    <!-- Upcoming Events Section (3 กิจกรรมที่ใกล้ที่สุด จาก routes/pages.js) -->
+    <!-- Upcoming Events -->
     <section class="events-section">
       <div class="container">
         <div class="section-heading">
@@ -91,7 +90,7 @@
           <% events.forEach(function (event) { %>
           <div class="col-md-4">
             <a href="/events/<%= event.id %>" class="event-card card-link">
-              <!-- รูป 2 ชั้น: ชั้นล่าง = รูปเดิมเบลอเต็มกรอบ (พื้นหลัง) / ชั้นบน = โปสเตอร์เต็มรูป ไม่ถูกตัด -->
+              <!-- รูปเบลอเป็นพื้นหลัง + โปสเตอร์เต็มรูปทับด้านบน -->
               <div class="event-image">
                 <img class="poster-bg" src="<%= fmt.eventImage(event) %>" alt="" aria-hidden="true" loading="lazy" />
                 <img
@@ -123,7 +122,7 @@
       </div>
     </section>
 
-    <!--Spots -->
+    <!-- Spots -->
     <section class="spots-section" id="spots">
       <div class="container">
         <div class="section-heading">

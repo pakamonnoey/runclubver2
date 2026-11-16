@@ -1,9 +1,5 @@
-<%#
-  ช่องรูปภาพ (ใช้ในฟอร์มคลับและกิจกรรมของ Admin)
-  - image_file : เลือกไฟล์จากเครื่อง → server เก็บลง DB (utils/upload.js) แล้วใส่ path /uploads/<id> ให้
-  - image      : ลิงก์/พาธของรูป (รูปปัจจุบันอยู่ในช่องนี้ — ลบข้อความออก = เอารูปออก)
-  ฟอร์มที่ include ไฟล์นี้ต้องมี enctype="multipart/form-data"
-%>
+<%# ช่องรูปในฟอร์ม admin: เลือกไฟล์ (image_file) หรือใส่ลิงก์ (image)
+    ลบข้อความในช่องลิงก์ = เอารูปออก %>
 <% const current = values.image || '';
    const canPreview = /^(\/image\/[\w.-]+|\/uploads\/\d+|https?:\/\/\S+)$/.test(current); %>
 <label class="form-label" for="image_file"><%= label %></label>

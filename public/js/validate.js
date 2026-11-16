@@ -1,10 +1,6 @@
-// Validation ฝั่ง client — ช่วยให้ผู้ใช้เห็น error ทันทีโดยไม่ต้องส่งไป server
-// (server ยัง validate ซ้ำทุกครั้ง เพราะ client ปิด JS หรือแก้โค้ดได้)
-//
-// ใช้กับ <form data-validate> และอ่านกฎจาก attribute ของ input:
-//   required, minlength, maxlength, type="email"  → กฎมาตรฐาน HTML
-//   data-match="password"                         → ต้องตรงกับช่อง id="password"
-//   data-letter-number                            → ต้องมีทั้งตัวอักษรและตัวเลข
+// ตรวจฟอร์มฝั่ง browser ให้เห็น error ทันที (server ตรวจซ้ำอีกที)
+// ใช้กับ <form data-validate> อ่านกฎจาก required, minlength, maxlength, type="email"
+// data-match="password" = ต้องตรงกับช่อง password, data-letter-number = ต้องมีตัวอักษรและตัวเลข
 
 function getErrorMessage(input) {
   const value = input.value.trim();
@@ -20,7 +16,7 @@ function getErrorMessage(input) {
     const other = document.getElementById(input.dataset.match);
     if (other && input.value !== other.value) return "รหัสผ่านยืนยันไม่ตรงกัน";
   }
-  return ""; // ผ่าน
+  return "";
 }
 
 function showError(input, message) {
@@ -42,12 +38,12 @@ document.querySelectorAll("form[data-validate]").forEach(function (form) {
     });
 
     if (firstInvalid) {
-      event.preventDefault(); // หยุดไม่ให้ส่งฟอร์ม
+      event.preventDefault();
       firstInvalid.focus();
     }
   });
 
-  // พิมพ์แก้แล้ว error หายทันที (เฉพาะช่องที่เคยแสดง error)
+  // พิมพ์แก้แล้ว error หายทันที
   inputs.forEach(function (input) {
     input.addEventListener("input", function () {
       if (input.classList.contains("is-invalid")) showError(input, getErrorMessage(input));

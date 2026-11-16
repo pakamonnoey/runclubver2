@@ -2,13 +2,10 @@
 
     <section class="detail-page">
       <div class="container">
-        <!-- back มาจาก routes/events.js: กลับไปหน้าที่เปิดมา (Events / หน้าคลับ / My Runs) -->
         <a href="<%= back.href %>" class="back-link">← กลับไป <%= back.label %></a>
 
         <div class="detail-layout">
-          <!-- รูป + รายละเอียด -->
           <div class="detail-main">
-            <!-- โปสเตอร์เต็มรูป (ไม่ตัด) + พื้นหลังเบลอจากรูปเดียวกัน — เทคนิคเดียวกับการ์ดหน้า Home -->
             <div class="detail-image detail-poster">
               <img class="poster-bg" src="<%= fmt.eventImage(event) %>" alt="" aria-hidden="true" />
               <img class="poster-main" src="<%= fmt.eventImage(event) %>" alt="<%= event.title %>" />
@@ -21,12 +18,10 @@
             </p>
 
             <% if (event.description) { %>
-            <!-- white-space: pre-line ใน CSS → ขึ้นบรรทัดใหม่ตามที่พิมพ์ไว้ โดยยัง escape ข้อความอยู่ -->
             <p class="detail-description"><%= event.description %></p>
             <% } %>
           </div>
 
-          <!-- กล่องข้อมูล + ปุ่ม -->
           <aside class="detail-box">
             <ul class="detail-facts">
               <li><span><%- include('partials/icon', { name: 'calendar' }) %> วันที่</span><strong><%= fmt.thaiDate(event.start_at) %></strong></li>
@@ -35,7 +30,6 @@
               <% if (event.distance_km !== null) { %>
               <li><span><%- include('partials/icon', { name: 'route' }) %> ระยะทาง</span><strong><%= fmt.distanceText(event.distance_km) %></strong></li>
               <% } %>
-              <!-- fee ว่าง = ฟรี (กิจกรรมส่วนใหญ่ฟรี admin กรอกเฉพาะที่มีค่าใช้จ่าย) -->
               <li><span><%- include('partials/icon', { name: 'coins' }) %> ค่าใช้จ่าย</span><strong><%= event.fee || 'ฟรี' %></strong></li>
               <li><span><%- include('partials/icon', { name: 'star' }) %> คนสนใจ</span><strong><%= event.saved_count %> คน</strong></li>
             </ul>
@@ -47,13 +41,11 @@
             <% } else { %>
             <div class="detail-actions">
               <% if (event.external_url) { %>
-              <!-- ลิงก์สมัครของผู้จัด: ผ่านการตรวจว่าเป็น http(s) ตอนบันทึก (utils/validators.js) -->
               <a href="<%= event.external_url %>" class="main-button detail-button" target="_blank" rel="noopener noreferrer">
                 สมัครกับผู้จัด ↗
               </a>
               <% } %>
 
-              <!-- บันทึกลงลิสต์ของฉัน — server ตรวจเงื่อนไขซ้ำอีกครั้งตอนกด (routes/events.js) -->
               <% if (isSaved) { %>
               <p class="detail-status status-joined">✓ อยู่ในลิสต์ของคุณแล้ว</p>
               <form action="/events/<%= event.id %>/unsave" method="POST">
@@ -70,7 +62,6 @@
             <% } %>
 
             <% if (event.source_url) { %>
-            <!-- ลิงก์แหล่งที่มา: ผ่านการตรวจว่าเป็น http(s) ตอนบันทึก (utils/validators.js) -->
             <a href="<%= event.source_url %>" class="source-link" target="_blank" rel="noopener noreferrer">ดูโพสต์ต้นทาง ↗</a>
             <% } %>
           </aside>

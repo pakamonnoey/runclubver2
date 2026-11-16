@@ -1,9 +1,6 @@
-// สร้างตาราง + ใส่ข้อมูลเริ่มต้น:  npm run db:setup
-// ใช้ได้ทั้ง DB ในเครื่องและ DB บน cloud (อ่านค่าเชื่อมต่อจาก .env)
-//
-// ⚠️ runbkk.sql ลบตารางเดิมทิ้งก่อนสร้างใหม่ → ถ้าใน DB มีข้อมูลอยู่แล้ว สคริปต์จะหยุดก่อน
-//    ถ้าต้องการล้างจริงๆ:  npm run db:setup -- --force
-// ENV_FILE=.env.production → ใช้ค่าเชื่อมต่อ DB บน cloud แทน (ค่าเริ่มต้นคือ .env)
+// สร้างตาราง + ข้อมูลเริ่มต้น: npm run db:setup
+// runbkk.sql ลบตารางเดิมก่อน ถ้ามีข้อมูลอยู่แล้วจะหยุด (ล้างจริงใช้ -- --force)
+// DB บน cloud: ENV_FILE=.env.production npm run db:setup
 require("dotenv").config({ path: process.env.ENV_FILE || ".env", quiet: true });
 
 const fs = require("fs");
@@ -22,13 +19,13 @@ async function main() {
     database: process.env.DB_NAME,
     charset: "utf8mb4",
     ssl: process.env.DB_SSL === "true" ? { minVersion: "TLSv1.2", rejectUnauthorized: true } : undefined,
-    multipleStatements: true, // อนุญาตให้รันหลายคำสั่งในครั้งเดียว (ใช้เฉพาะสคริปต์นี้)
+    multipleStatements: true, // รันทั้งไฟล์ .sql ในครั้งเดียว
   });
 
-  console.log(`→ ${process.env.DB_HOST} / ${process.env.DB_NAME}`); // บอกว่ากำลังจะทำกับ DB ไหน
+  console.log(`→ ${process.env.DB_HOST} / ${process.env.DB_NAME}`);
 
   try {
-    // ---- ตัวกันพลาด: มีตารางของโปรเจกต์อยู่แล้วหรือยัง ----
+    // มีตารางของโปรเจกต์อยู่แล้วหรือยัง
     const [existing] = await conn.query(
       "SELECT table_name AS name FROM information_schema.tables WHERE table_schema = ? AND table_name IN (?)",
       [process.env.DB_NAME, TABLES]

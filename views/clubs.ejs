@@ -1,6 +1,5 @@
 <%- include('partials/head', { title: 'Running Clubs - RUN BKK' }) %>
 
-    <!-- หน้ารายการคลับ: หัวข้อแบบเดียวกับหน้า Events (พื้นครีม ป้ายส้มเล็ก หัวข้อเข้ม) -->
     <section class="clubs-page">
       <div class="container">
         <div class="page-title">
@@ -14,21 +13,17 @@
         <% } %>
 
         <div class="row g-4 align-items-stretch">
-          <!-- 1 การ์ด ต่อ 1 แถวใน clubs (ข้อมูลมาจาก routes/clubs.js) -->
           <% clubs.forEach(function (club) { %>
           <div class="col-md-6 col-lg-4">
             <div class="club-card">
-              <!-- ส่วนหัวการ์ด: โลโก้เล็ก (สี่เหลี่ยมจัตุรัส = สัดส่วนเดียวกับโลโก้ → ไม่ถูกตัด) + ชื่อคลับ -->
               <div class="club-card-head">
                 <img class="club-logo" src="<%= fmt.clubImage(club) %>" alt="<%= club.name %>" loading="lazy" />
                 <h2><%= club.name %></h2>
               </div>
 
-              <!-- คำอธิบายแสดงเต็ม (แต่ละคลับยาวแค่ 2–4 บรรทัด) -->
               <p class="club-description"><%= club.description %></p>
 
               <div class="club-bottom">
-                <!-- รูปแบบเดียวกันทุกการ์ด: สถานที่ / ตารางวิ่ง / IG — ไม่มีข้อมูลก็ไม่แสดงบรรทัดนั้น -->
                 <ul class="club-meta">
                   <% if (club.location) { %><li><%- include('partials/icon', { name: 'pin' }) %> <%= club.location %></li><% } %>
                   <% if (club.regular_schedule) { %><li><%- include('partials/icon', { name: 'calendar' }) %> <%= club.regular_schedule %></li><% } %>
@@ -37,7 +32,6 @@
                   <% } %>
                 </ul>
 
-                <!-- ปุ่มหลัก: พาไปดูกิจกรรมของคลับ — บอกจำนวนให้รู้ก่อนกด (upcoming_count จาก routes/clubs.js) -->
                 <a href="/clubs/<%= club.id %>" class="main-button club-button">
                   <% if (club.upcoming_count > 0) { %>ดูกิจกรรมของคลับ (<%= club.upcoming_count %>)<% } else { %>ดูข้อมูลคลับ<% } %>
                 </a>

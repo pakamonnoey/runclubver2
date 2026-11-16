@@ -1,4 +1,4 @@
-// ทดสอบ: สิทธิ์ admin (requireRole) — member เข้าไม่ได้ / admin เข้าได้
+// สิทธิ์ admin: member เข้าไม่ได้ admin เข้าได้
 const { test, before, after } = require("node:test");
 const assert = require("node:assert/strict");
 const { pool, Client, checkServer, cleanup } = require("./helpers");
@@ -30,7 +30,7 @@ test("member ส่งฟอร์ม admin ตรงๆ (ไม่ผ่าน�
 test("admin เข้าทุกหน้า admin ได้ และเห็นเมนู Admin", async () => {
   const c = new Client();
   const email = await c.registerAndLogin(PREFIX);
-  // เปลี่ยน role ใน DB → app.js อ่าน role ล่าสุดจาก DB ทุก request จึงมีผลทันที
+  // app.js อ่าน role จาก DB ทุก request เลยมีผลทันที
   await pool.query("UPDATE users SET role = 'admin' WHERE email = ?", [email]);
 
   for (const path of ADMIN_PAGES) {
