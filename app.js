@@ -93,7 +93,7 @@ app.use("/", pageRoutes); // Home, FAQ (สาธารณะ)
 app.use("/", authRoutes); // /register /login /logout
 app.use("/", passwordRoutes); // /forgot-password /reset-password/:token (ลืมรหัสผ่าน)
 app.use("/clubs", clubRoutes); // /clubs, /clubs/:id (ต้อง login)
-app.use("/events", eventRoutes); // /events, /events/:id, join, cancel (ต้อง login)
+app.use("/events", eventRoutes); // /events, /events/:id, save / unsave ลงลิสต์ (ต้อง login)
 app.use("/", memberRoutes); // /my-runs, /profile (ต้อง login)
 app.use("/admin", adminRoutes); // Admin Dashboard (admin เท่านั้น)
 app.use("/uploads", uploadRoutes); // รูปที่อัปโหลด (เก็บใน DB)

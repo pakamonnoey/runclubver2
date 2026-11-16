@@ -12,7 +12,6 @@ SET NAMES utf8mb4;
 DROP TABLE IF EXISTS password_resets;
 DROP TABLE IF EXISTS registrations;
 DROP TABLE IF EXISTS run_sessions;
-DROP TABLE IF EXISTS club_owner_requests;  -- ตารางจากเวอร์ชันเก่า (ไม่ใช้แล้ว)
 DROP TABLE IF EXISTS clubs;
 DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS sessions;
@@ -103,7 +102,7 @@ CREATE TABLE images (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ---------------------------------------------------------------------
--- 6) sessions : ที่เก็บ login session (ใช้โดย express-mysql-session ใน Phase 4)
+-- 6) sessions : ที่เก็บ login session (ใช้โดย express-mysql-session)
 --    โครงสร้างตรงตามที่ library กำหนด
 -- ---------------------------------------------------------------------
 CREATE TABLE sessions (

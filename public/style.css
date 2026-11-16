@@ -75,7 +75,7 @@ html {
 }
 
 .section-heading {
-  margin-bottom: 35px;
+  margin-bottom: 32px;
 }
 
 .section-heading h2 {
@@ -143,7 +143,7 @@ html {
 /* About*/
 
 .about-section {
-  padding: 90px 0;
+  padding: 72px 0;
   background-color: #ff6b35;
   color: white;
 }
@@ -176,10 +176,10 @@ html {
 }
 
 .about-text h2 {
-  font-size: 48px;
+  font-size: 44px;
   color: white;
   margin: 10px 0 20px;
-  line-height: 1.2;
+  line-height: 1.3; /* ภาษาไทยมีวรรณยุกต์ ต้องเว้นบรรทัดมากกว่าหัวข้อภาษาอังกฤษ */
 }
 
 .about-text p {
@@ -200,7 +200,7 @@ html {
 /* Home Events*/
 
 .events-section {
-  padding: 90px 0;
+  padding: 72px 0;
   background-color: #f7f5ef;
 }
 
@@ -270,14 +270,14 @@ html {
 }
 
 .event-info p {
-  color: #666;
+  color: #555;
   line-height: 1.6;
 }
 
 .view-events {
   display: block;
   width: fit-content;
-  margin: 35px auto 0;
+  margin: 32px auto 0;
   padding: 13px 30px;
   background-color: #ff6b35;
   color: white;
@@ -294,7 +294,7 @@ html {
 /* Running Spots*/
 
 .spots-section {
-  padding: 90px 0;
+  padding: 72px 0;
   background-color: white;
 }
 
@@ -322,7 +322,7 @@ html {
 
 .spot-area {
   color: #ff6b35;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: bold;
 }
 
@@ -332,7 +332,7 @@ html {
 }
 
 .spot-info p {
-  color: #666;
+  color: #555;
   line-height: 1.6;
 }
 
@@ -725,7 +725,18 @@ html {
   }
 
   .about-text h2 {
-    font-size: 38px;
+    font-size: 32px;
+  }
+
+  /* มือถือ: ทุก section ของหน้า Home เว้นบน-ล่างเท่ากัน */
+  .about-section,
+  .events-section,
+  .spots-section {
+    padding: 56px 0;
+  }
+
+  .about-content {
+    gap: 32px;
   }
 
   .section-heading h2 {
@@ -762,7 +773,7 @@ html {
 }
 
 /* =====================================================================
-   Added for full-stack version (Phase 4+) — existing styles above unchanged
+   ส่วนที่เพิ่มสำหรับเวอร์ชัน full-stack (ด้านบนคือสไตล์เดิมของเว็บ HTML)
    ===================================================================== */
 
 /* Navbar: login state */
@@ -895,7 +906,7 @@ html {
   }
 }
 
-/* ---------- Phase 5: events, detail pages, my runs ---------- */
+/* ---------- Events, หน้ารายละเอียด, My Runs ---------- */
 
 .card-link {
   color: inherit;
@@ -1169,7 +1180,7 @@ a.outline-button {
   }
 }
 
-/* ---------- Phase 6: owner & admin dashboards ---------- */
+/* ---------- Admin ---------- */
 
 .menu-dashboard {
   color: #ff6b35 !important;
@@ -1304,13 +1315,7 @@ a.outline-button {
   width: auto;
 }
 
-.request-message {
-  max-width: 320px;
-  white-space: pre-line;
-  word-break: break-word;
-}
-
-/* status badge: draft / published / cancelled / pending / approved / rejected */
+/* status badge: draft / published / cancelled / pending */
 
 .status-badge {
   display: inline-block;
@@ -1322,8 +1327,7 @@ a.outline-button {
   font-weight: bold;
 }
 
-.status-published,
-.status-approved {
+.status-published {
   background-color: #e6f6ec;
   color: #1a7f45;
 }
@@ -1334,8 +1338,7 @@ a.outline-button {
   color: #b25e09;
 }
 
-.status-cancelled,
-.status-rejected {
+.status-cancelled {
   background-color: #fdecea;
   color: #b42318;
 }
