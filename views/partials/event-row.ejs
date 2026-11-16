@@ -1,7 +1,14 @@
-<%# การ์ดกิจกรรม 1 แถว — ใช้ร่วมกันในหน้า Events และหน้ารายละเอียดคลับ
-    รับค่า: event, href (ลิงก์ที่จะไป), showClub (แสดงชื่อคลับไหม — ในหน้าคลับไม่ต้อง เพราะรู้อยู่แล้ว) %>
-<a href="<%= href %>" class="event-list-card">
-  <img src="<%= event.image || event.club_image || '/image/about.jpg' %>" alt="<%= event.title %>" />
+<%# การ์ดกิจกรรม 1 แถว — ใช้ร่วมกันในหน้า Events, หน้ารายละเอียดคลับ และ My Runs
+    รับค่า:
+      event     ข้อมูลกิจกรรม 1 แถวจาก DB
+      href      ลิงก์ไปหน้ารายละเอียด (เช่น /events/12?from=club)
+      showClub  แสดงชื่อคลับไหม (หน้าคลับไม่ต้อง เพราะรู้อยู่แล้ว)
+      removable มีปุ่ม "เอาออก" ไหม (เฉพาะ My Runs)
+
+    ทั้งการ์ดกดได้ด้วยเทคนิค "stretched link": ลิงก์อยู่ที่ชื่อกิจกรรม แล้ว CSS ขยายพื้นที่กดให้เต็มการ์ด
+    (ไม่ครอบทั้งการ์ดด้วย <a> เพราะข้างในมีฟอร์มปุ่มเอาออก — HTML ไม่อนุญาตให้ปุ่มอยู่ใน <a>) %>
+<div class="event-list-card">
+  <img src="<%= fmt.eventImage(event) %>" alt="" loading="lazy" />
 
   <div class="event-date-box">
     <strong><%= fmt.dayNumber(event.start_at) %></strong>
@@ -11,7 +18,7 @@
   <div class="event-list-info">
     <p class="event-type"><%= fmt.runTypeLabel(event.run_type) %><% if (showClub) { %> · <%= event.club_name %><% } %></p>
 
-    <h3><%= event.title %></h3>
+    <h3><a href="<%= href %>" class="card-link"><%= event.title %></a></h3>
 
     <!-- ข้อมูลแยกทีละบรรทัด อ่านง่ายกว่าเขียนต่อกันด้วย · -->
     <ul class="event-meta">
@@ -19,8 +26,18 @@
       <li><%- include('icon', { name: 'pin' }) %> <%= event.meeting_point %></li>
       <li><%- include('icon', { name: 'coins' }) %> <%= event.fee || 'ฟรี' %></li>
       <% if (event.saved_count > 0) { %><li><%- include('icon', { name: 'star' }) %> <%= event.saved_count %> คนสนใจ</li><% } %>
+      <% if (event.status === 'cancelled') { %><li class="text-danger">กิจกรรมถูกยกเลิก</li><% } %>
     </ul>
   </div>
 
   <div class="event-distance"><%= fmt.distanceText(event.distance_km) %></div>
-</a>
+
+  <% if (locals.removable) { %>
+  <form action="/events/<%= event.id %>/unsave" method="POST"
+        onsubmit="return confirm('เอากิจกรรมนี้ออกจากลิสต์?')">
+    <!-- from = บอก server ให้พากลับมาหน้า My Runs หลังกด -->
+    <input type="hidden" name="from" value="my-runs" />
+    <button type="submit" class="outline-button">เอาออก</button>
+  </form>
+  <% } %>
+</div>

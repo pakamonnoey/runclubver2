@@ -20,7 +20,7 @@
             <div class="club-card">
               <!-- ส่วนหัวการ์ด: โลโก้เล็ก (สี่เหลี่ยมจัตุรัส = สัดส่วนเดียวกับโลโก้ → ไม่ถูกตัด) + ชื่อคลับ -->
               <div class="club-card-head">
-                <img class="club-logo" src="<%= club.image || '/image/about.jpg' %>" alt="<%= club.name %>" loading="lazy" />
+                <img class="club-logo" src="<%= fmt.clubImage(club) %>" alt="<%= club.name %>" loading="lazy" />
                 <h2><%= club.name %></h2>
               </div>
 

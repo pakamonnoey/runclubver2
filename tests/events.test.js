@@ -55,7 +55,9 @@ test("กดสนใจ → อยู่ใน My Runs / กดซ้ำไม�
   await c.post(`/events/${event.id}/save`);
   await c.post(`/events/${event.id}/save`); // กดซ้ำ
   assert.equal(await count(), 1);
-  assert.ok((await c.get("/my-runs")).html.includes(`href="/events/${event.id}?from=my-runs"`));
+  const myRuns = (await c.get("/my-runs")).html;
+  assert.ok(myRuns.includes(`href="/events/${event.id}?from=my-runs"`));
+  assert.ok(myRuns.includes(`action="/events/${event.id}/unsave"`)); // มีปุ่มเอาออก
   assert.match((await c.get(`/events/${event.id}`)).html, /อยู่ในลิสต์ของคุณแล้ว/);
 
   await c.post(`/events/${event.id}/unsave`);

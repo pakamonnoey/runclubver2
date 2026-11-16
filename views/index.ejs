@@ -93,10 +93,10 @@
             <a href="/events/<%= event.id %>" class="event-card card-link">
               <!-- รูป 2 ชั้น: ชั้นล่าง = รูปเดิมเบลอเต็มกรอบ (พื้นหลัง) / ชั้นบน = โปสเตอร์เต็มรูป ไม่ถูกตัด -->
               <div class="event-image">
-                <img class="poster-bg" src="<%= event.image || event.club_image || '/image/about.jpg' %>" alt="" aria-hidden="true" loading="lazy" />
+                <img class="poster-bg" src="<%= fmt.eventImage(event) %>" alt="" aria-hidden="true" loading="lazy" />
                 <img
                   class="poster-main"
-                  src="<%= event.image || event.club_image || '/image/about.jpg' %>"
+                  src="<%= fmt.eventImage(event) %>"
                   alt="<%= event.title %>"
                   loading="lazy"
                 />

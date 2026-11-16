@@ -10,8 +10,8 @@
           <div class="detail-main">
             <!-- โปสเตอร์เต็มรูป (ไม่ตัด) + พื้นหลังเบลอจากรูปเดียวกัน — เทคนิคเดียวกับการ์ดหน้า Home -->
             <div class="detail-image detail-poster">
-              <img class="poster-bg" src="<%= event.image || event.club_image || '/image/about.jpg' %>" alt="" aria-hidden="true" />
-              <img class="poster-main" src="<%= event.image || event.club_image || '/image/about.jpg' %>" alt="<%= event.title %>" />
+              <img class="poster-bg" src="<%= fmt.eventImage(event) %>" alt="" aria-hidden="true" />
+              <img class="poster-main" src="<%= fmt.eventImage(event) %>" alt="<%= event.title %>" />
             </div>
 
             <p class="event-type"><%= fmt.runTypeLabel(event.run_type) %></p>

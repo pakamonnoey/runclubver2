@@ -1,6 +1,9 @@
 // ฟังก์ชันช่วยแสดงผล — app.js ใส่ไว้ใน app.locals ทำให้ทุกไฟล์ .ejs เรียกใช้ได้
 const TZ = "Asia/Bangkok";
 
+// รูปสำรอง เมื่อกิจกรรม/คลับยังไม่มีรูป
+const DEFAULT_IMAGE = "/image/about.jpg";
+
 // ประเภทกิจกรรม (ค่าใน DB → ชื่อที่แสดง)
 const RUN_TYPES = {
   morning: "Morning Run",
@@ -37,6 +40,13 @@ module.exports = {
   distanceText: (km) => (km === null || km === undefined ? "" : `${Number(km)} KM`),
 
   runTypeLabel: (type) => RUN_TYPES[type] || type,
+
+  // รูปกิจกรรม: ใช้โปสเตอร์ของกิจกรรม → ถ้าไม่มีใช้โลโก้คลับ → ถ้าไม่มีอีกใช้รูปสำรอง
+  // (SQL ต้อง SELECT c.image AS club_image มาด้วย)
+  eventImage: (event) => event.image || event.club_image || DEFAULT_IMAGE,
+
+  // รูปคลับ: โลโก้คลับ → ถ้าไม่มีใช้รูปสำรอง
+  clubImage: (club) => club.image || DEFAULT_IMAGE,
 
   // ชื่อบัญชี IG จากลิงก์ เช่น "https://www.instagram.com/sabairunclub.bkk/" → "@sabairunclub.bkk"
   // ดึงจาก URL ที่ admin กรอกไว้ ไม่ได้แต่งชื่อเอง; อ่านไม่ได้ → แสดงคำว่า Instagram แทน

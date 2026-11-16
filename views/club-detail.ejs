@@ -7,7 +7,7 @@
         <!-- ส่วนบน: ข้อมูลคลับทั้งหมดรวมในการ์ดเดียว (โลโก้ / ชื่อ / ข้อมูลย่อ / คำอธิบาย) -->
         <div class="club-profile">
           <div class="club-detail-head">
-            <img class="club-logo club-logo-lg" src="<%= club.image || '/image/about.jpg' %>" alt="<%= club.name %>" />
+            <img class="club-logo club-logo-lg" src="<%= fmt.clubImage(club) %>" alt="<%= club.name %>" />
             <div>
               <p class="small-title">RUNNING CLUB</p>
               <h1><%= club.name %></h1>
