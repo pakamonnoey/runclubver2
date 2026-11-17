@@ -32,8 +32,9 @@ app.set("views", path.join(__dirname, "views"));
 // ทุก view เรียกใช้ fmt ได้ เช่น fmt.thaiDate(...)
 app.locals.fmt = format;
 
-// Render อยู่หลัง proxy ต้องเปิดไว้ ไม่งั้น secure cookie ใช้ไม่ได้
-if (isProduction) app.set("trust proxy", 1);
+// Render อยู่หลัง proxy หลายชั้น (IP ภายใน 10.x) ต้องเชื่อ proxy เหล่านี้
+// ไม่งั้น secure cookie ใช้ไม่ได้ และ req.ip จะได้ IP ของ proxy แทน IP ผู้ใช้
+if (isProduction) app.set("trust proxy", ["loopback", "linklocal", "uniquelocal"]);
 
 // 2) ไฟล์ใน public (CSS, รูป, JS)
 app.use(express.static(path.join(__dirname, "public")));
