@@ -28,12 +28,16 @@ async function countVisit(ip) {
 router.get("/", async (req, res) => {
   // เว็บจริงอยู่หลัง Cloudflare: IP ผู้ใช้จริงอยู่ใน header CF-Connecting-IP
   // ในเครื่องไม่มี header นี้ → ใช้ req.ip / ตัด ::ffff: ให้ IPv4 เหลือ 1.2.3.4
-  const ip = (req.get("cf-connecting-ip") || req.ip).replace(/^::ffff:/, "");
+  const cfIp = req.get("cf-connecting-ip");
+  const ip = (cfIp || req.ip).replace(/^::ffff:/, "");
+
+  // เว็บจริง: request ที่ไม่ผ่าน Cloudflare = health check ของ Render (::1) ไม่ใช่ผู้เข้าชม → ไม่นับ
+  const isHealthCheck = process.env.NODE_ENV === "production" && !cfIp;
 
   // นับไม่สำเร็จ หน้า Home ยังต้องเปิดได้
   let visitors = null;
   try {
-    visitors = await countVisit(ip);
+    if (!isHealthCheck) visitors = await countVisit(ip);
   } catch (err) {
     console.error("Visitor counter failed:", err.message);
   }
