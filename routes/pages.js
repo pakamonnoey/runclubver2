@@ -26,8 +26,9 @@ async function countVisit(ip) {
 
 // Home: 3 กิจกรรมที่ใกล้ที่สุด + โลโก้คลับ
 router.get("/", async (req, res) => {
-  // IPv4 บางครั้งมาในรูป ::ffff:1.2.3.4 → ตัดให้เหลือ 1.2.3.4
-  const ip = req.ip.replace(/^::ffff:/, "");
+  // เว็บจริงอยู่หลัง Cloudflare: IP ผู้ใช้จริงอยู่ใน header CF-Connecting-IP
+  // ในเครื่องไม่มี header นี้ → ใช้ req.ip / ตัด ::ffff: ให้ IPv4 เหลือ 1.2.3.4
+  const ip = (req.get("cf-connecting-ip") || req.ip).replace(/^::ffff:/, "");
 
   // นับไม่สำเร็จ หน้า Home ยังต้องเปิดได้
   let visitors = null;
