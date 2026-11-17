@@ -200,4 +200,23 @@
       </div>
     </section>
 
+    <%# Visitor Counter: visitors มาจาก routes/pages.js (null = นับไม่สำเร็จ ไม่แสดง) %>
+    <% if (visitors) { %>
+    <section class="visitor-counter">
+      <div class="container">
+        <p class="small-title">VISITORS</p>
+        <div class="visitor-stats">
+          <div>
+            <strong><%= visitors.today.toLocaleString() %></strong>
+            <span>ผู้เข้าชมวันนี้</span>
+          </div>
+          <div>
+            <strong><%= visitors.total.toLocaleString() %></strong>
+            <span>ผู้เข้าชมทั้งหมด</span>
+          </div>
+        </div>
+      </div>
+    </section>
+    <% } %>
+
 <%- include('partials/footer') %>

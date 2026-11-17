@@ -764,6 +764,31 @@ html {
   box-shadow: none;
 }
 
+/* Visitor Counter (Home) */
+
+.visitor-counter {
+  padding: 40px 0;
+  text-align: center;
+  border-top: 1px solid #eee;
+}
+
+.visitor-stats {
+  display: flex;
+  justify-content: center;
+  gap: 48px;
+}
+
+.visitor-stats strong {
+  display: block;
+  font-size: 32px;
+  color: #17202a;
+}
+
+.visitor-stats span {
+  color: #777;
+  font-size: 14px;
+}
+
 /* Footer*/
 
 .footer {
